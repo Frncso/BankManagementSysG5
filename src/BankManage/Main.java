@@ -22,7 +22,12 @@ public class Main {
         System.out.print("Enter your First Name: ");
         fname = sc.nextLine();
         
-        System.out.println("Hello, "+fname+"!");
+        if(fname.equalsIgnoreCase("melvin")){
+            System.out.println("langkiwa");
+        }
+        else{
+            System.out.println("Hello, "+fname+"!");
+        }
     }
     
 }
