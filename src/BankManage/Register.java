@@ -292,12 +292,11 @@ public class Register extends JFrame implements ActionListener{
             
         }
         else if(e.getSource() == btnLog || e.getSource() == btnLogS){
-            System.out.println("LOGGING IN"); // debug purposes
-            /* 
+     
             Login ln = new Login();
             ln.setVisible(true);
             dispose();
-            */
+            
         }
         else if(e.getSource() == btnReg){
             /* 

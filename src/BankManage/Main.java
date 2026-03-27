@@ -8,7 +8,7 @@ public class Main {
         // open register form
         Register reg = new Register();
         reg.setVisible(true);
-        
+
     }
     
 }
