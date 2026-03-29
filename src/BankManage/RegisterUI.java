@@ -331,17 +331,6 @@ public class RegisterUI extends JFrame implements ActionListener{
             
             rs.AddAccount(staff);
             
-            else if pos == cservice,
-            
-            Employee cservice = new Employee{
-                CserName = stFName,
-                CserName = stLName,
-                ... fields
-                accType = service
-            };
-            
-            rs.AddAccount(cservice);
-            
             */
             
             JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);

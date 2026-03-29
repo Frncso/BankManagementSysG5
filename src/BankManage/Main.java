@@ -11,7 +11,9 @@ public class Main {
     String decrypted = en.decrypt(testingmuch);
     
     public static void main(String[] args) {
-        // for testing purposes
+        // for testing purposes summary transact
+        SummaryTransactUI st = new SummaryTransactUI();
+        st.setVisible(true);
         
         // open register form
         RegisterUI reg = new RegisterUI();
