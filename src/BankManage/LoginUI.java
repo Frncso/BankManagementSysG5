@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
-public class Login extends JFrame implements ActionListener {
+public class LoginUI extends JFrame implements ActionListener {
    
     ColorScheme cs = new ColorScheme();
 
@@ -17,7 +17,7 @@ public class Login extends JFrame implements ActionListener {
     private JTextField txtAccNo;
     private JPasswordField txtPin;
 
-    Login(){
+    LoginUI(){
 
         setTitle("Banking System Login ");
         setSize(1440,960);
@@ -198,7 +198,7 @@ public class Login extends JFrame implements ActionListener {
 
         } else if (e.getSource() == btnRegister || e.getSource() == btnRegisterS) {
 
-            Register rg = new Register();
+            RegisterUI rg = new RegisterUI();
             rg.setVisible(true);
             dispose();
      }
