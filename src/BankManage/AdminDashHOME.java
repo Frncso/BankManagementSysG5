@@ -17,19 +17,20 @@ public class AdminDashHOME extends JFrame implements ActionListener {
         getContentPane().setBackground(Color.WHITE);
         
         JPanel sidebar = new JPanel();
-        sidebar.setBounds(0, 0, 200, 600);
+        sidebar.setBounds(0, 0, 300, 960);
         sidebar.setBackground(cs.bgColor); 
         sidebar.setLayout(null); 
 
         homeBtn = new JButton("Home");
-        homeBtn.setBounds(20, 30, 160, 40);
+        homeBtn.setBounds(30, 50, 240, 60);  
         homeBtn.setBackground(cs.btnColorSelected); 
         homeBtn.setForeground(cs.white);
         homeBtn.setFocusPainted(false);
         homeBtn.setBorderPainted(false);
+        homeBtn.addActionListener(this);
 
         changeInfoBtn = new JButton("Change info");
-        changeInfoBtn.setBounds(20, 90, 160, 40);
+        changeInfoBtn.setBounds(30, 140, 240, 60); 
         changeInfoBtn.setBackground(cs.btnColorSelect); 
         changeInfoBtn.setForeground(cs.white);
         changeInfoBtn.setFocusPainted(false);
@@ -37,7 +38,7 @@ public class AdminDashHOME extends JFrame implements ActionListener {
         changeInfoBtn.addActionListener(this);
 
         updateRoleBtn = new JButton("Update role");
-        updateRoleBtn.setBounds(20, 150, 160, 40);
+        updateRoleBtn.setBounds(30, 230, 240, 60);
         updateRoleBtn.setBackground(cs.btnColorSelect); 
         updateRoleBtn.setForeground(cs.white);
         updateRoleBtn.setFocusPainted(false);
@@ -45,52 +46,41 @@ public class AdminDashHOME extends JFrame implements ActionListener {
         updateRoleBtn.addActionListener(this);
 
         etcBtn = new JButton("etc");
-        etcBtn.setBounds(20, 210, 160, 40);
+        etcBtn.setBounds(30, 320, 240, 60);
         etcBtn.setBackground(cs.btnColorSelect);
         etcBtn.setForeground(cs.white);
         etcBtn.setFocusPainted(false);
         etcBtn.setBorderPainted(false);
         etcBtn.addActionListener(this);
-        
+
         homeLabel = new JLabel("Home", SwingConstants.CENTER);
-        homeLabel.setFont(new Font("Arial", Font.BOLD, 72));
+        homeLabel.setFont(new Font("Arial", Font.BOLD, 96));  
         homeLabel.setForeground(new Color(100, 100, 100));
-        homeLabel.setBounds(200, 0, 700, 600);
-        
-        
-        
+        homeLabel.setBounds(300, 0, 1140, 960);
+
         add(sidebar);
         sidebar.add(homeBtn);
         sidebar.add(changeInfoBtn);
         sidebar.add(updateRoleBtn);
         sidebar.add(etcBtn);
         add(homeLabel);
-        
-        
-        
-        setSize(900, 600);
+
+        setSize(1440, 960);
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
+        setLocationRelativeTo(null); 
     }
-    
-    
-    
-    
-    
     @Override
     public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == changeInfoBtn) {
-               dispose();
-               new  AdminDashChngInfo();
-                       
-            } else if (e.getSource() == updateRoleBtn) {
-                
-            } else if (e.getSource() == etcBtn) {
-                
-            }    
-        
-    }
-    
-}
+        if (e.getSource() == changeInfoBtn) {
+            dispose();
+            new AdminDashChngInfo();
+        } else if (e.getSource() == updateRoleBtn) {
 
+        } else if (e.getSource() == etcBtn) {
+
+        } else if (e.getSource() == homeBtn) {
+
+        }    
+    }
+}
