@@ -19,10 +19,12 @@ public class LoginUI extends JFrame  implements ActionListener {
     private JPanel loginContainer, loginCus, loginStf;
 
     private JButton btnCus, btnStf, btnSignIn, btnRegister; //cus log
-    private JButton btnCusS, btnStfS, btnSignInS, btnRegisterS; //stf log btnsignins -- open form
-
     private JTextField txtAccNo;
     private JPasswordField txtPin;
+    
+    private JButton btnCusS, btnStfS, btnSignInS, btnRegisterS; //stf log btnsignins -- open form
+    private JTextField txtAccNoS; 
+    private JPasswordField txtPinS;
 
     LoginUI(){
 
@@ -55,25 +57,21 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnStf = new JButton("Staff");
         btnStf.setBounds(220,40,175,30);
         btnStf.setBackground(cs.btnColorUnselect);
+        btnStf.setBorderPainted(false);
 
         JLabel lblAcc = new JLabel("Account Number");
         lblAcc.setBounds(45,100,200,30);
         lblAcc.setForeground(cs.gray);
-
         txtAccNo = new JTextField();
         txtAccNo.setBounds(45,130,350,35);
 
         JLabel lblPin = new JLabel("PIN");
         lblPin.setBounds(45,180,200,30);
-
         txtPin = new JPasswordField("1234");
         txtPin.setBounds(45,210,350,35);
 
         btnSignIn = new JButton("Sign In");
         btnSignIn.setBounds(45,270,350,35);
-//        btnSignIn.setBackground(cs.btnColorSelect);
-//        btnSignIn.setForeground(cs.);
-//      btnSignIn.setBorderPainted(false);
 
         JLabel lblBottom = new JLabel("Don't have an account?");
         lblBottom.setBounds(120,320,200,30);
@@ -103,10 +101,23 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnStfS = new JButton("Staff");
         btnStfS.setBounds(220,40,175,30);
         btnStfS.setBorderPainted(false);
+        btnStfS.setBackground(cs.btnColorSelect);
+        btnStfS.setForeground(cs.white);
+        
+        JLabel lblAccS = new JLabel("Staff Information");
+        lblAccS.setBounds(45, 100, 200, 30);
+        lblAccS.setForeground(cs.gray);
+        txtAccNoS = new JTextField();
+        txtAccNoS.setBounds(45, 130, 350, 35);
+
+        JLabel lblPinS = new JLabel("Password");
+        lblPinS.setBounds(45, 180, 200, 30);
+        txtPinS = new JPasswordField();
+        txtPinS.setBounds(45, 210, 350, 35);
 
         btnSignInS = new JButton("Sign In");
         btnSignInS.setBounds(45,270,350,35);
-        btnSignInS.setBorderPainted(false);
+//        btnSignInS.setBorderPainted(false);
 
         JLabel lblBottomS = new JLabel("Don't have an account?");
         lblBottomS.setBounds(120,320,200,30);
@@ -120,10 +131,13 @@ public class LoginUI extends JFrame  implements ActionListener {
 
         loginStf.add(btnCusS);
         loginStf.add(btnStfS);
+        loginStf.add(lblAccS);
+        loginStf.add(txtAccNoS);
+        loginStf.add(lblPinS);
+        loginStf.add(txtPinS);
         loginStf.add(btnSignInS);
         loginStf.add(lblBottomS);
         loginStf.add(btnRegisterS);
-
         loginContainer.setBounds(500,250,445,400);
         add(loginContainer);
 
@@ -156,15 +170,11 @@ public class LoginUI extends JFrame  implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Customer.");
                 CustomerDashboard dash = new CustomerDashboard(); 
                 dash.setVisible(true);
-    
-             //CLOSE
              dispose(); 
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid Customer Account or PIN.", "Login Error", JOptionPane.ERROR_MESSAGE);
             }
-
         } 
-        
         //for STF
         else if (e.getSource() == btnSignInS) {
             String accNo = txtAccNo.getText().trim();
@@ -173,7 +183,9 @@ public class LoginUI extends JFrame  implements ActionListener {
             //Pass ng STF
             if (accNo.equals("admin") && pin.equals("admin123")) {
                 JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Admin.");
-                
+                CustomerDashboard dash = new CustomerDashboard(); 
+                dash.setVisible(true);
+                 dispose(); 
               //where/what? call for admin inter
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid Staff Credentials.", "Login Error", JOptionPane.ERROR_MESSAGE);
