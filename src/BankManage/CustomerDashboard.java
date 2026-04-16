@@ -108,10 +108,6 @@ public class CustomerDashboard extends JFrame {
         contentArea.revalidate();
         contentArea.repaint();
     }
-
-    public static void main(String[] args) {
-        new CustomerDashboard();
-    }
 }
 
 

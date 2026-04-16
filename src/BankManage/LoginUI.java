@@ -6,15 +6,13 @@ import javax.swing.*;
 
 public class LoginUI extends JFrame  implements ActionListener {
    
-    public static void main(String[] args) {
-        ///// nag-eensures run sa same thread
-        SwingUtilities.invokeLater(() -> {
-            LoginUI login = new LoginUI();
-            login.setVisible(true);
-        });
-    }
     ColorScheme cs = new ColorScheme();
 
+    java.net.URL imgURL = LoginUI.class.getResource("resources/gradientBackground.png"); // classpath to img
+
+    private final ImageIcon image = new ImageIcon(imgURL);
+    private final JLabel background = new JLabel(image);
+    
     private CardLayout loginSwitch;
     private JPanel loginContainer, loginCus, loginStf;
 
@@ -32,11 +30,11 @@ public class LoginUI extends JFrame  implements ActionListener {
         setSize(1440,960);
         setLayout(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); 
         setResizable(false);
 
-        Container c = getContentPane();
-        c.setBackground(cs.bgColor);
-
+        background.setBounds(0, 0, 1440, 960);
+        
         loginSwitch = new CardLayout();
         loginContainer = new JPanel(loginSwitch);
 
@@ -57,6 +55,7 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnStf = new JButton("Staff");
         btnStf.setBounds(220,40,175,30);
         btnStf.setBackground(cs.btnColorUnselect);
+        btnStf.setForeground(cs.gray);
         btnStf.setBorderPainted(false);
 
         JLabel lblAcc = new JLabel("Account Number");
@@ -67,20 +66,26 @@ public class LoginUI extends JFrame  implements ActionListener {
 
         JLabel lblPin = new JLabel("PIN");
         lblPin.setBounds(45,180,200,30);
+        lblPin.setForeground(cs.gray);
         txtPin = new JPasswordField("1234");
         txtPin.setBounds(45,210,350,35);
 
         btnSignIn = new JButton("Sign In");
-        btnSignIn.setBounds(45,270,350,35);
+        btnSignIn.setBackground(cs.btnColorSelect);
+        btnSignIn.setForeground(cs.white);
+        btnSignIn.setFocusPainted(false);
+        btnSignIn.setBorderPainted(false);
+        btnSignIn.setBounds(45,270,350,30);
 
         JLabel lblBottom = new JLabel("Don't have an account?");
-        lblBottom.setBounds(120,320,200,30);
-//        lblBottom.setForeground(cs.gray);
+        lblBottom.setBounds(110,320,200,30);
+        lblBottom.setForeground(cs.gray);
 
         btnRegister = new JButton("Register here");
-        btnRegister.setBounds(240,320,120,30);
+        btnRegister.setBounds(226,320,120,30);
         btnRegister.setBorderPainted(false);
         btnRegister.setContentAreaFilled(false);
+        btnRegister.setForeground(cs.purple);
 
         loginCus.add(btnCus);
         loginCus.add(btnStf);
@@ -96,6 +101,9 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnCusS = new JButton("Customer");
         btnCusS.setBounds(45,40,175,30);
         btnCusS.setBorderPainted(false);
+        btnCusS.setBackground(cs.btnColorUnselect);
+        btnCusS.setForeground(cs.gray);
+        btnCusS.setFocusPainted(false);
         
         // for staff panel
         btnStfS = new JButton("Staff");
@@ -104,7 +112,7 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnStfS.setBackground(cs.btnColorSelect);
         btnStfS.setForeground(cs.white);
         
-        JLabel lblAccS = new JLabel("Staff Information");
+        JLabel lblAccS = new JLabel("Account Name");
         lblAccS.setBounds(45, 100, 200, 30);
         lblAccS.setForeground(cs.gray);
         txtAccNoS = new JTextField();
@@ -112,23 +120,30 @@ public class LoginUI extends JFrame  implements ActionListener {
 
         JLabel lblPinS = new JLabel("Password");
         lblPinS.setBounds(45, 180, 200, 30);
+        lblPinS.setForeground(cs.gray);
         txtPinS = new JPasswordField();
         txtPinS.setBounds(45, 210, 350, 35);
 
         btnSignInS = new JButton("Sign In");
-        btnSignInS.setBounds(45,270,350,35);
-//        btnSignInS.setBorderPainted(false);
+        btnSignInS.setBackground(cs.btnColorSelect);
+        btnSignInS.setForeground(cs.white);
+        btnSignInS.setFocusPainted(false);
+        btnSignInS.setBorderPainted(false);
+        btnSignInS.setBounds(45,270,350,30);
 
         JLabel lblBottomS = new JLabel("Don't have an account?");
-        lblBottomS.setBounds(120,320,200,30);
+        lblBottomS.setBounds(110,320,200,30);
         lblBottomS.setForeground(cs.gray);
 
         btnRegisterS = new JButton("Register here");
-        btnRegisterS.setBounds(240,320,120,30);
+        btnRegisterS.setBounds(226,320,120,30);
         btnRegisterS.setBorderPainted(false);
         btnRegisterS.setContentAreaFilled(false);
-        btnRegisterS.setForeground(cs.bgColor);
+        btnRegisterS.setForeground(cs.purple);
 
+        loginStf.setBackground(cs.white); // bg color white
+        loginCus.setBackground(cs.white);
+        
         loginStf.add(btnCusS);
         loginStf.add(btnStfS);
         loginStf.add(lblAccS);
@@ -147,6 +162,9 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnRegisterS.addActionListener(this);
         btnSignIn.addActionListener(this);
         btnSignInS.addActionListener(this);
+        
+        add(background);
+        
     }
 
    @Override
@@ -185,7 +203,7 @@ public class LoginUI extends JFrame  implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Admin.");
                 CustomerDashboard dash = new CustomerDashboard(); 
                 dash.setVisible(true);
-                 dispose(); 
+                dispose(); 
               //where/what? call for admin inter
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid Staff Credentials.", "Login Error", JOptionPane.ERROR_MESSAGE);
@@ -196,7 +214,15 @@ public class LoginUI extends JFrame  implements ActionListener {
             rg.setVisible(true);
             dispose();
         }
-  }}
+  }
+    
+    protected void staffRegister(boolean isStaffReg){
+        if(isStaffReg){
+            loginSwitch.show(loginContainer,"staff");
+        }
+    }
+    
+}
 
 //  1.purpleDark = Color(0x5B21B6);
 //  2.purple  = Color(0x7C3AED);

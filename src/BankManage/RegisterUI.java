@@ -47,34 +47,60 @@ public class RegisterUI extends JFrame implements ActionListener{
         "SSS ID"
     };
     
+    private final String[] months = {
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
+    };
+    
+    private final String[] day = new String[31];
+    private int daysInAMonth = 31;
+    
+    private final String[] year = new String[127];
+    private final int startYear = 1900;
+    
     private final String[] staffType = {
         "Select Position",
-        "Employee",
+        "Customer Service",
         "Administrator"
     };
     
+    private String accountNumber, accountNameStf;
+    
+    java.net.URL imgURL = RegisterUI.class.getResource("resources/gradientBackground.png"); // classpath to img
+    
+    // BG
+    
+    private final ImageIcon image = new ImageIcon(imgURL);
+    private final JLabel background = new JLabel(image);
+    
     private final CardLayout regSwitch;
     private final JPanel regFormCus, regFormStf, regFormContainer;
+    
+    // CUSTOMER SECTION
+    
     private final JButton btnCus, btnStf, btnReg, btnCusS, btnStfS, btnStfReg, btnLog;
-    
     private final JLabel lblFName, lblLName, lblPIN, lblDofB, lblOccu, lblSalary, lblIDType, lblIDNo, lblBottom; // for customer panel
-    private final JTextField txtFName, txtLName, txtPIN, txtDofB, txtIDNo;// for custoner panel, date of birth temporary
-    private final JComboBox<String> cbxOccu, cbxSalary, cbxIDType; // for customer panel
+    private final JTextField txtFName, txtLName, txtPIN, txtIDNo;// 
+    private final JComboBox<String> cbxOccu, cbxSalary, cbxIDType, cbxMonth, cbxDay, cbxYear; // for customer panel
+
+    // STAFF SECTION
     
-    private JLabel lblFNameS, lblLNameS, lblAddressS, lblDofBS, lblStaffType, lblAccess, lblBottomS; // for staff panel
-    private JButton btnLogS; // for staff panel
+    private final JButton btnLogS; // for staff panel
+    private final JLabel lblFNameS, lblLNameS, lblPassword, lblDofBS, lblStaffType, lblAccess, lblBottomS; // for staff panel
+    private final JTextField txtFNameS, txtLNameS, txtPassword, txtAccess;
+    private final JComboBox<String> cbxStaffType;
     
     RegisterUI(){
         
+        setSize(1440, 960);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);
+        setLocationRelativeTo(null); 
         setResizable(false);
         setTitle("Banking System Prototype");
-        setSize(1440, 960);
-        
-        Container c = this.getContentPane(); // bg color
-        c.setBackground(cs.bgColor);
 
+        //background
+        background.setBounds(0, 0, 1440, 960);        
+        
         regSwitch = new CardLayout();
         regFormContainer = new JPanel(regSwitch);
         
@@ -140,10 +166,42 @@ public class RegisterUI extends JFrame implements ActionListener{
         lblDofB.setForeground(cs.gray);
         regFormCus.add(lblDofB);
         
-        txtDofB = new JTextField(); // temporary as txtbox
-        txtDofB.setBounds(45, 320, 165, 35);
-        txtDofB.setBackground(cs.white);
-        regFormCus.add(txtDofB);
+        cbxMonth = new JComboBox<>(months);
+        cbxMonth.setSelectedItem("Jan");
+        cbxMonth.setBounds(45, 320, 55, 35);
+        cbxMonth.setBackground(cs.white);
+        cbxMonth.setForeground(cs.gray);
+        cbxMonth.setFocusable(false);
+        regFormCus.add(cbxMonth);
+        
+        // auto fill year and day (default)
+        
+        for(int y = 0; y < year.length; y++){
+            year[y]=String.valueOf(startYear+y);
+        }
+        
+        daysInAMonth = 31;
+        for(int d = 1; d <= daysInAMonth; d++){
+            day[d-1]=String.valueOf(d);
+        }
+        
+        cbxDay = new JComboBox<>(day);
+        cbxDay.setSelectedIndex(0);
+        cbxDay.setBounds(98, 320, 45, 35);
+        cbxDay.setBackground(cs.white);
+        cbxDay.setForeground(cs.gray);
+        cbxDay.setFocusable(false);
+        regFormCus.add(cbxDay);
+        
+        cbxYear = new JComboBox<>(year);
+        cbxYear.setSelectedIndex(year.length-1);
+        cbxYear.setBounds(140, 320, 69, 35);
+        cbxYear.setBackground(cs.white);
+        cbxYear.setForeground(cs.gray);
+        cbxYear.setFocusable(false);
+        regFormCus.add(cbxYear);
+        
+        //
         
         lblOccu = new JLabel("Occupation");
         lblOccu.setBounds(230, 290, 150, 30);
@@ -154,10 +212,12 @@ public class RegisterUI extends JFrame implements ActionListener{
         cbxOccu.setBounds(230, 320, 164, 35);
         cbxOccu.setSelectedIndex(0);
         cbxOccu.setBackground(cs.white);
+        cbxOccu.setForeground(cs.gray);
         regFormCus.add(cbxOccu);
         
         lblSalary = new JLabel("Income Range");
         lblSalary.setBounds(45, 360, 150, 30);
+        lblSalary.setForeground(cs.gray);
         lblSalary.setForeground(cs.gray);
         regFormCus.add(lblSalary);
         
@@ -165,6 +225,7 @@ public class RegisterUI extends JFrame implements ActionListener{
         cbxSalary.setBounds(45, 390, 164, 35);
         cbxSalary.setSelectedIndex(0);
         cbxSalary.setBackground(cs.white);
+        cbxSalary.setForeground(cs.gray);
         regFormCus.add(cbxSalary);
         
         lblIDType = new JLabel("ID Type");
@@ -176,6 +237,7 @@ public class RegisterUI extends JFrame implements ActionListener{
         cbxIDType.setBounds(230, 390, 164, 35);
         cbxIDType.setSelectedIndex(0);
         cbxIDType.setBackground(cs.white);
+        cbxIDType.setForeground(cs.gray);
         regFormCus.add(cbxIDType);
         
         lblIDNo = new JLabel("ID Number");
@@ -206,7 +268,7 @@ public class RegisterUI extends JFrame implements ActionListener{
         btnLog.setBorderPainted(false);
         btnLog.setContentAreaFilled(false);
         btnLog.setFocusPainted(false);
-        btnLog.setForeground(cs.bgColor);
+        btnLog.setForeground(cs.purple);
         regFormCus.add(btnLog);
         
         regFormCus.setBackground(cs.white);
@@ -229,6 +291,69 @@ public class RegisterUI extends JFrame implements ActionListener{
         btnStfS.setBorderPainted(false);
         regFormStf.add(btnStfS);
         
+        lblFNameS = new JLabel("First Name");
+        lblFNameS.setBounds(45, 80, 150, 30);
+        lblFNameS.setForeground(cs.gray);
+        regFormStf.add(lblFNameS);
+        
+        txtFNameS = new JTextField("");
+        txtFNameS.setBounds(45, 110, 350, 35);
+        txtFNameS.setBackground(cs.white);
+        regFormStf.add(txtFNameS);
+        
+        lblLNameS = new JLabel("Last Name");
+        lblLNameS.setBounds(45, 150, 150, 30);
+        lblLNameS.setForeground(cs.gray);
+        regFormStf.add(lblLNameS);
+        
+        txtLNameS = new JTextField("");
+        txtLNameS.setBounds(45, 180, 350, 35);
+        txtLNameS.setBackground(cs.white);
+        regFormStf.add(txtLNameS);
+        
+        lblPassword = new JLabel("PIN");
+        lblPassword.setBounds(45, 220, 150, 30);
+        lblPassword.setForeground(cs.gray);
+        regFormStf.add(lblPassword);
+        
+        txtPassword = new JTextField("");
+        txtPassword.setBounds(45, 250, 350, 35);
+        txtPassword.setBackground(cs.white);
+        regFormStf.add(txtPassword);
+        
+        lblDofBS = new JLabel("Date of Birth");
+        lblDofBS.setBounds(45, 290, 150, 30);
+        lblDofBS.setForeground(cs.gray);
+        regFormStf.add(lblDofBS);
+        
+        // transferring the same combo boxes
+        
+        //
+        
+        lblStaffType = new JLabel("Staff Type");
+        lblStaffType.setBounds(230, 290, 150, 30);
+        lblStaffType.setForeground(cs.gray);
+        regFormStf.add(lblStaffType);
+        
+        cbxStaffType = new JComboBox<>(staffType);
+        cbxStaffType.setBounds(230, 320, 164, 35);
+        cbxStaffType.setSelectedIndex(0);
+        cbxStaffType.setBackground(cs.white);
+        cbxStaffType.setForeground(cs.gray);
+        regFormStf.add(cbxStaffType);
+        
+        lblAccess = new JLabel("Access Code");
+        lblAccess.setBounds(45, 360, 150, 30);
+        lblAccess.setForeground(cs.gray);
+        lblAccess.setForeground(cs.gray);
+        regFormStf.add(lblAccess);
+        
+        txtAccess = new JTextField("");
+        txtAccess.setBounds(45, 390, 350, 35);
+        txtAccess.setBackground(cs.white);
+        txtAccess.setForeground(cs.gray);
+        regFormStf.add(txtAccess);
+        
         btnStfReg = new JButton("Sign Up");
         btnStfReg.setBounds(45, 510, 350, 30);
         btnStfReg.setBackground(cs.btnColorSelect);
@@ -247,34 +372,47 @@ public class RegisterUI extends JFrame implements ActionListener{
         btnLogS.setBorderPainted(false);
         btnLogS.setContentAreaFilled(false);
         btnLogS.setFocusPainted(false);
-        btnLogS.setForeground(cs.bgColor);
+        btnLogS.setForeground(cs.purple);
         regFormStf.add(btnLogS);
 
         //
         
         regFormStf.setBackground(cs.white);
         
-        regFormContainer.setBounds(500, 225, 445, 610);
+        regFormContainer.setBounds(500, 250, 445, 610);
         
         add(regFormContainer);
         
-        btnCusS.addActionListener(this); // staff customer button
         btnStf.addActionListener(this); // customer staff button
         btnReg.addActionListener(this); // customer reg button
+        cbxMonth.addActionListener(this); // customer month button
+        cbxYear.addActionListener(this); // customer year button
+        btnLog.addActionListener(this); // customer login button
+        
+        btnCusS.addActionListener(this); // staff customer button
         btnStfReg.addActionListener(this); // staff reg button
-        btnLog.addActionListener(this); // login customer button
-        btnLogS.addActionListener(this); // login staff button
+        btnLogS.addActionListener(this); // staff login button
+        
+        add(background);
         
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String selectedMonth = (String) cbxMonth.getSelectedItem();
+                
         if(e.getSource() == btnCusS){ // card switch staff to customer
+            
+            // reusing date of birth
             
             btnCus.setBackground(cs.btnColorSelect);
             btnCus.setForeground(cs.white);
             btnStf.setForeground(cs.gray);
             btnStf.setBackground(cs.btnColorUnselect);
+            
+            regFormCus.add(cbxMonth);
+            regFormCus.add(cbxDay);
+            regFormCus.add(cbxYear);
             
             regSwitch.show(regFormContainer, "customer");
             
@@ -286,15 +424,86 @@ public class RegisterUI extends JFrame implements ActionListener{
             btnCus.setForeground(cs.gray);
             btnCus.setBackground(cs.btnColorUnselect);
             
+            regFormStf.add(cbxMonth);
+            regFormStf.add(cbxDay);
+            regFormStf.add(cbxYear);
+            
             regSwitch.show(regFormContainer, "staff");
             
         }
-        else if(e.getSource() == btnLog || e.getSource() == btnLogS){
+        else if(e.getSource() == btnLog){
      
             LoginUI ln = new LoginUI();
             ln.setVisible(true);
             dispose();
             
+        }
+        else if(e.getSource() == btnLogS){
+            
+            LoginUI ln = new LoginUI();
+            ln.setVisible(true);
+            ln.staffRegister(true); // ensures it switches to staff tab upon olgin
+            dispose();
+            
+        }
+        else if(e.getSource() == cbxMonth){
+            // day logic
+        
+            boolean monthCheck = monthDayCheck(selectedMonth);
+            if(monthCheck){
+                daysInAMonth = 31;
+                cbxDay.removeAllItems();
+                for(int d = 1; d <= daysInAMonth; d++){
+                    cbxDay.addItem(String.valueOf(d));
+                }
+            }
+            else{
+                if(FebruaryCheck(selectedMonth)){
+                    if(Integer.parseInt((String) cbxYear.getSelectedItem()) % 4 == 0){
+                        System.out.println("UPDATE LEAP"); // test out
+                        daysInAMonth = 29;
+                        cbxDay.removeAllItems();
+                        for(int d = 1; d <= daysInAMonth; d++){
+                            cbxDay.addItem(String.valueOf(d));
+                        }
+                    }
+                    else{
+                        System.out.println("UPDATE NOT"); // test out
+                        daysInAMonth = 28;
+                        cbxDay.removeAllItems();
+                        for(int d = 1; d <= daysInAMonth; d++){
+                            cbxDay.addItem(String.valueOf(d));
+                        }
+                    }
+                }
+                else{
+                    daysInAMonth = 30;
+                    cbxDay.removeAllItems();
+                    for(int d = 1; d <= daysInAMonth; d++){
+                        cbxDay.addItem(String.valueOf(d));
+                    }
+                }
+            }
+        }
+        else if(e.getSource() == cbxYear){
+            if(FebruaryCheck(selectedMonth)){
+                if(Integer.parseInt((String) cbxYear.getSelectedItem()) % 4 == 0){
+                    System.out.println("UPDATE LEAP"); // test out
+                    daysInAMonth = 29;
+                    cbxDay.removeAllItems();
+                    for(int d = 1; d <= daysInAMonth; d++){
+                        cbxDay.addItem(String.valueOf(d));
+                    }
+                }
+                else{
+                    System.out.println("UPDATE NOT"); // test out
+                    daysInAMonth = 28;
+                    cbxDay.removeAllItems();
+                    for(int d = 1; d <= daysInAMonth; d++){
+                        cbxDay.addItem(String.valueOf(d));
+                    }
+                }
+            }
         }
         else if(e.getSource() == btnReg){
             /* 
@@ -310,7 +519,14 @@ public class RegisterUI extends JFrame implements ActionListener{
             
             // rs.AddAccount(customer);
             
+            // TEST CONCATENATION FOR ACC NO.
+            String fname = txtFName.getText();
+            String lname = txtLName.getText();
+            String birthday = (String) cbxDay.getSelectedItem();
+            accountNumber = fname.substring(0,2).toUpperCase()+lname.substring(0,2).toUpperCase()+"-"+"2026-"+birthday;
+            
             JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
+            System.out.println("Account Number: "+accountNumber);
             
             LoginUI ln = new LoginUI();
             ln.setVisible(true);
@@ -337,9 +553,51 @@ public class RegisterUI extends JFrame implements ActionListener{
             
             LoginUI ln = new LoginUI();
             ln.setVisible(true);
+            ln.staffRegister(true); // ensures it switches to staff tab upon registration
             dispose();
             
         }
+    }
+    
+    public final boolean monthDayCheck(String month){
+        boolean isThirtyOne;
+        
+        switch(month){
+            case "Jan":
+                isThirtyOne = true;
+                break;
+            case "Mar":
+                isThirtyOne = true;
+                break;
+            case "May":
+                isThirtyOne = true;
+                break;
+            case "Jul":
+                isThirtyOne = true;
+                break;
+            case "Aug":
+                isThirtyOne = true;
+                break;
+            case "Oct":
+                isThirtyOne = true;
+                break;
+            case "Dec":
+                isThirtyOne = true;
+                break;
+            default:
+                isThirtyOne = false;
+                break;
+        }
+        
+        return isThirtyOne;
+    }
+    
+    public final boolean FebruaryCheck(String month){
+        boolean isFeb;
+        
+        isFeb = month.equals("Feb");
+        
+        return isFeb;
     }
     
 }
