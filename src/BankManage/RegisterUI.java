@@ -311,7 +311,7 @@ public class RegisterUI extends JFrame implements ActionListener{
         txtLNameS.setBackground(cs.white);
         regFormStf.add(txtLNameS);
         
-        lblPassword = new JLabel("PIN");
+        lblPassword = new JLabel("Password");
         lblPassword.setBounds(45, 220, 150, 30);
         lblPassword.setForeground(cs.gray);
         regFormStf.add(lblPassword);

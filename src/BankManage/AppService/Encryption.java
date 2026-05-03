@@ -7,16 +7,27 @@ import java.util.List;
 
 public class Encryption {
     
-    private String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private String superkey = "DECODEME";
+    private final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=" + " ";
+    private final String superkey = "!D3C0DEM3!";
     
     public Encryption() {}
     
     private List<Integer> getCharPositions(String str){
-        
+
         List<Integer> charsAtPos = new ArrayList<Integer>();
+        
         for(int i = 0; i < str.length(); i++){
-            charsAtPos.add(chars.indexOf(str.charAt(i)));
+            
+            int index = chars.indexOf(str.charAt(i));
+            
+            if(index == -1){
+                throw new IllegalArgumentException(
+                    "Unsupported character: '" + str.charAt(i) + "' at position " + i
+                );
+            }
+            
+            charsAtPos.add(index);
+            
         }
         
         return charsAtPos;
