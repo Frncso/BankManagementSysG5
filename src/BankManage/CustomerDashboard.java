@@ -25,57 +25,32 @@ public class CustomerDashboard extends JFrame {
         naviPanel.setBounds(20, 150, 210, 400);
         naviPanel.setOpaque(false); 
         naviPanel.setLayout(new GridLayout(7, 1, 0, 15));
-//diff.buttons/panel
-        String[] menu = {"Home", "Transact", "Balance", "Savings", "History", "Summaries", "Logout"};
+
+      String[] menu = {"Home", "Transact", "Balance", "Savings", "History Summary", "Summaries", "Logout"};
+        
         for (String name : menu) {
             JButton btn = new JButton(name);
-            btn.setFocusable(false);
+            btn.setFont(new Font("Arial", Font.BOLD, 20));
+            btn.setForeground(Color.WHITE);
+            btn.setFocusPainted(false);
+            btn.setBorderPainted(false);
+            
+            if (name.equals("Home")) {
+                btn.setBackground(new Color(80, 65, 140)); 
+            } else {
+                btn.setBackground(new Color(60, 45, 120));
+            }
+            
             btn.addActionListener(e -> switchInterface(name));
             naviPanel.add(btn);
         }
+        
         sidebar.add(naviPanel);
-
         contentArea = new JPanel();
         contentArea.setBounds(250, 0, 1190, 960);
         contentArea.setLayout(null);
         contentArea.setOpaque(false);
         add(contentArea);
-
-//homeBtn = new JButton("Home");
-//        homeBtn.setBounds(30, 50, 240, 60);  
-//        homeBtn.setBackground(cs.btnColorSelected); 
-//        homeBtn.setForeground(cs.white);
-//        homeBtn.setFocusPainted(false);
-//        homeBtn.setBorderPainted(false);
-//
-//        transcBtn = new JButton("Transact");
-//        transcBtn.setBounds(30, 140, 240, 60); 
-//        transcBtn.setBackground(cs.btnColorSelect); 
-//        transcBtn.setForeground(cs.white);
-//        transcBtn.setFocusPainted(false);
-//        transcBtn.setBorderPainted(false);
-//        
-//
-//        histBtn = new JButton("History");
-//        histBtn.setBounds(30, 230, 240, 60);
-//        histBtn.setBackground(cs.btnColorSelect); 
-//        histBtn.setForeground(cs.white);
-//        histBtn.setFocusPainted(false);
-//        histBtn.setBorderPainted(false);
-//
-//        sumBtn = new JButton("Summaries");
-//        sumBtn.setBounds(30, 320, 240, 60);
-//        sumBtn.setBackground(cs.btnColorSelect);
-//        sumBtn.setForeground(cs.white);
-//        sumBtn.setFocusPainted(false);
-//        sumBtn.setBorderPainted(false);
-//        
-//        accBtn = new JButton("Logout");
-//        accBtn.setBounds(30, 410, 240, 60);
-//        accBtn.setBackground(cs.btnColorSelect);
-//        accBtn.setForeground(cs.white);
-//        accBtn.setFocusPainted(false);
-//        accBtn.setBorderPainted(false);
 
         JLabel greetLabel = new JLabel("Welcome", SwingConstants.CENTER);
         greetLabel.setFont(new Font("Arial", Font.BOLD, 96));  
@@ -94,20 +69,35 @@ public class CustomerDashboard extends JFrame {
     }
 
     private void switchInterface(String name) {
+        if (name.equals("Transact")) {
+            TransactUI transactPage = new TransactUI(this);
+            transactPage.setVisible(true);
+            this.setVisible(false);
+            return; 
+        } else if (name.equals("History")) { 
+            SummaryTransactUI historyPage = new SummaryTransactUI(this);
+            historyPage.setVisible(true);
+            this.setVisible(false);
+            return;
+        } else if (name.equals("Logout")) { 
+            this.dispose();  
+            System.exit(0);
+            return;
+        }
+        
         contentArea.removeAll();
         if (name.equals("Home")) {
             JLabel greet = new JLabel("Welcome", SwingConstants.CENTER);
             greet.setBounds(0, 300, 1190, 120);
             greet.setFont(new Font("Arial", Font.BOLD, 96));
             contentArea.add(greet);
-        } else if (name.equals("Transact")) {
-        } else if (name.equals("Logout")) {
-            this.dispose(); 
         }
         
         contentArea.revalidate();
         contentArea.repaint();
     }
+
+    public static void main(String[] args) {
+        new CustomerDashboard();
+    }
 }
-
-
