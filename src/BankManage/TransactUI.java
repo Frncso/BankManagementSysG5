@@ -128,6 +128,6 @@ public class TransactUI extends JFrame {
     private void goBackToDashboard() {
         this.setVisible(false);     
         parentDashboard.setVisible(true); 
-        this.dispose();     
+        this.dispose(); 
     }
 }
