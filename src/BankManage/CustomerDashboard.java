@@ -26,7 +26,7 @@ public class CustomerDashboard extends JFrame {
         naviPanel.setOpaque(false); 
         naviPanel.setLayout(new GridLayout(7, 1, 0, 15));
 
-      String[] menu = {"Home", "Transact", "Balance", "Savings", "History Summary", "Summaries", "Logout"};
+      String[] menu = {"Home", "Transact", "Balance", "Savings", "History", "Summaries", "Logout"};
         
         for (String name : menu) {
             JButton btn = new JButton(name);
