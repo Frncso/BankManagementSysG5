@@ -1,4 +1,3 @@
-
 package BankManage;
 
 import java.awt.*;
@@ -170,6 +169,4 @@ public class historyUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
-    }
-   
-}
+    }}

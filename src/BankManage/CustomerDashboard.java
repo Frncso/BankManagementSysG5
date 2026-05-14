@@ -3,8 +3,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-//dashboard @author athea-matt
-public class CustomerDashboard extends JFrame {
+public class CustomerDashboard extends JFrame implements ActionListener {
 
     private JPanel contentArea;
     public CustomerDashboard() {
@@ -15,36 +14,29 @@ public class CustomerDashboard extends JFrame {
         getContentPane().setBackground(Color.WHITE);
         setLocationRelativeTo(null); 
 
-        JPanel sidebar = new JPanel();
+       JPanel sidebar = new JPanel();
         sidebar.setBounds(0, 0, 250, 960);
-        sidebar.setBackground(new Color(60, 45, 120)); 
-        sidebar.setLayout(null); 
+        sidebar.setBackground(new Color(60, 45, 120));
+        sidebar.setLayout(null);
         add(sidebar);
 
         JPanel naviPanel = new JPanel();
         naviPanel.setBounds(20, 150, 210, 400);
-        naviPanel.setOpaque(false); 
+        naviPanel.setOpaque(false);
         naviPanel.setLayout(new GridLayout(7, 1, 0, 15));
 
-      String[] menu = {"Home", "Transact", "Balance", "Savings", "History", "Summaries", "Logout"};
-        
+        String[] menu = {"Home", "Transact", "Balance", "Savings", "History", "Summaries", "Logout"};
+
         for (String name : menu) {
             JButton btn = new JButton(name);
             btn.setFont(new Font("Arial", Font.BOLD, 20));
             btn.setForeground(Color.WHITE);
-            btn.setFocusPainted(false);
-            btn.setBorderPainted(false);
+            btn.setBackground(name.equals("Home") ? new Color(80, 65, 140) : new Color(60, 45, 120));
             
-            if (name.equals("Home")) {
-                btn.setBackground(new Color(80, 65, 140)); 
-            } else {
-                btn.setBackground(new Color(60, 45, 120));
-            }
-            
-            btn.addActionListener(e -> switchInterface(name));
+            btn.setActionCommand(name); // Very important!
+            btn.addActionListener(this);
             naviPanel.add(btn);
         }
-        
         sidebar.add(naviPanel);
         contentArea = new JPanel();
         contentArea.setBounds(250, 0, 1190, 960);
@@ -53,48 +45,26 @@ public class CustomerDashboard extends JFrame {
         add(contentArea);
 
         JLabel greetLabel = new JLabel("Welcome", SwingConstants.CENTER);
-        greetLabel.setFont(new Font("Arial", Font.BOLD, 96));  
-        greetLabel.setForeground(new Color(100, 100, 100));
-        greetLabel.setBounds(300, 300, 1140, 120);
-        
-        JLabel userLabel = new JLabel("Melvin Mallon!", SwingConstants.CENTER);
-        userLabel.setFont(new Font("Arial", Font.BOLD, 50));  
-        userLabel.setForeground(new Color(100, 100, 100));
-        userLabel.setBounds(300, 400, 1140, 80);
-
+        greetLabel.setFont(new Font("Arial", Font.BOLD, 96));
+        greetLabel.setBounds(0, 300, 1190, 120);
         contentArea.add(greetLabel);
-        contentArea.add(userLabel);
 
         setVisible(true);
     }
 
-    private void switchInterface(String name) {
-        if (name.equals("Transact")) {
-            TransactUI transactPage = new TransactUI(this);
-            transactPage.setVisible(true);
+    @Override
+   public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+
+        if (cmd.equals("Transact")) {
+            new TransactUI(this);
             this.setVisible(false);
-            return; 
-        } else if (name.equals("History")) { 
-            SummaryTransactUI historyPage = new SummaryTransactUI(this);
-            historyPage.setVisible(true);
+        } else if (cmd.equals("Summaries")) {
+            new SummaryTransactUI(this);
             this.setVisible(false);
-            return;
-        } else if (name.equals("Logout")) { 
-            this.dispose();  
+        } else if (cmd.equals("Logout")) {
             System.exit(0);
-            return;
         }
-        
-        contentArea.removeAll();
-        if (name.equals("Home")) {
-            JLabel greet = new JLabel("Welcome", SwingConstants.CENTER);
-            greet.setBounds(0, 300, 1190, 120);
-            greet.setFont(new Font("Arial", Font.BOLD, 96));
-            contentArea.add(greet);
-        }
-        
-        contentArea.revalidate();
-        contentArea.repaint();
     }
 
     public static void main(String[] args) {

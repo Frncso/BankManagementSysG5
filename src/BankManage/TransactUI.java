@@ -1,118 +1,75 @@
 package BankManage;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class TransactUI extends JFrame {
+public class TransactUI extends JFrame implements ActionListener {
 
     private JButton btnDeposit, btnWithdrawal, btnBack;
     private JLabel lblTitle;
     private JPanel sidePanel;
-    private JFrame parentDashboard; 
+    private JFrame parentDashboard;
 
     public TransactUI(JFrame dashboard) {
         this.parentDashboard = dashboard;
-        
+
         setTitle("Transaction");
         setSize(1440, 960);
         setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setBackground(new Color(245, 245, 245));
         setResizable(false);
-
-        initializeComponents();
         setLocationRelativeTo(null);
-    }
 
-    private void initializeComponents() {
         sidePanel = new JPanel();
         sidePanel.setBounds(0, 0, 250, 960);
-        sidePanel.setBackground(new Color(60, 45, 120)); 
+        sidePanel.setBackground(new Color(60, 45, 120));
         sidePanel.setLayout(null);
-        
-        JPanel naviPanel = new JPanel();
-        naviPanel.setBounds(20, 150, 210, 400);
-        naviPanel.setOpaque(false); // Para transparent ang likod ng panel
-        naviPanel.setLayout(new GridLayout(7, 1, 0, 15)); 
-        
-        JButton btnHome = new JButton("Home");
-        btnHome.setFont(new Font("Arial", Font.BOLD, 20));
-        btnHome.setForeground(Color.WHITE);
-        btnHome.setBackground(new Color(60, 45, 120));
-        btnHome.setFocusPainted(false);
-        btnHome.setBorderPainted(false);
-        btnHome.addActionListener(e -> goBackToDashboard());
-        naviPanel.add(btnHome);
-
-        JButton btnTransact = new JButton("Transact");
-        btnTransact.setFont(new Font("Arial", Font.BOLD, 20));
-        btnTransact.setForeground(Color.WHITE);
-        btnTransact.setBackground(new Color(80, 65, 140)); // Lighter purple
-        btnTransact.setFocusPainted(false);
-        btnTransact.setBorderPainted(false);
-        naviPanel.add(btnTransact);
-
-        JButton btnBalance = new JButton("Balance");
-        btnBalance.setFont(new Font("Arial", Font.BOLD, 20));
-        btnBalance.setForeground(Color.WHITE);
-        btnBalance.setBackground(new Color(60, 45, 120));
-        btnBalance.setFocusPainted(false);
-        btnBalance.setBorderPainted(false);
-        naviPanel.add(btnBalance);
-
-        JButton btnSavings = new JButton("Savings");
-        btnSavings.setFont(new Font("Arial", Font.BOLD, 20));
-        btnSavings.setForeground(Color.WHITE);
-        btnSavings.setBackground(new Color(60, 45, 120));
-        btnSavings.setFocusPainted(false);
-        btnSavings.setBorderPainted(false);
-        naviPanel.add(btnSavings);
-
-        JButton btnHistory = new JButton("History");
-        btnHistory.setFont(new Font("Arial", Font.BOLD, 20));
-        btnHistory.setForeground(Color.WHITE);
-        btnHistory.setBackground(new Color(60, 45, 120));
-        btnHistory.setFocusPainted(false);
-        btnHistory.setBorderPainted(false);
-        naviPanel.add(btnHistory);
-
-        JButton btnSummary = new JButton("Summaries");
-        btnSummary.setFont(new Font("Arial", Font.BOLD, 20));
-        btnSummary.setForeground(Color.WHITE);
-        btnSummary.setBackground(new Color(60, 45, 120));
-        btnSummary.setFocusPainted(false);
-        btnSummary.setBorderPainted(false);
-        naviPanel.add(btnSummary);
-
-        JButton btnLogout = new JButton("Logout");
-        btnLogout.setFont(new Font("Arial", Font.BOLD, 20));
-        btnLogout.setForeground(Color.WHITE);
-        btnLogout.setBackground(new Color(60, 45, 120));
-        btnLogout.setFocusPainted(false);
-        btnLogout.setBorderPainted(false);
-        naviPanel.add(btnLogout);   
-        sidePanel.add(naviPanel);
         add(sidePanel);
 
+        JPanel naviPanel = new JPanel();
+        naviPanel.setBounds(20, 150, 210, 400);
+        naviPanel.setOpaque(false);
+        naviPanel.setLayout(new GridLayout(7, 1, 0, 15));
+
+        String[] menu = {"Home", "Transact", "Balance", "Savings", "History", "Summaries", "Logout"};
+
+        for (String name : menu) {
+            JButton btn = new JButton(name);
+            btn.setFont(new Font("Arial", Font.BOLD, 20));
+            btn.setForeground(Color.WHITE);
+            if (name.equals("Transact")) {
+                btn.setBackground(new Color(80, 65, 140));
+            } else {
+                btn.setBackground(new Color(60, 45, 120));
+            }
+            btn.setActionCommand(name);
+            btn.addActionListener(this);
+            naviPanel.add(btn);
+        }
+        sidePanel.add(naviPanel);
         lblTitle = new JLabel("Transact");
         lblTitle.setFont(new Font("Serif", Font.BOLD, 48));
         lblTitle.setBounds(320, 80, 400, 60);
-        lblTitle.setForeground(new Color(60, 45, 120)); 
+        lblTitle.setForeground(new Color(60, 45, 120));
         add(lblTitle);
 
         btnDeposit = new JButton("Deposit");
         btnDeposit.setBounds(320, 250, 350, 120);
         btnDeposit.setFont(new Font("Arial", Font.BOLD, 28));
-        btnDeposit.setBackground(new Color(46, 204, 113)); 
+        btnDeposit.setBackground(new Color(46, 204, 113));
         btnDeposit.setForeground(Color.WHITE);
-        btnDeposit.setFocusPainted(false);
+        btnDeposit.addActionListener(this);
         add(btnDeposit);
 
         btnWithdrawal = new JButton("Withdrawal");
-        btnWithdrawal.setBounds(720, 250, 350, 120); 
+        btnWithdrawal.setBounds(720, 250, 350, 120);
         btnWithdrawal.setFont(new Font("Arial", Font.BOLD, 28));
-        btnWithdrawal.setBackground(new Color(231, 76, 60)); 
+        btnWithdrawal.setBackground(new Color(231, 76, 60));
         btnWithdrawal.setForeground(Color.WHITE);
-        btnWithdrawal.setFocusPainted(false);
+        btnWithdrawal.addActionListener(this);
         add(btnWithdrawal);
 
         btnBack = new JButton("← Back to Dashboard");
@@ -120,14 +77,24 @@ public class TransactUI extends JFrame {
         btnBack.setFont(new Font("Arial", Font.BOLD, 16));
         btnBack.setBackground(Color.WHITE);
         btnBack.setForeground(new Color(60, 45, 120));
-        btnBack.setFocusPainted(false);
-        btnBack.addActionListener(e -> goBackToDashboard());
+        btnBack.setActionCommand("Home"); // Treat Back button as Home trigger
+        btnBack.addActionListener(this);
         add(btnBack);
+
+        setVisible(true);
     }
-    
-    private void goBackToDashboard() {
-        this.setVisible(false);     
-        parentDashboard.setVisible(true); 
-        this.dispose(); 
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+       String cmd = e.getActionCommand();
+        if (cmd.equals("Home")) {
+            parentDashboard.setVisible(true);
+            this.dispose();
+        } else if (cmd.equals("Summaries")) {
+            new SummaryTransactUI(parentDashboard);
+            this.dispose();
+        } else if (cmd.equals("Logout")) {
+            System.exit(0);
+        }
     }
 }

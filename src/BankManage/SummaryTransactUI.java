@@ -1,37 +1,37 @@
 package BankManage;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class SummaryTransactUI extends JFrame {
+public class SummaryTransactUI extends JFrame implements ActionListener {
 
     private JLabel lblTitle;
     private JPanel sidePanel;
-    private JFrame parentDashboard; 
+    private JFrame parentDashboard;
 
     public SummaryTransactUI(JFrame dashboard) {
         this.parentDashboard = dashboard;
-        
-        setTitle("VaultB Banking System - Transaction History");
+
+        setTitle("Transaction History");
         setSize(1440, 960);
         setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setBackground(new Color(245, 245, 245));
         setResizable(false);
-
-        initializeComponents();
         setLocationRelativeTo(null);
-    }
 
-    private void initializeComponents() {
         sidePanel = new JPanel();
         sidePanel.setBounds(0, 0, 250, 960);
-        sidePanel.setBackground(new Color(60, 45, 120)); 
+        sidePanel.setBackground(new Color(60, 45, 120));
         sidePanel.setLayout(null);
-        
+        add(sidePanel);
+
         JPanel naviPanel = new JPanel();
         naviPanel.setBounds(20, 150, 210, 400);
-        naviPanel.setBackground(new Color(60, 45, 120)); 
-        naviPanel.setLayout(new GridLayout(7, 1, 0, 15)); 
+        naviPanel.setOpaque(false);
+        naviPanel.setLayout(new GridLayout(7, 1, 0, 15));
         
         String[] menu = {"Home", "Transact", "Balance", "Savings", "History", "Summaries", "Logout"};
         
@@ -39,23 +39,18 @@ public class SummaryTransactUI extends JFrame {
             JButton btn = new JButton(name);
             btn.setFont(new Font("Arial", Font.BOLD, 20));
             btn.setForeground(Color.WHITE);
-            btn.setFocusPainted(false);
-            btn.setBorderPainted(false);
             
             if (name.equals("History")) {
                 btn.setBackground(new Color(80, 65, 140));
             } else {
                 btn.setBackground(new Color(60, 45, 120)); 
             }
-            if (name.equals("Home")) {
-                btn.addActionListener(e -> goBackToDashboard());
-            }
             
+            btn.addActionListener(this);
             naviPanel.add(btn);
         }
         
         sidePanel.add(naviPanel);
-        add(sidePanel);
         lblTitle = new JLabel("Transaction History");
         lblTitle.setFont(new Font("Serif", Font.BOLD, 48));
         lblTitle.setBounds(320, 80, 500, 60);
@@ -80,14 +75,13 @@ public class SummaryTransactUI extends JFrame {
         box1.add(lblAmt1);
         add(box1);
 
-     
         JPanel box2 = new JPanel();
         box2.setBounds(320, 280, 600, 100); 
         box2.setBackground(Color.WHITE);
         box2.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         box2.setLayout(null);
 
-        JLabel lblDate2 = new JLabel("March 28, 2026 (Withdrawal)");
+        JLabel lblDate2 = new JLabel("February 27, 2026 (Withdrawal)");
         lblDate2.setFont(new Font("Arial", Font.PLAIN, 24));
         lblDate2.setBounds(20, 10, 400, 40);
         box2.add(lblDate2);
@@ -105,7 +99,7 @@ public class SummaryTransactUI extends JFrame {
         box3.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         box3.setLayout(null);
 
-        JLabel lblDate3 = new JLabel("March 27, 2026 (Withdrawal)");
+        JLabel lblDate3 = new JLabel("March 17, 2026 (Withdrawal)");
         lblDate3.setFont(new Font("Arial", Font.PLAIN, 24));
         lblDate3.setBounds(20, 10, 400, 40);
         box3.add(lblDate3);
@@ -122,14 +116,23 @@ public class SummaryTransactUI extends JFrame {
         btnBack.setFont(new Font("Arial", Font.BOLD, 16));
         btnBack.setBackground(Color.WHITE);
         btnBack.setForeground(new Color(60, 45, 120));
-        btnBack.setFocusPainted(false);
-        btnBack.addActionListener(e -> goBackToDashboard());
+        btnBack.addActionListener(this);
         add(btnBack);
+
+        setVisible(true);
     }
     
-    private void goBackToDashboard() {
-        this.setVisible(false);     
-        parentDashboard.setVisible(true); 
-        this.dispose();     
+    @Override
+    public void actionPerformed(ActionEvent e) {
+   String command = e.getActionCommand();
+        if (command.equals("Home")) {
+            parentDashboard.setVisible(true);
+            this.dispose();
+        } else if (command.equals("History")) {
+            new SummaryTransactUI(parentDashboard);
+            this.dispose();
+        } else if (command.equals("Logout")) {
+            System.exit(0);
+        }
     }
 }
