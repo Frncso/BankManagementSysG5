@@ -4,13 +4,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.HashSet;
 
-public class SummaryTransactUI extends JFrame implements ActionListener {
+public class BalanceUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
     
     // panels
     
-    private JPanel sidebarPanel, mainContentPanel; // gamitin nyo mainContentPanel para mag lagay ng content na hindi mag ooverlap kay sidebar
+    private JPanel sidebarPanel, mainContentPanel;
     
     // import images
     
@@ -75,8 +75,8 @@ public class SummaryTransactUI extends JFrame implements ActionListener {
     private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, historyBtn, summaryBtn, accountsBtn, logoutBtn;
     private final JLabel logoName;
     
-    public SummaryTransactUI() {
-        setTitle("Dashboard - History");
+    public BalanceUI() {
+        setTitle("Dashboard - Balance");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setSize(1440, 960);
@@ -129,7 +129,7 @@ public class SummaryTransactUI extends JFrame implements ActionListener {
         
         balanceBtn = new JButton("Balance", balanceIcon);
         balanceBtn.setBounds(0, 140, 180, 40);
-        balanceBtn.setBackground(cs.darkPurple);
+        balanceBtn.setBackground(cs.btnColorSelect);
         balanceBtn.setForeground(cs.white);
         balanceBtn.setFocusPainted(false);
         balanceBtn.setBorderPainted(false);
@@ -174,7 +174,7 @@ public class SummaryTransactUI extends JFrame implements ActionListener {
         
         summaryBtn = new JButton("Summary", summaryIcon);
         summaryBtn.setBounds(0, 260, 180, 40);
-        summaryBtn.setBackground(cs.btnColorSelect);
+        summaryBtn.setBackground(cs.darkPurple);
         summaryBtn.setForeground(cs.white);
         summaryBtn.setFocusPainted(false);
         summaryBtn.setBorderPainted(false);
@@ -231,10 +231,10 @@ public class SummaryTransactUI extends JFrame implements ActionListener {
         // end content panel
         
         transactBtn.addActionListener(this);
-        balanceBtn.addActionListener(this);
+        homeBtn.addActionListener(this);
         savingsBtn.addActionListener(this);
         historyBtn.addActionListener(this);
-        homeBtn.addActionListener(this);
+        summaryBtn.addActionListener(this);
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
         
@@ -249,9 +249,9 @@ public class SummaryTransactUI extends JFrame implements ActionListener {
             dispose();
         }
         
-        else if(e.getSource() == balanceBtn){
-            BalanceUI balUI = new BalanceUI();
-            balUI.setVisible(true);
+        else if(e.getSource() == homeBtn){
+            CustomerDashboard cusUI = new CustomerDashboard();
+            cusUI.setVisible(true);
             dispose();
         }
         
@@ -267,9 +267,9 @@ public class SummaryTransactUI extends JFrame implements ActionListener {
             dispose();
         }
         
-        else if(e.getSource() == homeBtn){
-            CustomerDashboard cusUI = new CustomerDashboard();
-            cusUI.setVisible(true);
+        else if(e.getSource() == summaryBtn){
+            SummaryTransactUI sumUI = new SummaryTransactUI();
+            sumUI.setVisible(true);
             dispose();
         }
         
