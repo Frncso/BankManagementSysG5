@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.HashSet;
 
-public class AccountMenuUI extends JFrame implements ActionListener {
+public class TransactUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
     
@@ -75,8 +75,8 @@ public class AccountMenuUI extends JFrame implements ActionListener {
     private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, historyBtn, summaryBtn, accountsBtn, logoutBtn;
     private final JLabel logoName;
     
-    public AccountMenuUI() {
-        setTitle("Dashboard - Home");
+    public TransactUI() {
+        setTitle("Dashboard - Transactions");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setSize(1440, 960);
@@ -114,7 +114,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         
         transactBtn = new JButton("Transact", transactIcon);
         transactBtn.setBounds(0, 100, 180, 40);
-        transactBtn.setBackground(cs.darkPurple);
+        transactBtn.setBackground(cs.btnColorSelect);
         transactBtn.setForeground(cs.white);
         transactBtn.setFocusPainted(false);
         transactBtn.setBorderPainted(false);
@@ -189,7 +189,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         
         accountsBtn = new JButton("Accounts", accountsIcon);
         accountsBtn.setBounds(0, 300, 180, 40);
-        accountsBtn.setBackground(cs.btnColorSelect);
+        accountsBtn.setBackground(cs.darkPurple);
         accountsBtn.setForeground(cs.white);
         accountsBtn.setFocusPainted(false);
         accountsBtn.setBorderPainted(false);
@@ -230,12 +230,12 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         
         // end content panel
         
-        transactBtn.addActionListener(this);
+        homeBtn.addActionListener(this);
         balanceBtn.addActionListener(this);
         savingsBtn.addActionListener(this);
         historyBtn.addActionListener(this);
         summaryBtn.addActionListener(this);
-        homeBtn.addActionListener(this);
+        accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
         
     }
@@ -243,9 +243,9 @@ public class AccountMenuUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        if(e.getSource() == transactBtn){
-            TransactUI traUI = new TransactUI();
-            traUI.setVisible(true);
+        if(e.getSource() == homeBtn){
+            CustomerDashboard cusUI = new CustomerDashboard();
+            cusUI.setVisible(true);
             dispose();
         }
         
@@ -273,9 +273,9 @@ public class AccountMenuUI extends JFrame implements ActionListener {
             dispose();
         }
         
-        else if(e.getSource() == homeBtn){
-            CustomerDashboard cusUI = new CustomerDashboard();
-            cusUI.setVisible(true);
+        else if(e.getSource() == accountsBtn){
+            AccountMenuUI accMenUI = new AccountMenuUI();
+            accMenUI.setVisible(true);
             dispose();
         }
         

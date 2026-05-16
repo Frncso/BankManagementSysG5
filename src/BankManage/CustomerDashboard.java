@@ -4,13 +4,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.HashSet;
 
-public class AccountMenuUI extends JFrame implements ActionListener {
+public class CustomerDashboard extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
     
     // panels
     
-    private JPanel sidebarPanel, mainContentPanel; // gamitin nyo mainContentPanel para mag lagay ng content na hindi mag ooverlap kay sidebar
+    private JPanel sidebarPanel, mainContentPanel, balancePanel, savingsPanel, quickActionPanel, recentTransactPanel, insightsPanel;
     
     // import images
     
@@ -75,7 +75,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
     private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, historyBtn, summaryBtn, accountsBtn, logoutBtn;
     private final JLabel logoName;
     
-    public AccountMenuUI() {
+    public CustomerDashboard() {
         setTitle("Dashboard - Home");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -99,7 +99,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         
         homeBtn = new JButton("Home", homeIcon);
         homeBtn.setBounds(0, 60, 180, 40);
-        homeBtn.setBackground(cs.darkPurple);
+        homeBtn.setBackground(cs.btnColorSelect);
         homeBtn.setForeground(cs.white);
         homeBtn.setFocusPainted(false);
         homeBtn.setBorderPainted(false);
@@ -189,7 +189,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         
         accountsBtn = new JButton("Accounts", accountsIcon);
         accountsBtn.setBounds(0, 300, 180, 40);
-        accountsBtn.setBackground(cs.btnColorSelect);
+        accountsBtn.setBackground(cs.darkPurple);
         accountsBtn.setForeground(cs.white);
         accountsBtn.setFocusPainted(false);
         accountsBtn.setBorderPainted(false);
@@ -235,7 +235,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         savingsBtn.addActionListener(this);
         historyBtn.addActionListener(this);
         summaryBtn.addActionListener(this);
-        homeBtn.addActionListener(this);
+        accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
         
     }
@@ -273,9 +273,9 @@ public class AccountMenuUI extends JFrame implements ActionListener {
             dispose();
         }
         
-        else if(e.getSource() == homeBtn){
-            CustomerDashboard cusUI = new CustomerDashboard();
-            cusUI.setVisible(true);
+        else if(e.getSource() == accountsBtn){
+            AccountMenuUI accMenUI = new AccountMenuUI();
+            accMenUI.setVisible(true);
             dispose();
         }
         
@@ -286,6 +286,11 @@ public class AccountMenuUI extends JFrame implements ActionListener {
             dispose();
         }
         
+    }
+    
+    public static void main(String[] args) {
+        CustomerDashboard cd = new CustomerDashboard();
+        cd.setVisible(true);
     }
     
 }
