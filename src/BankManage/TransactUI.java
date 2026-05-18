@@ -2,9 +2,10 @@ package BankManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashSet;
 
 public class TransactUI extends JFrame implements ActionListener {
-
+    
     ColorScheme cs = new ColorScheme();
     
     // panels
@@ -73,6 +74,20 @@ public class TransactUI extends JFrame implements ActionListener {
     
     private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, historyBtn, summaryBtn, accountsBtn, logoutBtn;
     private final JLabel logoName;
+    
+    private JPanel fPanel, sPanel, tPanel;
+    private JPanel transactconPanel;
+    
+    private JLabel fTitle, fPhp, fSub;
+    private JLabel sTitle, sPhp, sSub; 
+    private JLabel tTitle, tPhp, tSub;
+    private JLabel transactconTitleLabel;
+    
+    private JButton innerDepositBtn, innerWithdrawBtn, innerTransferBtn;
+    private JButton depstfiBtn, withdrBtn, transFBtn;
+
+    private JLabel formHeaderTitle, labelAction, labelFrom, labelTo, labelAmount, labelDesc;
+    private JTextField txtFrom, txtTo, txtAmount, txtDesc;
     
     public TransactUI() {
         setTitle("Dashboard - Transactions");
@@ -220,15 +235,148 @@ public class TransactUI extends JFrame implements ActionListener {
         add(sidebarPanel);
         
         // main content panel
-        
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
-        
+        mainContentPanel.setBackground(Color.WHITE);
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
         
-        // end content panel
+        fPanel = new JPanel();
+        fPanel.setLayout(null);
+        fPanel.setBackground(Color.WHITE);
+        fPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        fPanel.setBounds(50, 40, 360, 200); 
+        mainContentPanel.add(fPanel);
         
+        fTitle = new JLabel("VaultBank Deposit");
+        fTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        fTitle.setBounds(20, 15, 300, 25);
+        fPanel.add(fTitle); 
+        
+        fPhp = new JLabel("PHP ₱239,691.12"); 
+        fPhp.setFont(new Font("Arial", Font.BOLD, 22));
+        fPhp.setBounds(20, 50, 300, 35);
+        fPanel.add(fPhp);
+        
+        fSub = new JLabel("Current");
+        fSub.setFont(new Font("Arial", Font.PLAIN, 13));
+        fSub.setForeground(Color.GRAY);
+        fSub.setBounds(20, 90, 100, 20);
+        fPanel.add(fSub); 
+        
+        innerDepositBtn = new JButton("Deposit");
+        innerDepositBtn.setBounds(20, 130, 320, 45);
+        innerDepositBtn.setBackground(new Color(138, 43, 226));
+        innerDepositBtn.setForeground(Color.WHITE);
+        innerDepositBtn.setFont(new Font("Arial", Font.BOLD, 15));
+        innerDepositBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        innerDepositBtn.addActionListener(this);
+        fPanel.add(innerDepositBtn);
+        
+        sPanel = new JPanel();
+        sPanel.setLayout(null);
+        sPanel.setBackground(Color.WHITE);
+        sPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        sPanel.setBounds(440, 40, 360, 200); 
+        mainContentPanel.add(sPanel);
+        
+        sTitle = new JLabel("VaultBank Withdrawals");
+        sTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        sTitle.setBounds(20, 15, 300, 25);
+        sPanel.add(sTitle); 
+        
+        sPhp = new JLabel("PHP -₱68,823.67"); 
+        sPhp.setFont(new Font("Arial", Font.BOLD, 22));
+        sPhp.setBounds(20, 50, 300, 35);
+        sPanel.add(sPhp); 
+        
+        sSub = new JLabel("Recorded");
+        sSub.setFont(new Font("Arial", Font.PLAIN, 13));
+        sSub.setForeground(Color.GRAY);
+        sSub.setBounds(20, 90, 100, 20);
+        sPanel.add(sSub); 
+
+        innerWithdrawBtn = new JButton("Withdraw"); 
+        innerWithdrawBtn.setBounds(20, 130, 320, 45);
+        innerWithdrawBtn.setBackground(new Color(138, 43, 226));
+        innerWithdrawBtn.setForeground(Color.WHITE);
+        innerWithdrawBtn.setFont(new Font("Arial", Font.BOLD, 15));
+        innerWithdrawBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        innerWithdrawBtn.addActionListener(this);
+        sPanel.add(innerWithdrawBtn);
+        
+        tPanel = new JPanel();
+        tPanel.setLayout(null);
+        tPanel.setBackground(Color.WHITE);
+        tPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        tPanel.setBounds(830, 40, 360, 200); 
+        mainContentPanel.add(tPanel);
+        
+        tTitle = new JLabel("VaultBank Recent activity");
+        tTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        tTitle.setBounds(20, 15, 300, 25);
+        tPanel.add(tTitle);
+        
+        tPhp = new JLabel("PHP -₱20,000.00"); 
+        tPhp.setFont(new Font("Arial", Font.BOLD, 22));
+        tPhp.setBounds(20, 50, 300, 35);
+        tPanel.add(tPhp);
+        
+        tSub = new JLabel("Funds");
+        tSub.setFont(new Font("Arial", Font.PLAIN, 13));
+        tSub.setForeground(Color.GRAY);
+        tSub.setBounds(20, 90, 100, 20);
+        tPanel.add(tSub);
+        
+        innerTransferBtn = new JButton("Transfer");
+        innerTransferBtn.setBounds(20, 130, 320, 45);
+        innerTransferBtn.setBackground(new Color(138, 43, 226));
+        innerTransferBtn.setForeground(Color.WHITE);
+        innerTransferBtn.setFont(new Font("Arial", Font.BOLD, 15));
+        innerTransferBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        innerTransferBtn.addActionListener(this);
+        tPanel.add(innerTransferBtn);
+      
+        transactconPanel = new JPanel();
+        transactconPanel.setLayout(null);
+        transactconPanel.setBackground(Color.WHITE);
+        transactconPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        transactconPanel.setBounds(50, 270, 1140, 470); 
+        mainContentPanel.add(transactconPanel);
+        
+        transactconTitleLabel = new JLabel("Transactions:");
+        transactconTitleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        transactconTitleLabel.setBounds(30, 25, 200, 30);
+        transactconPanel.add(transactconTitleLabel);
+        
+        depstfiBtn = new JButton("deposit");
+        depstfiBtn.setBounds(760, 25, 100, 30);
+        depstfiBtn.setBackground(new Color(138, 43, 226));
+        depstfiBtn.setForeground(Color.WHITE);
+        depstfiBtn.setFont(new Font("Arial", Font.BOLD, 13));
+        depstfiBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        depstfiBtn.addActionListener(this);
+        transactconPanel.add(depstfiBtn); 
+        
+        withdrBtn = new JButton("withdraw");
+        withdrBtn.setBounds(880, 25, 100, 30);
+        withdrBtn.setBackground(new Color(138, 43, 226));
+        withdrBtn.setForeground(Color.WHITE);
+        withdrBtn.setFont(new Font("Arial", Font.BOLD, 13));
+        withdrBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        withdrBtn.addActionListener(this);
+        transactconPanel.add(withdrBtn); 
+        
+        transFBtn = new JButton("transfer");
+        transFBtn.setBounds(1000, 25, 100, 30);
+        transFBtn.setBackground(new Color(138, 43, 226));
+        transFBtn.setForeground(Color.WHITE);
+        transFBtn.setFont(new Font("Arial", Font.BOLD, 13));
+        transFBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        transFBtn.addActionListener(this);
+        transactconPanel.add(transFBtn);  
+
+        // Sidebar Shortcuts
         homeBtn.addActionListener(this);
         balanceBtn.addActionListener(this);
         savingsBtn.addActionListener(this);
@@ -236,7 +384,6 @@ public class TransactUI extends JFrame implements ActionListener {
         summaryBtn.addActionListener(this);
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
-        
     }
 
     @Override
@@ -247,44 +394,35 @@ public class TransactUI extends JFrame implements ActionListener {
             cusUI.setVisible(true);
             dispose();
         }
-        
         else if(e.getSource() == balanceBtn){
             BalanceUI balUI = new BalanceUI();
             balUI.setVisible(true);
             dispose();
         }
-        
         else if(e.getSource() == savingsBtn){
             SavingsUI saveUI = new SavingsUI();
             saveUI.setVisible(true);
             dispose();
         }
-        
         else if(e.getSource() == historyBtn){
             HistoryUI hisUI = new HistoryUI();
             hisUI.setVisible(true);
             dispose();
         }
-        
         else if(e.getSource() == summaryBtn){
             SummaryTransactUI sumUI = new SummaryTransactUI();
             sumUI.setVisible(true);
             dispose();
         }
-        
         else if(e.getSource() == accountsBtn){
             AccountMenuUI accMenUI = new AccountMenuUI();
             accMenUI.setVisible(true);
             dispose();
         }
-        
         else if(e.getSource() == logoutBtn){
-            // logout code
             LoginUI logUI = new LoginUI();
             logUI.setVisible(true);
             dispose();
         }
-        
     }
-    
 }

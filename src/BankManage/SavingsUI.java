@@ -2,6 +2,7 @@ package BankManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashSet;
 
 public class SavingsUI extends JFrame implements ActionListener {
 
@@ -69,11 +70,29 @@ public class SavingsUI extends JFrame implements ActionListener {
     private final Image logoScale = logoRaw.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
     private final JLabel logo = new JLabel(new ImageIcon(logoScale));;
     
-    // sidebar
+    // sidebar + Added
     
     private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, historyBtn, summaryBtn, accountsBtn, logoutBtn;
+    
+    private JButton calculateBtn;
     private final JLabel logoName;
     
+    private JLabel savingsAccountLabel, savingsGoalLabel, goalLabel, targetLabel, currentLabel, completeLabel, interestCalcLabel, 
+    monthlyGrowthLabel, enterMonthsLabel, resultLabel, savingsHistoryLabel, historyListLabel;
+    private JLabel historyListTitleLabel, history1Label, history2Label;
+    private JTextField monthsInputText;
+    
+    
+    // Cards for boxes
+    private JPanel lPanel, rPanel;
+    private JLabel lTitle, lLabel, lcurLabel;
+    private JLabel rTitle, rLabel, rAccrLabel;
+    private JButton targetBtn, completedBtn, viewGoalBtn;
+    
+    private JPanel achievedPanel;
+    private JLabel achievedTitle, achievedCountLabel, achievedSubLabel;
+    private JButton viewAchievedBtn;
+
     public SavingsUI() {
         setTitle("Dashboard - Home");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,8 +122,6 @@ public class SavingsUI extends JFrame implements ActionListener {
         homeBtn.setFocusPainted(false);
         homeBtn.setBorderPainted(false);
         
-        // icon beside button
-        
         homeBtn.setHorizontalAlignment(SwingConstants.LEFT);
         homeBtn.setIconTextGap(8);
         sidebarPanel.add(homeBtn);
@@ -117,9 +134,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         transactBtn.setForeground(cs.white);
         transactBtn.setFocusPainted(false);
         transactBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
+    
         transactBtn.setHorizontalAlignment(SwingConstants.LEFT);
         transactBtn.setIconTextGap(8);
         sidebarPanel.add(transactBtn);
@@ -132,9 +147,6 @@ public class SavingsUI extends JFrame implements ActionListener {
         balanceBtn.setForeground(cs.white);
         balanceBtn.setFocusPainted(false);
         balanceBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
         balanceBtn.setHorizontalAlignment(SwingConstants.LEFT);
         balanceBtn.setIconTextGap(8);
         sidebarPanel.add(balanceBtn);
@@ -207,9 +219,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         logoutBtn.setForeground(cs.white);
         logoutBtn.setFocusPainted(false);
         logoutBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
+             
         logoutBtn.setHorizontalAlignment(SwingConstants.LEFT);
         logoutBtn.setIconTextGap(8);
         sidebarPanel.add(logoutBtn);
@@ -219,16 +229,136 @@ public class SavingsUI extends JFrame implements ActionListener {
         sidebarPanel.setBounds(0, 0, 180, 960);
         add(sidebarPanel);
         
-        // main content panel
-        
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
-        
+        mainContentPanel.setBackground(Color.WHITE); 
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
         
-        // end content panel
+        lPanel = new JPanel();
+        lPanel.setLayout(null);
+        lPanel.setBackground(Color.WHITE);
+        lPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        lPanel.setBounds(50, 40, 540, 200);
+        mainContentPanel.add(lPanel);
         
+        lTitle = new JLabel("VaultBank Savings Account");
+        lTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        lTitle.setBounds(20, 15, 300, 25);
+        lPanel.add(lTitle); 
+        
+        lLabel = new JLabel("PHP 18,500.00"); 
+        lLabel.setFont(new Font("Arial", Font.BOLD, 26));
+        lLabel.setBounds(20, 50, 300, 35);
+        lPanel.add(lLabel); 
+        
+        lcurLabel = new JLabel("Current");
+        lcurLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        lcurLabel.setForeground(Color.GRAY);
+        lcurLabel.setBounds(20, 90, 100, 20);
+        lPanel.add(lcurLabel); 
+        
+        targetBtn = new JButton("Target");
+        targetBtn.setBounds(20, 130, 150, 45);
+        targetBtn.setBackground(new Color(138, 43, 226)); 
+        targetBtn.setForeground(Color.WHITE);
+        targetBtn.setFont(new Font("Arial", Font.BOLD, 15));
+        targetBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); // for purple border line
+        targetBtn.addActionListener(this);
+        lPanel.add(targetBtn);
+        
+        completedBtn = new JButton("Completed");
+        completedBtn.setBounds(185, 130, 150, 45);
+        completedBtn.setBackground(new Color(138, 43, 226));
+        completedBtn.setForeground(Color.WHITE);
+        completedBtn.setFont(new Font("Arial", Font.BOLD, 15));
+        completedBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        completedBtn.addActionListener(this);
+        lPanel.add(completedBtn);
+        
+        viewGoalBtn = new JButton("View GOAL");
+        viewGoalBtn.setBounds(350, 130, 170, 45);
+        viewGoalBtn.setBackground(new Color(138, 43, 226));
+        viewGoalBtn.setForeground(Color.WHITE);
+        viewGoalBtn.setFont(new Font("Arial", Font.BOLD, 15));
+        viewGoalBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        viewGoalBtn.addActionListener(this);
+        lPanel.add(viewGoalBtn);
+        
+        rPanel = new JPanel();
+        rPanel.setLayout(null);
+        rPanel.setBackground(Color.WHITE);
+        rPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        rPanel.setBounds(620, 40, 540, 200);
+        mainContentPanel.add(rPanel);
+        
+        rTitle = new JLabel("VaultBank Interest Account");
+        rTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        rTitle.setBounds(20, 15, 300, 25);
+        rPanel.add(rTitle);
+        
+        rLabel = new JLabel("PHP 4% Annual");
+        rLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        rLabel.setBounds(100, 52, 200, 35);
+        rPanel.add(rLabel);
+        
+        rAccrLabel = new JLabel("Months to Forecast:");
+        rAccrLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        rAccrLabel.setForeground(Color.GRAY);
+        rAccrLabel.setBounds(20, 90, 130, 25);
+        rPanel.add(rAccrLabel); 
+        
+        monthsInputText = new JTextField("12");
+        monthsInputText.setFont(new Font("Arial", Font.PLAIN, 14));
+        monthsInputText.setBounds(155, 90, 50, 25);
+        rPanel.add(monthsInputText); 
+        
+        resultLabel = new JLabel("Result: ₱18,500.00");
+        resultLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        resultLabel.setBounds(260, 90, 240, 25);
+        rPanel.add(resultLabel);
+        
+        calculateBtn = new JButton("Calculate");
+        calculateBtn.setBounds(20, 130, 500, 45);
+        calculateBtn.setBackground(new Color(138, 43, 226));
+        calculateBtn.setForeground(Color.WHITE);
+        calculateBtn.setFont(new Font("Arial", Font.BOLD, 15));
+        calculateBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        calculateBtn.addActionListener(this);
+        rPanel.add(calculateBtn);
+
+        achievedPanel = new JPanel();
+        achievedPanel.setLayout(null);
+        achievedPanel.setBackground(Color.WHITE);
+        achievedPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        achievedPanel.setBounds(335, 270, 540, 200); 
+        mainContentPanel.add(achievedPanel);
+        
+        achievedTitle = new JLabel("VaultBank Achieved Goals");
+        achievedTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        achievedTitle.setBounds(20, 15, 300, 25);
+        achievedPanel.add(achievedTitle);
+        
+        achievedCountLabel = new JLabel("2 Goals Done");
+        achievedCountLabel.setFont(new Font("Arial", Font.BOLD, 26));
+        achievedCountLabel.setBounds(20, 50, 300, 35);
+        achievedPanel.add(achievedCountLabel);
+        
+        achievedSubLabel = new JLabel("Savings History");
+        achievedSubLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        achievedSubLabel.setForeground(Color.GRAY);
+        achievedSubLabel.setBounds(20, 90, 150, 20);
+        achievedPanel.add(achievedSubLabel);
+        
+        viewAchievedBtn = new JButton("View Achieved");
+        viewAchievedBtn.setBounds(20, 130, 500, 45); 
+        viewAchievedBtn.setBackground(new Color(138, 43, 226));
+        viewAchievedBtn.setForeground(Color.WHITE);
+        viewAchievedBtn.setFont(new Font("Arial", Font.BOLD, 15));
+        viewAchievedBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        viewAchievedBtn.addActionListener(this);
+        achievedPanel.add(viewAchievedBtn);
+
         transactBtn.addActionListener(this);
         balanceBtn.addActionListener(this);
         homeBtn.addActionListener(this);
@@ -236,13 +366,13 @@ public class SavingsUI extends JFrame implements ActionListener {
         summaryBtn.addActionListener(this);
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
-        
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        if(e.getSource() == transactBtn){
+       
+         if(e.getSource() == transactBtn){
             TransactUI traUI = new TransactUI();
             traUI.setVisible(true);
             dispose();
@@ -279,17 +409,14 @@ public class SavingsUI extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == logoutBtn){
-            // logout code
             LoginUI logUI = new LoginUI();
             logUI.setVisible(true);
             dispose();
         }
-        
     }
     
     public static void main(String[] args) {
         CustomerDashboard cd = new CustomerDashboard();
         cd.setVisible(true);
     }
-    
 }

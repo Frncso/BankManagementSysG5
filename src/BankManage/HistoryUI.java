@@ -2,12 +2,13 @@ package BankManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashSet;
 
 public class HistoryUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
     
-    // panels 
+    // panels
     
     private JPanel sidebarPanel, mainContentPanel, balancePanel, savingsPanel, quickActionPanel, recentTransactPanel, insightsPanel;
     
