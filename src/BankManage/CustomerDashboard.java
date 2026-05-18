@@ -61,6 +61,24 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     private Image logoutScale = logoutRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon logoutIcon = new ImageIcon(logoutScale);
     
+    java.net.URL withdrawImgURL = CustomerDashboard.class.getResource("resources/withdraw.png");
+    
+    private ImageIcon withdrawRaw = new ImageIcon(withdrawImgURL);
+    private Image withdrawScale = withdrawRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon withdrawIcon = new ImageIcon(withdrawScale);
+    
+    java.net.URL depositImgURL = CustomerDashboard.class.getResource("resources/deposit.png");
+    
+    private ImageIcon depositRaw = new ImageIcon(depositImgURL);
+    private Image depositScale = depositRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon depositIcon = new ImageIcon(depositScale);
+    
+    java.net.URL transferImgURL = CustomerDashboard.class.getResource("resources/transfer.png");
+    
+    private ImageIcon transferRaw = new ImageIcon(transferImgURL);
+    private Image transferScale = transferRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon transferIcon = new ImageIcon(transferScale);
+    
     // logo
     
     java.net.URL logoImgURL = CustomerDashboard.class.getResource("resources/bluewhiteLogo.png");
@@ -73,6 +91,22 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     
     private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, historyBtn, summaryBtn, accountsBtn, logoutBtn;
     private final JLabel logoName;
+    
+    // mainContentPanel
+    
+    private JLabel dashboardTitle, welcomelbl, usrFName, datelbl;
+    
+    //
+    
+    // balance panel
+    
+    private JLabel vaultbankBalbl, availBalancelbl, availlbl;
+    private JButton withdrawBtn, depositBtn, transferBtn;
+    
+    //
+    
+    private String fname = "Juan", date = "May 15, 2026";
+    private double totalBal = 150676.72;
     
     public CustomerDashboard() {
         setTitle("Dashboard - Home");
@@ -224,6 +258,90 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
         
+        dashboardTitle = new JLabel("Dashboard");
+        dashboardTitle.setBounds(30, 15, 100, 20);
+        dashboardTitle.setFont(new Font("", Font.BOLD, 16));
+        mainContentPanel.add(dashboardTitle);
+        
+        welcomelbl = new JLabel("Welcome Back, ");
+        welcomelbl.setBounds(30, 67, 200, 30);
+        welcomelbl.setFont(new Font("", Font.BOLD, 24));
+        mainContentPanel.add(welcomelbl);
+        
+        usrFName = new JLabel(fname);
+        usrFName.setBounds(210, 67, 200, 30);
+        usrFName.setFont(new Font("", Font.BOLD, 24));
+        usrFName.setForeground(cs.btnColorSelect);
+        mainContentPanel.add(usrFName);
+        
+        datelbl = new JLabel(date);
+        datelbl.setBounds(30, 103, 100, 20);
+        datelbl.setForeground(cs.gray);
+        mainContentPanel.add(datelbl);
+        
+        // bal panel
+        
+        balancePanel = new JPanel();
+        balancePanel.setLayout(null);
+        balancePanel.setBounds(30, 140, 450, 170);
+        balancePanel.setBackground(cs.white);
+        balancePanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        
+        vaultbankBalbl = new JLabel("VaultBank Balance");
+        vaultbankBalbl.setBounds(15, 12, 150, 20);
+        vaultbankBalbl.setFont(new Font("", Font.BOLD, 12));
+        balancePanel.add(vaultbankBalbl);
+        
+        availBalancelbl = new JLabel("P"+String.valueOf(totalBal));
+        availBalancelbl.setBounds(15, 42, 300, 30);
+        availBalancelbl.setFont(new Font("", Font.BOLD, 28));
+        balancePanel.add(availBalancelbl);
+        
+        availlbl = new JLabel("Available");
+        availlbl.setBounds(15, 75, 150, 20);
+        availlbl.setForeground(cs.gray);
+        balancePanel.add(availlbl);
+        
+        withdrawBtn = new JButton("Withdraw", withdrawIcon);
+        withdrawBtn.setBounds(15, 110, 130, 40);
+        withdrawBtn.setBackground(cs.darkPurple);
+        withdrawBtn.setForeground(cs.white);
+        withdrawBtn.setFocusPainted(false);
+        withdrawBtn.setBorderPainted(false);
+        
+        withdrawBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        withdrawBtn.setMargin(new Insets(0, 0, 0, 10));
+        withdrawBtn.setIconTextGap(10);
+        balancePanel.add(withdrawBtn);
+        
+        depositBtn = new JButton("Deposit", depositIcon);
+        depositBtn.setBounds(160, 110, 130, 40);
+        depositBtn.setBackground(cs.darkPurple);
+        depositBtn.setForeground(cs.white);
+        depositBtn.setFocusPainted(false);
+        depositBtn.setBorderPainted(false);
+        
+        depositBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        depositBtn.setMargin(new Insets(0, 0, 0, 10));
+        depositBtn.setIconTextGap(10);
+        balancePanel.add(depositBtn);
+        
+        transferBtn = new JButton("Transfer", transferIcon);
+        transferBtn.setBounds(305, 110, 130, 40);
+        transferBtn.setBackground(cs.darkPurple);
+        transferBtn.setForeground(cs.white);
+        transferBtn.setFocusPainted(false);
+        transferBtn.setBorderPainted(false);
+        
+        transferBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        transferBtn.setMargin(new Insets(0, 0, 0, 5));
+        transferBtn.setIconTextGap(10);
+        balancePanel.add(transferBtn);
+        
+        mainContentPanel.add(balancePanel);
+        
+        // end bal
+        
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
         
@@ -241,6 +359,8 @@ public class CustomerDashboard extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        
+        // side bar
         
         if(e.getSource() == transactBtn){
             TransactUI traUI = new TransactUI();
@@ -284,6 +404,14 @@ public class CustomerDashboard extends JFrame implements ActionListener {
             logUI.setVisible(true);
             dispose();
         }
+        
+        // side bar end
+        
+        // main content
+        
+        
+        
+        //
         
     }
     
