@@ -10,7 +10,7 @@ public class SavingsUI extends JFrame implements ActionListener {
     
     // panels
     
-    private JPanel sidebarPanel, mainContentPanel, balancePanel, savingsPanel, quickActionPanel, recentTransactPanel, insightsPanel;
+    private JPanel sidebarPanel, mainContentPanel, linePanel;
     
     // import images
     
@@ -38,18 +38,6 @@ public class SavingsUI extends JFrame implements ActionListener {
     private Image savingsScale = savingsRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon savingsIcon = new ImageIcon(savingsScale);
     
-    java.net.URL historyImgURL = CustomerDashboard.class.getResource("resources/history.png");
-    
-    private ImageIcon historyRaw = new ImageIcon(historyImgURL);
-    private Image historyScale = historyRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon historyIcon = new ImageIcon(historyScale);
-    
-    java.net.URL summaryImgURL = CustomerDashboard.class.getResource("resources/summary.png");
-    
-    private ImageIcon summaryRaw = new ImageIcon(summaryImgURL);
-    private Image summaryScale = summaryRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon summaryIcon = new ImageIcon(summaryScale);
-    
     java.net.URL accountsImgURL = CustomerDashboard.class.getResource("resources/accounts.png");
     
     private ImageIcon accountsRaw = new ImageIcon(accountsImgURL);
@@ -72,7 +60,7 @@ public class SavingsUI extends JFrame implements ActionListener {
     
     // sidebar + Added
     
-    private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, historyBtn, summaryBtn, accountsBtn, logoutBtn;
+    private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, accountsBtn, logoutBtn;
     
     private JButton calculateBtn;
     private final JLabel logoName;
@@ -82,6 +70,7 @@ public class SavingsUI extends JFrame implements ActionListener {
     private JLabel historyListTitleLabel, history1Label, history2Label;
     private JTextField monthsInputText;
     
+    private JLabel dashboardTitle;
     
     // Cards for boxes
     private JPanel lPanel, rPanel;
@@ -166,40 +155,10 @@ public class SavingsUI extends JFrame implements ActionListener {
         savingsBtn.setIconTextGap(8);
         sidebarPanel.add(savingsBtn);
         
-        // history
-        
-        historyBtn = new JButton("History", historyIcon);
-        historyBtn.setBounds(0, 220, 180, 40);
-        historyBtn.setBackground(cs.darkPurple);
-        historyBtn.setForeground(cs.white);
-        historyBtn.setFocusPainted(false);
-        historyBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
-        historyBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        historyBtn.setIconTextGap(8);
-        sidebarPanel.add(historyBtn);
-        
-        // summary
-        
-        summaryBtn = new JButton("Summary", summaryIcon);
-        summaryBtn.setBounds(0, 260, 180, 40);
-        summaryBtn.setBackground(cs.darkPurple);
-        summaryBtn.setForeground(cs.white);
-        summaryBtn.setFocusPainted(false);
-        summaryBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
-        summaryBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        summaryBtn.setIconTextGap(8);
-        sidebarPanel.add(summaryBtn);
-        
         // accounts
         
         accountsBtn = new JButton("Accounts", accountsIcon);
-        accountsBtn.setBounds(0, 300, 180, 40);
+        accountsBtn.setBounds(0, 220, 180, 40);
         accountsBtn.setBackground(cs.darkPurple);
         accountsBtn.setForeground(cs.white);
         accountsBtn.setFocusPainted(false);
@@ -235,11 +194,22 @@ public class SavingsUI extends JFrame implements ActionListener {
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
         
+        dashboardTitle = new JLabel("Savings");
+        dashboardTitle.setBounds(30, 15, 100, 20);
+        dashboardTitle.setFont(new Font("", Font.BOLD, 16));
+        mainContentPanel.add(dashboardTitle);
+        
+        linePanel = new JPanel();
+        
+        linePanel.setBounds(30, 50, 1185, 3);
+        linePanel.setBackground(cs.darkPurple);
+        mainContentPanel.add(linePanel);
+        
         lPanel = new JPanel();
         lPanel.setLayout(null);
         lPanel.setBackground(Color.WHITE);
         lPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        lPanel.setBounds(50, 40, 540, 200);
+        lPanel.setBounds(30, 80, 540, 200);
         mainContentPanel.add(lPanel);
         
         lTitle = new JLabel("VaultBank Savings Account");
@@ -260,28 +230,31 @@ public class SavingsUI extends JFrame implements ActionListener {
         
         targetBtn = new JButton("Target");
         targetBtn.setBounds(20, 130, 150, 45);
-        targetBtn.setBackground(new Color(138, 43, 226)); 
+        targetBtn.setBackground(cs.darkPurple); 
         targetBtn.setForeground(Color.WHITE);
         targetBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        targetBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); // for purple border line
+        targetBtn.setBorderPainted(false);
+        targetBtn.setFocusable(false);
         targetBtn.addActionListener(this);
         lPanel.add(targetBtn);
         
         completedBtn = new JButton("Completed");
         completedBtn.setBounds(185, 130, 150, 45);
-        completedBtn.setBackground(new Color(138, 43, 226));
+        completedBtn.setBackground(cs.darkPurple);
         completedBtn.setForeground(Color.WHITE);
         completedBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        completedBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        completedBtn.setBorderPainted(false);
+        completedBtn.setFocusable(false);
         completedBtn.addActionListener(this);
         lPanel.add(completedBtn);
         
         viewGoalBtn = new JButton("View GOAL");
         viewGoalBtn.setBounds(350, 130, 170, 45);
-        viewGoalBtn.setBackground(new Color(138, 43, 226));
+        viewGoalBtn.setBackground(cs.darkPurple);
         viewGoalBtn.setForeground(Color.WHITE);
         viewGoalBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        viewGoalBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        viewGoalBtn.setBorderPainted(false);
+        viewGoalBtn.setFocusable(false);
         viewGoalBtn.addActionListener(this);
         lPanel.add(viewGoalBtn);
         
@@ -289,7 +262,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         rPanel.setLayout(null);
         rPanel.setBackground(Color.WHITE);
         rPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        rPanel.setBounds(620, 40, 540, 200);
+        rPanel.setBounds(675, 80, 540, 200);
         mainContentPanel.add(rPanel);
         
         rTitle = new JLabel("VaultBank Interest Account");
@@ -320,10 +293,11 @@ public class SavingsUI extends JFrame implements ActionListener {
         
         calculateBtn = new JButton("Calculate");
         calculateBtn.setBounds(20, 130, 500, 45);
-        calculateBtn.setBackground(new Color(138, 43, 226));
+        calculateBtn.setBackground(cs.darkPurple);
         calculateBtn.setForeground(Color.WHITE);
         calculateBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        calculateBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        calculateBtn.setBorderPainted(false);
+        calculateBtn.setFocusable(false);
         calculateBtn.addActionListener(this);
         rPanel.add(calculateBtn);
 
@@ -331,7 +305,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         achievedPanel.setLayout(null);
         achievedPanel.setBackground(Color.WHITE);
         achievedPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        achievedPanel.setBounds(335, 270, 540, 200); 
+        achievedPanel.setBounds(355, 310, 540, 200); 
         mainContentPanel.add(achievedPanel);
         
         achievedTitle = new JLabel("VaultBank Achieved Goals");
@@ -352,18 +326,17 @@ public class SavingsUI extends JFrame implements ActionListener {
         
         viewAchievedBtn = new JButton("View Achieved");
         viewAchievedBtn.setBounds(20, 130, 500, 45); 
-        viewAchievedBtn.setBackground(new Color(138, 43, 226));
+        viewAchievedBtn.setBackground(cs.darkPurple);
         viewAchievedBtn.setForeground(Color.WHITE);
         viewAchievedBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        viewAchievedBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        viewGoalBtn.setBorderPainted(false);
+        viewGoalBtn.setFocusable(false);
         viewAchievedBtn.addActionListener(this);
         achievedPanel.add(viewAchievedBtn);
 
         transactBtn.addActionListener(this);
         balanceBtn.addActionListener(this);
         homeBtn.addActionListener(this);
-        historyBtn.addActionListener(this);
-        summaryBtn.addActionListener(this);
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
     }
@@ -390,18 +363,6 @@ public class SavingsUI extends JFrame implements ActionListener {
             dispose();
         }
         
-        else if(e.getSource() == historyBtn){
-            HistoryUI hisUI = new HistoryUI();
-            hisUI.setVisible(true);
-            dispose();
-        }
-        
-        else if(e.getSource() == summaryBtn){
-            SummaryTransactUI sumUI = new SummaryTransactUI();
-            sumUI.setVisible(true);
-            dispose();
-        }
-        
         else if(e.getSource() == accountsBtn){
             AccountMenuUI accMenUI = new AccountMenuUI();
             accMenUI.setVisible(true);
@@ -415,8 +376,4 @@ public class SavingsUI extends JFrame implements ActionListener {
         }
     }
     
-    public static void main(String[] args) {
-        CustomerDashboard cd = new CustomerDashboard();
-        cd.setVisible(true);
-    }
 }

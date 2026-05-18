@@ -63,7 +63,17 @@ public class RegisterUI extends JFrame implements ActionListener{
         "Administrator"
     };
     
-    private String accountNumber, accountNameStf;
+    private String accountNumber;
+    
+    // logo
+    
+    java.net.URL logoImgURL = CustomerDashboard.class.getResource("resources/bluewhiteLogo.png");
+    
+    private final ImageIcon logoRaw = new ImageIcon(logoImgURL);
+    private final Image logoScale = logoRaw.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
+    private final JLabel logo = new JLabel(new ImageIcon(logoScale));;
+    private final JPanel logoPanel;
+    private final JLabel logoFont;
     
     java.net.URL imgURL = RegisterUI.class.getResource("resources/gradientBackground.png"); // classpath to img
     
@@ -79,14 +89,16 @@ public class RegisterUI extends JFrame implements ActionListener{
     
     private final JButton btnCus, btnStf, btnReg, btnCusS, btnStfS, btnStfReg, btnLog;
     private final JLabel lblFName, lblLName, lblPIN, lblDofB, lblOccu, lblSalary, lblIDType, lblIDNo, lblBottom; // for customer panel
-    private final JTextField txtFName, txtLName, txtPIN, txtIDNo;// 
+    private final JTextField txtFName, txtLName, txtIDNo;//
+    private final JPasswordField passField;
     private final JComboBox<String> cbxOccu, cbxSalary, cbxIDType, cbxMonth, cbxDay, cbxYear; // for customer panel
 
     // STAFF SECTION
     
     private final JButton btnLogS; // for staff panel
     private final JLabel lblFNameS, lblLNameS, lblPassword, lblDofBS, lblStaffType, lblAccess, lblBottomS; // for staff panel
-    private final JTextField txtFNameS, txtLNameS, txtPassword, txtAccess;
+    private final JTextField txtFNameS, txtLNameS, txtAccess;
+    private final JPasswordField passFieldS;
     private final JComboBox<String> cbxStaffType;
     
     RegisterUI(){
@@ -96,7 +108,23 @@ public class RegisterUI extends JFrame implements ActionListener{
         setLayout(null);
         setLocationRelativeTo(null); 
         setResizable(false);
-        setTitle("Banking System Prototype");
+        setTitle("VaultBank Register");
+
+        logoPanel = new JPanel();
+        logoPanel.setLayout(null);
+        logoPanel.setBounds(472, 80, 500, 200);
+        logoPanel.setOpaque(false);
+        
+        logoFont = new JLabel("VaultBank");
+        logoFont.setBounds(125, 60, 400, 50);
+        logoFont.setForeground(cs.white);
+        logoFont.setFont(new Font("Cascadia Code", Font.BOLD, 64));
+        
+        logo.setBounds(25, 50, 75, 75);
+        
+        logoPanel.add(logoFont);
+        logoPanel.add(logo);
+        add(logoPanel);
 
         //background
         background.setBounds(0, 0, 1440, 960);        
@@ -151,15 +179,15 @@ public class RegisterUI extends JFrame implements ActionListener{
         txtLName.setBackground(cs.white);
         regFormCus.add(txtLName);
         
-        lblPIN = new JLabel("PIN");
+        lblPIN = new JLabel("Password");
         lblPIN.setBounds(45, 220, 150, 30);
         lblPIN.setForeground(cs.gray);
         regFormCus.add(lblPIN);
         
-        txtPIN = new JTextField("");
-        txtPIN.setBounds(45, 250, 350, 35);
-        txtPIN.setBackground(cs.white);
-        regFormCus.add(txtPIN);
+        passField = new JPasswordField("");
+        passField.setBounds(45, 250, 350, 35);
+        passField.setBackground(cs.white);
+        regFormCus.add(passField);
         
         lblDofB = new JLabel("Date of Birth");
         lblDofB.setBounds(45, 290, 150, 30);
@@ -316,10 +344,10 @@ public class RegisterUI extends JFrame implements ActionListener{
         lblPassword.setForeground(cs.gray);
         regFormStf.add(lblPassword);
         
-        txtPassword = new JTextField("");
-        txtPassword.setBounds(45, 250, 350, 35);
-        txtPassword.setBackground(cs.white);
-        regFormStf.add(txtPassword);
+        passFieldS = new JPasswordField("");
+        passFieldS.setBounds(45, 250, 350, 35);
+        passFieldS.setBackground(cs.white);
+        regFormStf.add(passFieldS);
         
         lblDofBS = new JLabel("Date of Birth");
         lblDofBS.setBounds(45, 290, 150, 30);
@@ -519,7 +547,7 @@ public class RegisterUI extends JFrame implements ActionListener{
             
             // rs.AddAccount(customer);
             
-            // TEST CONCATENATION FOR ACC NO.
+            // TEST CONCATENATION FOR ACC NO. (must have try catch soon)
             String fname = txtFName.getText();
             String lname = txtLName.getText();
             String birthday = (String) cbxDay.getSelectedItem();

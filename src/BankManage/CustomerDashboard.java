@@ -2,7 +2,6 @@ package BankManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashSet;
 
 public class CustomerDashboard extends JFrame implements ActionListener {
 
@@ -10,7 +9,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     
     // panels
     
-    private JPanel sidebarPanel, mainContentPanel, balancePanel, savingsPanel, quickActionPanel, recentTransactPanel, insightsPanel;
+    private JPanel sidebarPanel, mainContentPanel, linePanel, balancePanel, savingsPanel, recentTransactPanel;
     
     // import images
     
@@ -37,18 +36,6 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     private ImageIcon savingsRaw = new ImageIcon(savingsImgURL);
     private Image savingsScale = savingsRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon savingsIcon = new ImageIcon(savingsScale);
-    
-    java.net.URL historyImgURL = CustomerDashboard.class.getResource("resources/history.png");
-    
-    private ImageIcon historyRaw = new ImageIcon(historyImgURL);
-    private Image historyScale = historyRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon historyIcon = new ImageIcon(historyScale);
-    
-    java.net.URL summaryImgURL = CustomerDashboard.class.getResource("resources/summary.png");
-    
-    private ImageIcon summaryRaw = new ImageIcon(summaryImgURL);
-    private Image summaryScale = summaryRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon summaryIcon = new ImageIcon(summaryScale);
     
     java.net.URL accountsImgURL = CustomerDashboard.class.getResource("resources/accounts.png");
     
@@ -80,6 +67,12 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     private Image transferScale = transferRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon transferIcon = new ImageIcon(transferScale);
     
+    java.net.URL historyImgURL = CustomerDashboard.class.getResource("resources/history.png");
+    
+    private ImageIcon historyRaw = new ImageIcon(historyImgURL);
+    private Image historyScale = historyRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon historyIcon = new ImageIcon(historyScale);
+    
     // logo
     
     java.net.URL logoImgURL = CustomerDashboard.class.getResource("resources/bluewhiteLogo.png");
@@ -90,24 +83,52 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     
     // sidebar
     
-    private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, historyBtn, summaryBtn, accountsBtn, logoutBtn;
+    private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, accountsBtn, logoutBtn;
     private final JLabel logoName;
     
     // mainContentPanel
     
-    private JLabel dashboardTitle, welcomelbl, usrFName, datelbl;
+    private final JLabel dashboardTitle, welcomelbl, usrFName, datelbl, quicklbl;
     
     //
     
     // balance panel
     
-    private JLabel vaultbankBalbl, availBalancelbl, availlbl;
-    private JButton withdrawBtn, depositBtn, transferBtn;
+    private final JLabel vaultbankBalbl, availBalancelbl, availlbl;
+    private final JButton withdrawBtn, depositBtn, transferBtn;
+    
+    //
+    
+    // savings panel
+    
+    private final JLabel savingslbl, savingBalancelbl, savingavaillbl, savingquicklbl;
+    private final JButton gotoSavingsbtn, gotoHistorybtn;
+    
+    //
+    
+    // recent panel
+    
+    private final JLabel recentlbl;
+    private JTable recenttransacttbl;
+    private JScrollPane recentnoScroll;
+    
+    protected String[] recentColumns = {
+        "Name", "Date", "Status", "Amount"
+    };
+    
+    protected String[][] sampleData = {
+        {"PayPal Transfer", "May 10, 2026", "Completed", "+₱25,120.50"},
+        {"Roblox 1000 ROBUX", "May 5, 2026", "Declined", "=₱0"},
+        {"Minecraft Cape", "January 7, 2026", "Completed", "-₱250.00"},
+        {"Minecraft Bundle", "January 6, 2026", "Completed", "-₱1,600"},
+    };
     
     //
     
     private String fname = "Juan", date = "May 15, 2026";
-    private double totalBal = 150676.72;
+    private double checkBal = 121502.60;
+    private double saveBal = 30242.55;
+    private double totalBal = checkBal + saveBal;
     
     public CustomerDashboard() {
         setTitle("Dashboard - Home");
@@ -189,40 +210,10 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         savingsBtn.setIconTextGap(8);
         sidebarPanel.add(savingsBtn);
         
-        // history
-        
-        historyBtn = new JButton("History", historyIcon);
-        historyBtn.setBounds(0, 220, 180, 40);
-        historyBtn.setBackground(cs.darkPurple);
-        historyBtn.setForeground(cs.white);
-        historyBtn.setFocusPainted(false);
-        historyBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
-        historyBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        historyBtn.setIconTextGap(8);
-        sidebarPanel.add(historyBtn);
-        
-        // summary
-        
-        summaryBtn = new JButton("Summary", summaryIcon);
-        summaryBtn.setBounds(0, 260, 180, 40);
-        summaryBtn.setBackground(cs.darkPurple);
-        summaryBtn.setForeground(cs.white);
-        summaryBtn.setFocusPainted(false);
-        summaryBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
-        summaryBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        summaryBtn.setIconTextGap(8);
-        sidebarPanel.add(summaryBtn);
-        
         // accounts
         
         accountsBtn = new JButton("Accounts", accountsIcon);
-        accountsBtn.setBounds(0, 300, 180, 40);
+        accountsBtn.setBounds(0, 220, 180, 40);
         accountsBtn.setBackground(cs.darkPurple);
         accountsBtn.setForeground(cs.white);
         accountsBtn.setFocusPainted(false);
@@ -259,10 +250,16 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
         
-        dashboardTitle = new JLabel("Dashboard");
+        dashboardTitle = new JLabel("Home");
         dashboardTitle.setBounds(30, 15, 100, 20);
         dashboardTitle.setFont(new Font("", Font.BOLD, 16));
         mainContentPanel.add(dashboardTitle);
+        
+        linePanel = new JPanel();
+        
+        linePanel.setBounds(30, 50, 1185, 3);
+        linePanel.setBackground(cs.darkPurple);
+        mainContentPanel.add(linePanel);
         
         welcomelbl = new JLabel("Welcome Back, ");
         welcomelbl.setBounds(30, 67, 200, 30);
@@ -284,27 +281,34 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         
         balancePanel = new JPanel();
         balancePanel.setLayout(null);
-        balancePanel.setBounds(30, 140, 450, 170);
+        balancePanel.setBounds(30, 150, 580, 245);
         balancePanel.setBackground(cs.white);
         balancePanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         
-        vaultbankBalbl = new JLabel("VaultBank Balance");
-        vaultbankBalbl.setBounds(15, 12, 150, 20);
-        vaultbankBalbl.setFont(new Font("", Font.BOLD, 12));
+        vaultbankBalbl = new JLabel("VaultBank Balance"); 
+        vaultbankBalbl.setBounds(20, 20, 250, 20);
+        vaultbankBalbl.setFont(new Font("", Font.BOLD, 18));
+        vaultbankBalbl.setForeground(cs.darkerPurple);
         balancePanel.add(vaultbankBalbl);
         
-        availBalancelbl = new JLabel("P"+String.valueOf(totalBal));
-        availBalancelbl.setBounds(15, 42, 300, 30);
-        availBalancelbl.setFont(new Font("", Font.BOLD, 28));
+        availBalancelbl = new JLabel("₱"+String.valueOf(totalBal));
+        availBalancelbl.setBounds(20, 65, 300, 30);
+        availBalancelbl.setFont(new Font("Arial", Font.BOLD, 36));
+        availBalancelbl.setForeground(cs.darkerPurple);
         balancePanel.add(availBalancelbl);
         
-        availlbl = new JLabel("Available");
-        availlbl.setBounds(15, 75, 150, 20);
+        availlbl = new JLabel("Checking + Saving");
+        availlbl.setBounds(20, 108, 150, 20);
         availlbl.setForeground(cs.gray);
         balancePanel.add(availlbl);
         
+        quicklbl = new JLabel("Quick Actions");
+        quicklbl.setBounds(20, 150, 150, 20);
+        quicklbl.setForeground(cs.darkerPurple);
+        balancePanel.add(quicklbl);
+        
         withdrawBtn = new JButton("Withdraw", withdrawIcon);
-        withdrawBtn.setBounds(15, 110, 130, 40);
+        withdrawBtn.setBounds(20, 180, 170, 45);
         withdrawBtn.setBackground(cs.darkPurple);
         withdrawBtn.setForeground(cs.white);
         withdrawBtn.setFocusPainted(false);
@@ -316,7 +320,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         balancePanel.add(withdrawBtn);
         
         depositBtn = new JButton("Deposit", depositIcon);
-        depositBtn.setBounds(160, 110, 130, 40);
+        depositBtn.setBounds(205, 180, 170, 45);
         depositBtn.setBackground(cs.darkPurple);
         depositBtn.setForeground(cs.white);
         depositBtn.setFocusPainted(false);
@@ -328,7 +332,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         balancePanel.add(depositBtn);
         
         transferBtn = new JButton("Transfer", transferIcon);
-        transferBtn.setBounds(305, 110, 130, 40);
+        transferBtn.setBounds(390, 180, 170, 45);
         transferBtn.setBackground(cs.darkPurple);
         transferBtn.setForeground(cs.white);
         transferBtn.setFocusPainted(false);
@@ -338,10 +342,125 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         transferBtn.setMargin(new Insets(0, 0, 0, 5));
         transferBtn.setIconTextGap(10);
         balancePanel.add(transferBtn);
-        
+           
         mainContentPanel.add(balancePanel);
         
         // end bal
+        
+        // savings overview
+        
+        savingsPanel = new JPanel();
+        savingsPanel.setLayout(null);
+        savingsPanel.setBounds(635, 150, 580, 245);
+        savingsPanel.setBackground(cs.white);
+        savingsPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        
+        savingslbl = new JLabel("Savings Overview"); 
+        savingslbl.setBounds(20, 20, 250, 20);
+        savingslbl.setFont(new Font("", Font.BOLD, 18));
+        savingslbl.setForeground(cs.darkerPurple);
+        savingsPanel.add(savingslbl);
+        
+        savingBalancelbl = new JLabel("₱"+String.valueOf(saveBal));
+        savingBalancelbl.setBounds(20, 65, 300, 30);
+        savingBalancelbl.setFont(new Font("Arial", Font.BOLD, 36));
+        savingBalancelbl.setForeground(cs.darkerPurple);
+        savingsPanel.add(savingBalancelbl);
+
+        savingavaillbl = new JLabel("Available");
+        savingavaillbl.setBounds(20, 108, 150, 20);
+        savingavaillbl.setForeground(cs.gray);
+        savingsPanel.add(savingavaillbl);
+        
+        savingquicklbl = new JLabel("Quick Actions");
+        savingquicklbl.setBounds(20, 150, 150, 20);
+        savingquicklbl.setForeground(cs.darkerPurple);
+        savingsPanel.add(savingquicklbl);
+        
+        gotoSavingsbtn = new JButton("Go To Savings", savingsIcon);
+        gotoSavingsbtn.setBounds(20, 180, 262, 45);
+        gotoSavingsbtn.setBackground(cs.darkPurple);
+        gotoSavingsbtn.setForeground(cs.white);
+        gotoSavingsbtn.setFocusPainted(false);
+        gotoSavingsbtn.setBorderPainted(false);
+        
+        gotoSavingsbtn.setHorizontalAlignment(SwingConstants.CENTER);
+        gotoSavingsbtn.setMargin(new Insets(0, 0, 0, 10));
+        gotoSavingsbtn.setIconTextGap(10);
+        savingsPanel.add(gotoSavingsbtn);
+        
+        gotoHistorybtn = new JButton("Goal History", historyIcon);
+        gotoHistorybtn.setBounds(298, 180, 262, 45);
+        gotoHistorybtn.setBackground(cs.darkPurple);
+        gotoHistorybtn.setForeground(cs.white);
+        gotoHistorybtn.setFocusPainted(false);
+        gotoHistorybtn.setBorderPainted(false);
+        
+        gotoHistorybtn.setHorizontalAlignment(SwingConstants.CENTER);
+        gotoHistorybtn.setMargin(new Insets(0, 0, 0, 10));
+        gotoHistorybtn.setIconTextGap(10);
+        savingsPanel.add(gotoHistorybtn);
+  
+        mainContentPanel.add(savingsPanel);
+        
+        // end savings
+        
+        // Transaction
+        
+        recentTransactPanel = new JPanel();
+        recentTransactPanel.setLayout(null);
+        recentTransactPanel.setBounds(30, 425, 1185, 460);
+        recentTransactPanel.setBackground(cs.white);
+        recentTransactPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        
+        recentlbl = new JLabel("Recent Transactions"); 
+        recentlbl.setBounds(20, 20, 250, 20);
+        recentlbl.setFont(new Font("", Font.BOLD, 18));
+        recentlbl.setForeground(cs.darkerPurple);
+        recentTransactPanel.add(recentlbl);
+        
+        // table (objects papasok dito)
+        
+        recenttransacttbl = new JTable(sampleData, recentColumns);
+        recenttransacttbl.setRowHeight(40);
+        recenttransacttbl.setFont(new Font("Arial", Font.PLAIN, 14));
+        recenttransacttbl.setFocusable(false);
+        recenttransacttbl.getTableHeader().setReorderingAllowed(false);
+        recenttransacttbl.getTableHeader().setBackground(cs.darkPurple);
+        recenttransacttbl.getTableHeader().setForeground(cs.white);
+        recenttransacttbl.setSelectionBackground(cs.lightPurple);
+        recenttransacttbl.setSelectionForeground(cs.white);
+        recenttransacttbl.setShowGrid(false);
+        recenttransacttbl.setDefaultEditor(Object.class, null);
+        
+        recenttransacttbl.getTableHeader().setFont(
+            new Font("Arial", Font.BOLD, 14)
+        );
+        recenttransacttbl.getTableHeader().setPreferredSize(
+            new Dimension(0, 45)
+        );
+        
+        // no scroll
+        
+        recentnoScroll = new JScrollPane(recenttransacttbl);
+        
+        recentnoScroll.setVerticalScrollBarPolicy(
+            JScrollPane.VERTICAL_SCROLLBAR_NEVER
+        );
+
+        recentnoScroll.setHorizontalScrollBarPolicy(
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
+        
+        recentnoScroll.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        recentnoScroll.setBounds(20, 60, 1145, 380);
+        recentTransactPanel.add(recentnoScroll);
+        
+        mainContentPanel.add(recentTransactPanel);
+        
+        // end table
+        
+        // recent end
         
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
@@ -351,8 +470,6 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         transactBtn.addActionListener(this);
         balanceBtn.addActionListener(this);
         savingsBtn.addActionListener(this);
-        historyBtn.addActionListener(this);
-        summaryBtn.addActionListener(this);
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
         
@@ -378,18 +495,6 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         else if(e.getSource() == savingsBtn){
             SavingsUI saveUI = new SavingsUI();
             saveUI.setVisible(true);
-            dispose();
-        }
-        
-        else if(e.getSource() == historyBtn){
-            HistoryUI hisUI = new HistoryUI();
-            hisUI.setVisible(true);
-            dispose();
-        }
-        
-        else if(e.getSource() == summaryBtn){
-            SummaryTransactUI sumUI = new SummaryTransactUI();
-            sumUI.setVisible(true);
             dispose();
         }
         

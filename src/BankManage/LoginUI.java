@@ -8,6 +8,16 @@ public class LoginUI extends JFrame  implements ActionListener {
    
     ColorScheme cs = new ColorScheme();
 
+    // logo
+    
+    java.net.URL logoImgURL = CustomerDashboard.class.getResource("resources/bluewhiteLogo.png");
+    
+    private final ImageIcon logoRaw = new ImageIcon(logoImgURL);
+    private final Image logoScale = logoRaw.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH);
+    private final JLabel logo = new JLabel(new ImageIcon(logoScale));;
+    
+    private final JLabel logoFont;
+    
     java.net.URL imgURL = LoginUI.class.getResource("resources/gradientBackground.png"); // classpath to img
 
     private final ImageIcon image = new ImageIcon(imgURL);
@@ -15,6 +25,8 @@ public class LoginUI extends JFrame  implements ActionListener {
     
     private CardLayout loginSwitch;
     private JPanel loginContainer, loginCus, loginStf;
+    
+    private JPanel logoPanel;
 
     private JButton btnCus, btnStf, btnSignIn, btnRegister; //cus log
     private JTextField txtAccNo;
@@ -26,21 +38,39 @@ public class LoginUI extends JFrame  implements ActionListener {
 
     LoginUI(){
 
-        setTitle("Banking System Login ");
+        setTitle("VaultBank Login");
         setSize(1440,960);
         setLayout(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null); 
         setResizable(false);
-
+        
+        logoPanel = new JPanel();
+        logoPanel.setLayout(null);
+        logoPanel.setBounds(472, 80, 500, 200);
+        logoPanel.setOpaque(false);
+        
+        logoFont = new JLabel("VaultBank");
+        logoFont.setBounds(125, 60, 400, 50);
+        logoFont.setForeground(cs.white);
+        logoFont.setFont(new Font("Cascadia Code", Font.BOLD, 64));
+        
+        logo.setBounds(25, 50, 75, 75);
+        
+        logoPanel.add(logoFont);
+        logoPanel.add(logo);
+        add(logoPanel);
+        
         background.setBounds(0, 0, 1440, 960);
+        
         
         loginSwitch = new CardLayout();
         loginContainer = new JPanel(loginSwitch);
 
         loginCus = new JPanel(null);
         loginStf = new JPanel(null);
-
+        
+        
         loginContainer.add(loginCus,"customer");
         loginContainer.add(loginStf,"staff");
 
@@ -64,7 +94,7 @@ public class LoginUI extends JFrame  implements ActionListener {
         txtAccNo = new JTextField();
         txtAccNo.setBounds(45,130,350,35);
 
-        JLabel lblPin = new JLabel("PIN");
+        JLabel lblPin = new JLabel("Password");
         lblPin.setBounds(45,180,200,30);
         lblPin.setForeground(cs.gray);
         txtPin = new JPasswordField("1234");

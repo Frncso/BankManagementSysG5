@@ -10,5 +10,6 @@ public class ColorScheme {
     protected final Color btnColorUnselect = new Color(243, 240, 247); // universal btn color select
     protected final Color lightPurple = new Color(167, 139, 251); // light purple universal
     protected final Color darkPurple = new Color(91, 33, 183); // dark purple universal
+    protected final Color darkerPurple = new Color(25, 1, 61); // very dark purple
     
 }

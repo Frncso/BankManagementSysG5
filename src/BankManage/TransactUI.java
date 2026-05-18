@@ -10,7 +10,7 @@ public class TransactUI extends JFrame implements ActionListener {
     
     // panels
     
-    private JPanel sidebarPanel, mainContentPanel; // gamitin nyo mainContentPanel para mag lagay ng content na hindi mag ooverlap kay sidebar
+    private final JPanel sidebarPanel, mainContentPanel, linePanel; // gamitin nyo mainContentPanel para mag lagay ng content na hindi mag ooverlap kay sidebar
     
     // import images
     
@@ -38,18 +38,6 @@ public class TransactUI extends JFrame implements ActionListener {
     private Image savingsScale = savingsRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon savingsIcon = new ImageIcon(savingsScale);
     
-    java.net.URL historyImgURL = CustomerDashboard.class.getResource("resources/history.png");
-    
-    private ImageIcon historyRaw = new ImageIcon(historyImgURL);
-    private Image historyScale = historyRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon historyIcon = new ImageIcon(historyScale);
-    
-    java.net.URL summaryImgURL = CustomerDashboard.class.getResource("resources/summary.png");
-    
-    private ImageIcon summaryRaw = new ImageIcon(summaryImgURL);
-    private Image summaryScale = summaryRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon summaryIcon = new ImageIcon(summaryScale);
-    
     java.net.URL accountsImgURL = CustomerDashboard.class.getResource("resources/accounts.png");
     
     private ImageIcon accountsRaw = new ImageIcon(accountsImgURL);
@@ -62,6 +50,24 @@ public class TransactUI extends JFrame implements ActionListener {
     private Image logoutScale = logoutRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon logoutIcon = new ImageIcon(logoutScale);
     
+    java.net.URL withdrawImgURL = CustomerDashboard.class.getResource("resources/withdraw.png");
+    
+    private ImageIcon withdrawRaw = new ImageIcon(withdrawImgURL);
+    private Image withdrawScale = withdrawRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon withdrawIcon = new ImageIcon(withdrawScale);
+    
+    java.net.URL depositImgURL = CustomerDashboard.class.getResource("resources/deposit.png");
+    
+    private ImageIcon depositRaw = new ImageIcon(depositImgURL);
+    private Image depositScale = depositRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon depositIcon = new ImageIcon(depositScale);
+    
+    java.net.URL transferImgURL = CustomerDashboard.class.getResource("resources/transfer.png");
+    
+    private ImageIcon transferRaw = new ImageIcon(transferImgURL);
+    private Image transferScale = transferRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon transferIcon = new ImageIcon(transferScale);
+    
     // logo
     
     java.net.URL logoImgURL = CustomerDashboard.class.getResource("resources/bluewhiteLogo.png");
@@ -72,8 +78,14 @@ public class TransactUI extends JFrame implements ActionListener {
     
     // sidebar
     
-    private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, historyBtn, summaryBtn, accountsBtn, logoutBtn;
+    private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, accountsBtn, logoutBtn;
     private final JLabel logoName;
+    
+    // main contnet
+    
+    private final JLabel dashboardTitle;
+    
+    //
     
     private JPanel fPanel, sPanel, tPanel;
     private JPanel transactconPanel;
@@ -86,6 +98,33 @@ public class TransactUI extends JFrame implements ActionListener {
     private JButton innerDepositBtn, innerWithdrawBtn, innerTransferBtn;
     private JButton depstfiBtn, withdrBtn, transFBtn;
 
+    // transact tbl
+    
+    private JLabel transactlbl;
+    private JTable recenttransacttbl;
+    private JScrollPane recentnoScroll;
+    
+    protected String[] recentColumns = {
+        "Name", "Date", "Status", "Amount"
+    };
+    
+    protected String[][] sampleData = {
+        {"PayPal Transfer", "May 10, 2026", "Completed", "+₱25,120.50"},
+        {"Roblox 1000 ROBUX", "May 5, 2026", "Declined", "=₱0.00"},
+        {"Minecraft Cape", "January 7, 2026", "Completed", "-₱250.00"},
+        {"Minecraft Bundle", "January 6, 2026", "Completed", "-₱1,600.00"},
+        {"Robux 20USD Gift Card", "January 1, 2026", "Completed", "-₱1,200.00"},
+        {"Patreon Membership ", "January 1, 2026", "Completed", "-₱300.00"},
+        {"Minecraft Gift", "January 1, 2026", "Completed", "-₱1,600.00"},
+        {"YouTube Premium Yearly", "December 25, 2025", "Completed", "-₱2,000.00"},
+        {"PayPal Transfer", "December 24, 2025", "Completed", "₱+50,600.00"},
+        {"Robux 20USD Gift Card", "December 1, 2026", "Completed", "-₱1,200.00"},
+        {"Patreon Membership ", "December 1, 2026", "Completed", "-₱300.00"},
+        {"Minecraft Merch", "November 1, 2026", "Completed", "-₱1,600.00"},
+        {"Spotify Premium Yearly", "September 25, 2025", "Completed", "-₱2,000.00"},
+        {"PayPal Transfer", "September 24, 2025", "Completed", "+₱10,600.00"}
+    };
+    
     private JLabel formHeaderTitle, labelAction, labelFrom, labelTo, labelAmount, labelDesc;
     private JTextField txtFrom, txtTo, txtAmount, txtDesc;
     
@@ -169,40 +208,10 @@ public class TransactUI extends JFrame implements ActionListener {
         savingsBtn.setIconTextGap(8);
         sidebarPanel.add(savingsBtn);
         
-        // history
-        
-        historyBtn = new JButton("History", historyIcon);
-        historyBtn.setBounds(0, 220, 180, 40);
-        historyBtn.setBackground(cs.darkPurple);
-        historyBtn.setForeground(cs.white);
-        historyBtn.setFocusPainted(false);
-        historyBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
-        historyBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        historyBtn.setIconTextGap(8);
-        sidebarPanel.add(historyBtn);
-        
-        // summary
-        
-        summaryBtn = new JButton("Summary", summaryIcon);
-        summaryBtn.setBounds(0, 260, 180, 40);
-        summaryBtn.setBackground(cs.darkPurple);
-        summaryBtn.setForeground(cs.white);
-        summaryBtn.setFocusPainted(false);
-        summaryBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
-        summaryBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        summaryBtn.setIconTextGap(8);
-        sidebarPanel.add(summaryBtn);
-        
         // accounts
         
         accountsBtn = new JButton("Accounts", accountsIcon);
-        accountsBtn.setBounds(0, 300, 180, 40);
+        accountsBtn.setBounds(0, 220, 180, 40);
         accountsBtn.setBackground(cs.darkPurple);
         accountsBtn.setForeground(cs.white);
         accountsBtn.setFocusPainted(false);
@@ -241,35 +250,52 @@ public class TransactUI extends JFrame implements ActionListener {
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
         
+        dashboardTitle = new JLabel("Transactions");
+        dashboardTitle.setBounds(30, 15, 100, 20);
+        dashboardTitle.setFont(new Font("", Font.BOLD, 16));
+        mainContentPanel.add(dashboardTitle);
+        
+        linePanel = new JPanel();
+        
+        linePanel.setBounds(30, 50, 1185, 3);
+        linePanel.setBackground(cs.darkPurple);
+        mainContentPanel.add(linePanel);
+        
         fPanel = new JPanel();
         fPanel.setLayout(null);
         fPanel.setBackground(Color.WHITE);
         fPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        fPanel.setBounds(50, 40, 360, 200); 
+        fPanel.setBounds(30, 80, 360, 200); 
         mainContentPanel.add(fPanel);
         
         fTitle = new JLabel("VaultBank Deposit");
         fTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        fTitle.setForeground(cs.darkerPurple);
         fTitle.setBounds(20, 15, 300, 25);
         fPanel.add(fTitle); 
         
         fPhp = new JLabel("PHP ₱239,691.12"); 
         fPhp.setFont(new Font("Arial", Font.BOLD, 22));
+        fPhp.setForeground(cs.darkerPurple);
         fPhp.setBounds(20, 50, 300, 35);
         fPanel.add(fPhp);
         
         fSub = new JLabel("Current");
-        fSub.setFont(new Font("Arial", Font.PLAIN, 13));
         fSub.setForeground(Color.GRAY);
         fSub.setBounds(20, 90, 100, 20);
         fPanel.add(fSub); 
         
-        innerDepositBtn = new JButton("Deposit");
+        innerDepositBtn = new JButton("Deposit", depositIcon);
         innerDepositBtn.setBounds(20, 130, 320, 45);
-        innerDepositBtn.setBackground(new Color(138, 43, 226));
+        innerDepositBtn.setBackground(cs.darkPurple);
         innerDepositBtn.setForeground(Color.WHITE);
-        innerDepositBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        innerDepositBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        innerDepositBtn.setFocusPainted(false);
+        innerDepositBtn.setBorderPainted(false);
+        
+        innerDepositBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        innerDepositBtn.setMargin(new Insets(0, 0, 0, 10));
+        innerDepositBtn.setIconTextGap(10);
+
         innerDepositBtn.addActionListener(this);
         fPanel.add(innerDepositBtn);
         
@@ -277,31 +303,37 @@ public class TransactUI extends JFrame implements ActionListener {
         sPanel.setLayout(null);
         sPanel.setBackground(Color.WHITE);
         sPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        sPanel.setBounds(440, 40, 360, 200); 
+        sPanel.setBounds(440, 80, 360, 200); 
         mainContentPanel.add(sPanel);
         
         sTitle = new JLabel("VaultBank Withdrawals");
         sTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        sTitle.setForeground(cs.darkerPurple);
         sTitle.setBounds(20, 15, 300, 25);
         sPanel.add(sTitle); 
         
         sPhp = new JLabel("PHP -₱68,823.67"); 
         sPhp.setFont(new Font("Arial", Font.BOLD, 22));
+        sPhp.setForeground(cs.darkerPurple);
         sPhp.setBounds(20, 50, 300, 35);
         sPanel.add(sPhp); 
         
         sSub = new JLabel("Recorded");
-        sSub.setFont(new Font("Arial", Font.PLAIN, 13));
         sSub.setForeground(Color.GRAY);
         sSub.setBounds(20, 90, 100, 20);
         sPanel.add(sSub); 
 
-        innerWithdrawBtn = new JButton("Withdraw"); 
+        innerWithdrawBtn = new JButton("Withdraw", withdrawIcon); 
         innerWithdrawBtn.setBounds(20, 130, 320, 45);
-        innerWithdrawBtn.setBackground(new Color(138, 43, 226));
+        innerWithdrawBtn.setBackground(cs.darkPurple);
         innerWithdrawBtn.setForeground(Color.WHITE);
-        innerWithdrawBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        innerWithdrawBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        innerWithdrawBtn.setFocusPainted(false);
+        innerWithdrawBtn.setBorderPainted(false);
+        
+        innerWithdrawBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        innerWithdrawBtn.setMargin(new Insets(0, 0, 0, 10));
+        innerWithdrawBtn.setIconTextGap(10);
+        
         innerWithdrawBtn.addActionListener(this);
         sPanel.add(innerWithdrawBtn);
         
@@ -309,79 +341,83 @@ public class TransactUI extends JFrame implements ActionListener {
         tPanel.setLayout(null);
         tPanel.setBackground(Color.WHITE);
         tPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        tPanel.setBounds(830, 40, 360, 200); 
+        tPanel.setBounds(855, 80, 360, 200); 
         mainContentPanel.add(tPanel);
         
         tTitle = new JLabel("VaultBank Recent activity");
         tTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        tTitle.setForeground(cs.darkerPurple);
         tTitle.setBounds(20, 15, 300, 25);
         tPanel.add(tTitle);
         
         tPhp = new JLabel("PHP -₱20,000.00"); 
         tPhp.setFont(new Font("Arial", Font.BOLD, 22));
+        tPhp.setForeground(cs.darkerPurple);
         tPhp.setBounds(20, 50, 300, 35);
         tPanel.add(tPhp);
         
         tSub = new JLabel("Funds");
-        tSub.setFont(new Font("Arial", Font.PLAIN, 13));
         tSub.setForeground(Color.GRAY);
         tSub.setBounds(20, 90, 100, 20);
         tPanel.add(tSub);
         
-        innerTransferBtn = new JButton("Transfer");
+        innerTransferBtn = new JButton("Transfer", transferIcon);
         innerTransferBtn.setBounds(20, 130, 320, 45);
-        innerTransferBtn.setBackground(new Color(138, 43, 226));
+        innerTransferBtn.setBackground(cs.darkPurple);
         innerTransferBtn.setForeground(Color.WHITE);
-        innerTransferBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        innerTransferBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
+        innerTransferBtn.setFocusPainted(false);
+        innerTransferBtn.setBorderPainted(false);
+        
+        innerTransferBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        innerTransferBtn.setMargin(new Insets(0, 0, 0, 10));
+        innerTransferBtn.setIconTextGap(10);
+        
         innerTransferBtn.addActionListener(this);
         tPanel.add(innerTransferBtn);
       
         transactconPanel = new JPanel();
         transactconPanel.setLayout(null);
+        transactconPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         transactconPanel.setBackground(Color.WHITE);
-        transactconPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        transactconPanel.setBounds(50, 270, 1140, 470); 
+        transactconPanel.setBounds(30, 310, 1185, 570); 
         mainContentPanel.add(transactconPanel);
         
-        transactconTitleLabel = new JLabel("Transactions:");
-        transactconTitleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        transactconTitleLabel.setBounds(30, 25, 200, 30);
-        transactconPanel.add(transactconTitleLabel);
+        transactlbl = new JLabel("Transactions"); 
+        transactlbl.setBounds(20, 20, 250, 20);
+        transactlbl.setFont(new Font("", Font.BOLD, 18));
+        transactlbl.setForeground(cs.darkerPurple);
+        transactconPanel.add(transactlbl);
         
-        depstfiBtn = new JButton("deposit");
-        depstfiBtn.setBounds(760, 25, 100, 30);
-        depstfiBtn.setBackground(new Color(138, 43, 226));
-        depstfiBtn.setForeground(Color.WHITE);
-        depstfiBtn.setFont(new Font("Arial", Font.BOLD, 13));
-        depstfiBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-        depstfiBtn.addActionListener(this);
-        transactconPanel.add(depstfiBtn); 
+        recenttransacttbl = new JTable(sampleData, recentColumns);
+        recenttransacttbl.setRowHeight(40);
+        recenttransacttbl.setFont(new Font("Arial", Font.PLAIN, 14));
+        recenttransacttbl.setFocusable(false);
+        recenttransacttbl.getTableHeader().setReorderingAllowed(false);
+        recenttransacttbl.getTableHeader().setBackground(cs.darkPurple);
+        recenttransacttbl.getTableHeader().setForeground(cs.white);
+        recenttransacttbl.setSelectionBackground(cs.lightPurple);
+        recenttransacttbl.setSelectionForeground(cs.white);
+        recenttransacttbl.setShowGrid(false);
+        recenttransacttbl.setDefaultEditor(Object.class, null);
         
-        withdrBtn = new JButton("withdraw");
-        withdrBtn.setBounds(880, 25, 100, 30);
-        withdrBtn.setBackground(new Color(138, 43, 226));
-        withdrBtn.setForeground(Color.WHITE);
-        withdrBtn.setFont(new Font("Arial", Font.BOLD, 13));
-        withdrBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-        withdrBtn.addActionListener(this);
-        transactconPanel.add(withdrBtn); 
+        recenttransacttbl.getTableHeader().setFont(
+            new Font("Arial", Font.BOLD, 14)
+        );
+        recenttransacttbl.getTableHeader().setPreferredSize(
+            new Dimension(0, 45)
+        );
         
-        transFBtn = new JButton("transfer");
-        transFBtn.setBounds(1000, 25, 100, 30);
-        transFBtn.setBackground(new Color(138, 43, 226));
-        transFBtn.setForeground(Color.WHITE);
-        transFBtn.setFont(new Font("Arial", Font.BOLD, 13));
-        transFBtn.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-        transFBtn.addActionListener(this);
-        transactconPanel.add(transFBtn);  
+        // no scroll
+        
+        recentnoScroll = new JScrollPane(recenttransacttbl);
+        recentnoScroll.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        recentnoScroll.setBounds(20, 60, 1145, 490);
+        transactconPanel.add(recentnoScroll);
 
         // Sidebar Shortcuts
         homeBtn.addActionListener(this);
         balanceBtn.addActionListener(this);
         savingsBtn.addActionListener(this);
-        historyBtn.addActionListener(this);
-        summaryBtn.addActionListener(this);
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
     }
@@ -402,16 +438,6 @@ public class TransactUI extends JFrame implements ActionListener {
         else if(e.getSource() == savingsBtn){
             SavingsUI saveUI = new SavingsUI();
             saveUI.setVisible(true);
-            dispose();
-        }
-        else if(e.getSource() == historyBtn){
-            HistoryUI hisUI = new HistoryUI();
-            hisUI.setVisible(true);
-            dispose();
-        }
-        else if(e.getSource() == summaryBtn){
-            SummaryTransactUI sumUI = new SummaryTransactUI();
-            sumUI.setVisible(true);
             dispose();
         }
         else if(e.getSource() == accountsBtn){

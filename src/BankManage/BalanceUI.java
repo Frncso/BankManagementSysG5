@@ -2,7 +2,6 @@ package BankManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashSet;
 
 public class BalanceUI extends JFrame implements ActionListener {
 
@@ -10,7 +9,7 @@ public class BalanceUI extends JFrame implements ActionListener {
     
     // panels
     
-    private JPanel sidebarPanel, mainContentPanel;
+    private final JPanel sidebarPanel, mainContentPanel, linePanel;
     
     // import images
     
@@ -38,18 +37,6 @@ public class BalanceUI extends JFrame implements ActionListener {
     private Image savingsScale = savingsRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon savingsIcon = new ImageIcon(savingsScale);
     
-    java.net.URL historyImgURL = CustomerDashboard.class.getResource("resources/history.png");
-    
-    private ImageIcon historyRaw = new ImageIcon(historyImgURL);
-    private Image historyScale = historyRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon historyIcon = new ImageIcon(historyScale);
-    
-    java.net.URL summaryImgURL = CustomerDashboard.class.getResource("resources/summary.png");
-    
-    private ImageIcon summaryRaw = new ImageIcon(summaryImgURL);
-    private Image summaryScale = summaryRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon summaryIcon = new ImageIcon(summaryScale);
-    
     java.net.URL accountsImgURL = CustomerDashboard.class.getResource("resources/accounts.png");
     
     private ImageIcon accountsRaw = new ImageIcon(accountsImgURL);
@@ -72,8 +59,14 @@ public class BalanceUI extends JFrame implements ActionListener {
     
     // sidebar
     
-    private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, historyBtn, summaryBtn, accountsBtn, logoutBtn;
+    private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, accountsBtn, logoutBtn;
     private final JLabel logoName;
+    
+    // main content
+    
+    private final JLabel dashboardTitle;
+    
+    //
     
     public BalanceUI() {
         setTitle("Dashboard - Balance");
@@ -155,40 +148,10 @@ public class BalanceUI extends JFrame implements ActionListener {
         savingsBtn.setIconTextGap(8);
         sidebarPanel.add(savingsBtn);
         
-        // history
-        
-        historyBtn = new JButton("History", historyIcon);
-        historyBtn.setBounds(0, 220, 180, 40);
-        historyBtn.setBackground(cs.darkPurple);
-        historyBtn.setForeground(cs.white);
-        historyBtn.setFocusPainted(false);
-        historyBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
-        historyBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        historyBtn.setIconTextGap(8);
-        sidebarPanel.add(historyBtn);
-        
-        // summary
-        
-        summaryBtn = new JButton("Summary", summaryIcon);
-        summaryBtn.setBounds(0, 260, 180, 40);
-        summaryBtn.setBackground(cs.darkPurple);
-        summaryBtn.setForeground(cs.white);
-        summaryBtn.setFocusPainted(false);
-        summaryBtn.setBorderPainted(false);
-        
-        // icon beside button
-        
-        summaryBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        summaryBtn.setIconTextGap(8);
-        sidebarPanel.add(summaryBtn);
-        
         // accounts
         
         accountsBtn = new JButton("Accounts", accountsIcon);
-        accountsBtn.setBounds(0, 300, 180, 40);
+        accountsBtn.setBounds(0, 220, 180, 40);
         accountsBtn.setBackground(cs.darkPurple);
         accountsBtn.setForeground(cs.white);
         accountsBtn.setFocusPainted(false);
@@ -225,6 +188,17 @@ public class BalanceUI extends JFrame implements ActionListener {
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
         
+        dashboardTitle = new JLabel("Balance");
+        dashboardTitle.setBounds(30, 15, 100, 20);
+        dashboardTitle.setFont(new Font("", Font.BOLD, 16));
+        mainContentPanel.add(dashboardTitle);
+        
+        linePanel = new JPanel();
+        
+        linePanel.setBounds(30, 50, 1185, 3);
+        linePanel.setBackground(cs.darkPurple);
+        mainContentPanel.add(linePanel);
+        
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
         
@@ -233,8 +207,6 @@ public class BalanceUI extends JFrame implements ActionListener {
         transactBtn.addActionListener(this);
         homeBtn.addActionListener(this);
         savingsBtn.addActionListener(this);
-        historyBtn.addActionListener(this);
-        summaryBtn.addActionListener(this);
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
         
@@ -258,18 +230,6 @@ public class BalanceUI extends JFrame implements ActionListener {
         else if(e.getSource() == savingsBtn){
             SavingsUI saveUI = new SavingsUI();
             saveUI.setVisible(true);
-            dispose();
-        }
-        
-        else if(e.getSource() == historyBtn){
-            HistoryUI hisUI = new HistoryUI();
-            hisUI.setVisible(true);
-            dispose();
-        }
-        
-        else if(e.getSource() == summaryBtn){
-            SummaryTransactUI sumUI = new SummaryTransactUI();
-            sumUI.setVisible(true);
             dispose();
         }
         
