@@ -96,6 +96,11 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         acceptBtn.setBounds(30, 590, 150, 45);
         acceptBtn.setBackground(new Color(34, 139, 34));
         acceptBtn.setForeground(cs.white);
+        acceptBtn.setFocusPainted(false);
+        acceptBtn.setBorderPainted(false);
+        acceptBtn.setContentAreaFilled(true);
+        acceptBtn.setOpaque(true);
+        acceptBtn.setFont(new Font("Arial", Font.BOLD, 13));
         acceptBtn.addActionListener(this);
         mainContentPanel.add(acceptBtn);
 
@@ -103,6 +108,11 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         declineBtn.setBounds(200, 590, 150, 45);
         declineBtn.setBackground(new Color(178, 34, 34));
         declineBtn.setForeground(cs.white);
+        declineBtn.setFocusPainted(false);
+        declineBtn.setBorderPainted(false);
+        declineBtn.setContentAreaFilled(true);
+        declineBtn.setOpaque(true);
+        declineBtn.setFont(new Font("Arial", Font.BOLD, 13));
         declineBtn.addActionListener(this);
         mainContentPanel.add(declineBtn);
 
@@ -110,6 +120,11 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         returnBtn.setBounds(370, 590, 150, 45);
         returnBtn.setBackground(cs.darkPurple);
         returnBtn.setForeground(cs.white);
+        returnBtn.setFocusPainted(false);
+        returnBtn.setBorderPainted(false);
+        returnBtn.setContentAreaFilled(true);
+        returnBtn.setOpaque(true);
+        returnBtn.setFont(new Font("Arial", Font.BOLD, 13));
         returnBtn.addActionListener(this);
         mainContentPanel.add(returnBtn);
 

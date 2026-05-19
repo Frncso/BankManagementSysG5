@@ -86,7 +86,7 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
         accRequestBtn = makeSidebarBtn("Account Requests", accountsIcon, cs.darkPurple, 140);
         sidebarPanel.add(accRequestBtn);
 
-        transTrackerBtn = makeSidebarBtn("Transaction Tracker", trackerIcon, cs.btnColorSelect, 220);
+        transTrackerBtn = makeSidebarBtn("Transaction Tracker", trackerIcon, cs.btnColorSelect, 180);
         sidebarPanel.add(transTrackerBtn);
 
         logoutBtn = makeSidebarBtn("Logout", logoutIcon, cs.darkPurple, 840);

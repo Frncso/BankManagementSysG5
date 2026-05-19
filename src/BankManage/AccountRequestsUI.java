@@ -33,7 +33,13 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
     private final Image logoScale = logoRaw.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
     private final JLabel logo = new JLabel(new ImageIcon(logoScale));
     
-    private final JButton homeBtn, accRequestBtn, logoutBtn;
+    java.net.URL trackerImgURL = AdminDashboard.class.getResource("resources/tracker.png");
+
+    private ImageIcon trackerRaw = new ImageIcon(trackerImgURL);
+    private Image trackerScale = trackerRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon trackerIcon = new ImageIcon(trackerScale);
+    
+    private final JButton homeBtn, accRequestBtn, logoutBtn, transTrackerBtn;
     private final JLabel logoName;
     
     private final JLabel dashboardTitle, pendinglbl;
@@ -100,6 +106,16 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         logoutBtn.setIconTextGap(8);
         sidebarPanel.add(logoutBtn);
         
+        transTrackerBtn = new JButton("Transaction Tracker", trackerIcon);
+        transTrackerBtn.setBounds(0, 180, 180, 40);
+        transTrackerBtn.setBackground(cs.darkPurple);
+        transTrackerBtn.setForeground(cs.white);
+        transTrackerBtn.setFocusPainted(false);
+        transTrackerBtn.setBorderPainted(false);
+        transTrackerBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        transTrackerBtn.setIconTextGap(8);
+        sidebarPanel.add(transTrackerBtn);
+        
         sidebarPanel.setBackground(cs.purple);
         sidebarPanel.setBounds(0, 0, 180, 960);
         add(sidebarPanel);
@@ -156,6 +172,7 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         
         homeBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
+        transTrackerBtn.addActionListener(this);
     }
 
     @Override
@@ -169,6 +186,9 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
             LoginUI logUI = new LoginUI();
             logUI.setVisible(true);
             dispose();
-        }
+        } else if (e.getSource() == transTrackerBtn) {
+        new TransactionTrackerUI().setVisible(true);
+        dispose();
     }
+}
 }
