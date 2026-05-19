@@ -71,15 +71,14 @@ public class SavingsUI extends JFrame implements ActionListener {
     private JTextField monthsInputText;
     
     private JLabel dashboardTitle;
-    
-    // Cards for boxes
-    private JPanel lPanel, rPanel;
     private JLabel lTitle, lLabel, lcurLabel;
     private JLabel rTitle, rLabel, rAccrLabel;
-    private JButton targetBtn, completedBtn, viewGoalBtn;
-    
-    private JPanel achievedPanel;
     private JLabel achievedTitle, achievedCountLabel, achievedSubLabel;
+   
+    private JPanel lPanel, rPanel;
+    private JPanel achievedPanel;
+    
+    private JButton targetBtn, completedBtn, viewGoalBtn;
     private JButton viewAchievedBtn;
 
     public SavingsUI() {
@@ -200,7 +199,6 @@ public class SavingsUI extends JFrame implements ActionListener {
         mainContentPanel.add(dashboardTitle);
         
         linePanel = new JPanel();
-        
         linePanel.setBounds(30, 50, 1185, 3);
         linePanel.setBackground(cs.darkPurple);
         mainContentPanel.add(linePanel);
@@ -209,7 +207,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         lPanel.setLayout(null);
         lPanel.setBackground(Color.WHITE);
         lPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        lPanel.setBounds(30, 80, 540, 200);
+        lPanel.setBounds(30, 80, 580, 200); 
         mainContentPanel.add(lPanel);
         
         lTitle = new JLabel("VaultBank Savings Account");
@@ -229,7 +227,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         lPanel.add(lcurLabel); 
         
         targetBtn = new JButton("Target");
-        targetBtn.setBounds(20, 130, 150, 45);
+        targetBtn.setBounds(20, 130, 160, 45); 
         targetBtn.setBackground(cs.darkPurple); 
         targetBtn.setForeground(Color.WHITE);
         targetBtn.setFont(new Font("Arial", Font.BOLD, 15));
@@ -239,7 +237,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         lPanel.add(targetBtn);
         
         completedBtn = new JButton("Completed");
-        completedBtn.setBounds(185, 130, 150, 45);
+        completedBtn.setBounds(200, 130, 160, 45);
         completedBtn.setBackground(cs.darkPurple);
         completedBtn.setForeground(Color.WHITE);
         completedBtn.setFont(new Font("Arial", Font.BOLD, 15));
@@ -249,7 +247,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         lPanel.add(completedBtn);
         
         viewGoalBtn = new JButton("View GOAL");
-        viewGoalBtn.setBounds(350, 130, 170, 45);
+        viewGoalBtn.setBounds(380, 130, 180, 45);
         viewGoalBtn.setBackground(cs.darkPurple);
         viewGoalBtn.setForeground(Color.WHITE);
         viewGoalBtn.setFont(new Font("Arial", Font.BOLD, 15));
@@ -262,7 +260,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         rPanel.setLayout(null);
         rPanel.setBackground(Color.WHITE);
         rPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        rPanel.setBounds(675, 80, 540, 200);
+        rPanel.setBounds(635, 80, 580, 200); 
         mainContentPanel.add(rPanel);
         
         rTitle = new JLabel("VaultBank Interest Account");
@@ -272,7 +270,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         
         rLabel = new JLabel("PHP 4% Annual");
         rLabel.setFont(new Font("Arial", Font.BOLD, 22));
-        rLabel.setBounds(100, 52, 200, 35);
+        rLabel.setBounds(20, 52, 300, 35); 
         rPanel.add(rLabel);
         
         rAccrLabel = new JLabel("Months to Forecast:");
@@ -288,11 +286,11 @@ public class SavingsUI extends JFrame implements ActionListener {
         
         resultLabel = new JLabel("Result: ₱18,500.00");
         resultLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        resultLabel.setBounds(260, 90, 240, 25);
+        resultLabel.setBounds(215, 90, 240, 25); 
         rPanel.add(resultLabel);
         
         calculateBtn = new JButton("Calculate");
-        calculateBtn.setBounds(20, 130, 500, 45);
+        calculateBtn.setBounds(20, 130, 540, 45); 
         calculateBtn.setBackground(cs.darkPurple);
         calculateBtn.setForeground(Color.WHITE);
         calculateBtn.setFont(new Font("Arial", Font.BOLD, 15));
@@ -300,12 +298,12 @@ public class SavingsUI extends JFrame implements ActionListener {
         calculateBtn.setFocusable(false);
         calculateBtn.addActionListener(this);
         rPanel.add(calculateBtn);
-
+        
         achievedPanel = new JPanel();
         achievedPanel.setLayout(null);
         achievedPanel.setBackground(Color.WHITE);
         achievedPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        achievedPanel.setBounds(355, 310, 540, 200); 
+        achievedPanel.setBounds(335, 310, 540, 200); 
         mainContentPanel.add(achievedPanel);
         
         achievedTitle = new JLabel("VaultBank Achieved Goals");
@@ -329,8 +327,8 @@ public class SavingsUI extends JFrame implements ActionListener {
         viewAchievedBtn.setBackground(cs.darkPurple);
         viewAchievedBtn.setForeground(Color.WHITE);
         viewAchievedBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        viewGoalBtn.setBorderPainted(false);
-        viewGoalBtn.setFocusable(false);
+        viewAchievedBtn.setBorderPainted(false); 
+        viewAchievedBtn.setFocusable(false);     
         viewAchievedBtn.addActionListener(this);
         achievedPanel.add(viewAchievedBtn);
 
@@ -344,7 +342,6 @@ public class SavingsUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         
-       
          if(e.getSource() == transactBtn){
             TransactUI traUI = new TransactUI();
             traUI.setVisible(true);
@@ -375,5 +372,4 @@ public class SavingsUI extends JFrame implements ActionListener {
             dispose();
         }
     }
-    
 }
