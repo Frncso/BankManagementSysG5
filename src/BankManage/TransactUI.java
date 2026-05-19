@@ -450,5 +450,5 @@ public class TransactUI extends JFrame implements ActionListener {
             logUI.setVisible(true);
             dispose();
         }
+        }
     }
-}

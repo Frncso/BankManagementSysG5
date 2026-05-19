@@ -28,7 +28,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setResizable(false);
 
-        // Main---------------------------------------
+        //Main--------------------------------------
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
         mainContentPanel.setBounds(0, 0, 1440, 960);
@@ -43,7 +43,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         linePanel.setBackground(cs.darkPurple);
         mainContentPanel.add(linePanel);
 
-        // ================= SUMMARY PANEL =================
+        //Summary Panel--------------------------------------
         summaryPanel = new JPanel();
         summaryPanel.setLayout(null);
         summaryPanel.setBounds(30, 80, 700, 480);
@@ -91,7 +91,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
 
         mainContentPanel.add(summaryPanel);
 
-        //Buttons
+        //Buttons--------------------------------------
         acceptBtn = new JButton("Accept");
         acceptBtn.setBounds(30, 590, 150, 45);
         acceptBtn.setBackground(new Color(34, 139, 34));
