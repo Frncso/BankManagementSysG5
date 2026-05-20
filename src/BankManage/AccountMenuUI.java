@@ -497,9 +497,5 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         }
         
     }
-    public static void main(String[] args){
-        AccountMenuUI bu = new AccountMenuUI();
-        bu.setVisible(true);
-    }
     
 }
