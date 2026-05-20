@@ -60,9 +60,9 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
     };
     
     protected String[][] sampleData = {
-        {"REQ-101", "Ezekiel Francisco", "ezekiel@email.com", "Savings", "May 18, 2026"},
-        {"REQ-102", "Inigo Baseleres", "inigo@email.com", "Checking", "May 17, 2026"},
-        {"REQ-103", "Athea Rodriguez", "athea@email.com", "Savings", "May 16, 2026"},
+        {"REQ-001", "Ezekiel Francisco", "ezekiel@email.com", "Savings", "May 18, 2026"},
+        {"REQ-002", "Inigo Baseleres", "inigo@email.com", "Checking", "May 17, 2026"},
+        {"REQ-003", "Athea Rodriguez", "athea@email.com", "Savings", "May 16, 2026"},
     };
     
     public AccountRequestsUI() {

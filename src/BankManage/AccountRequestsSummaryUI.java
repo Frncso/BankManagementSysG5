@@ -16,7 +16,7 @@ public class AccountRequestsSummaryUI extends JFrame implements ActionListener {
     private final JButton acceptBtn, declineBtn, returnBtn;
     
     public AccountRequestsSummaryUI() {
-        setTitle("Requests Summary");
+        setTitle("Account Requests Summary");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setSize(800, 600);
@@ -59,7 +59,7 @@ public class AccountRequestsSummaryUI extends JFrame implements ActionListener {
         requestIDlbl.setFont(new Font("Arial", Font.BOLD, 15));
         summaryPanel.add(requestIDlbl);
         
-        requestIDval = new JLabel("REQ-101");
+        requestIDval = new JLabel("REQ-001");
         requestIDval.setBounds(250, 85, 400, 35);
         requestIDval.setFont(new Font("Arial", Font.PLAIN, 15));
         summaryPanel.add(requestIDval);

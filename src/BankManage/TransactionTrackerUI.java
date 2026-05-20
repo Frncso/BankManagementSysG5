@@ -75,9 +75,9 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
     };
 
     protected String[][] tableData = {
-        {"TXN-001", "ACC-12345", "Savings",  "Ezekiel", "Fully Booked",            "May 10, 2026",       "₱25,120.50", "Completed"},
-        {"TXN-002", "ACC-12346", "Checking", "Inigo",   "Nintendo Shop",           "May 5, 2026",        "₱0.00",      "Declined"},
-        {"TXN-003", "ACC-12347", "Savings",  "Athea",   "Fully Booked",            "January 7, 2026",    "₱250.00",    "Completed"},
+        {"TXN-001", "ACC-12345", "Savings",  "Ezekiel", "Fully Booked",            "May 25, 2026",       "₱25,120.50", "Completed"},
+        {"TXN-002", "ACC-12346", "Checking", "Inigo",   "Nintendo Shop",           "May 30, 2026",        "₱0.00",      "Declined"},
+        {"TXN-003", "ACC-12347", "Savings",  "Athea",   "Fully Booked",            "June 7, 2026",    "₱250.00",    "Completed"},
         {"TXN-004", "ACC-12348", "Savings",  "Maria",   "Food Panda",              "January 6, 2026",    "₱1,600.00",  "Completed"},
         {"TXN-005", "ACC-12349", "Checking", "Jose",    "The Golden Fur PH",       "January 1, 2026",    "₱1,200.00",  "Completed"},
         {"TXN-006", "ACC-12350", "Savings",  "Ana",     "Shopee Philippines",      "January 1, 2026",    "₱300.00",    "Completed"},

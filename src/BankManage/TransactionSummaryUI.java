@@ -35,7 +35,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         setTitle("Transaction Summary");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
-        setSize(593, 720);
+        setSize(800, 600);
         setLocationRelativeTo(null); 
         setResizable(false);
         
@@ -43,7 +43,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
-        mainContentPanel.setBounds(0, 0, 593, 720);
+        mainContentPanel.setBounds(0, 0, 800, 600);
         
         pageTitle = new JLabel("Transaction Summary");
         pageTitle.setBounds(30, 15, 300, 20);
@@ -52,7 +52,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         
         linePanel = new JPanel();
         
-        linePanel.setBounds(30, 50, 520, 3);
+        linePanel.setBounds(30, 50, 740, 3);
         linePanel.setBackground(cs.darkPurple);
         mainContentPanel.add(linePanel);
         
@@ -60,100 +60,100 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         
         summaryPanel = new JPanel();
         summaryPanel.setLayout(null);
-        summaryPanel.setBounds(30, 80, 520, 480);
+        summaryPanel.setBounds(50, 80, 700, 380);
         summaryPanel.setBackground(cs.white);
         summaryPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         
         summaryTitlelbl = new JLabel("Transaction Details"); 
-        summaryTitlelbl.setBounds(25, 20, 300, 30);
+        summaryTitlelbl.setBounds(35, 20, 300, 30);
         summaryTitlelbl.setFont(new Font("", Font.BOLD, 18));
         summaryTitlelbl.setForeground(cs.darkerPurple);
         summaryPanel.add(summaryTitlelbl);
         
         divider = new JPanel();
-        divider.setBounds(25, 58, 650, 2);
+        divider.setBounds(35, 60, 630, 2);
         divider.setBackground(cs.darkPurple);
         summaryPanel.add(divider);
         
         // static placeholder labels (plain & non-dynamic)
         
         txnIDlbl = new JLabel("Transaction ID:");
-        txnIDlbl.setBounds(25, 75, 200, 30);
+        txnIDlbl.setBounds(45, 75, 200, 30);
         txnIDlbl.setFont(new Font("Arial", Font.BOLD, 14));
         summaryPanel.add(txnIDlbl);
         
         txnIDval = new JLabel("TXN-001");
-        txnIDval.setBounds(230, 75, 430, 30);
+        txnIDval.setBounds(250, 75, 400, 30);
         txnIDval.setFont(new Font("Arial", Font.PLAIN, 14));
         summaryPanel.add(txnIDval);
         
         accountIDlbl = new JLabel("Account ID:");
-        accountIDlbl.setBounds(25, 123, 200, 30);
+        accountIDlbl.setBounds(45, 110, 200, 30);
         accountIDlbl.setFont(new Font("Arial", Font.BOLD, 14));
         summaryPanel.add(accountIDlbl);
         
         accountIDval = new JLabel("ACC-12345");
-        accountIDval.setBounds(230, 123, 430, 30);
+        accountIDval.setBounds(250, 110, 400, 30);
         accountIDval.setFont(new Font("Arial", Font.PLAIN, 14));
         summaryPanel.add(accountIDval);
         
         accountTypelbl = new JLabel("Account Type:");
-        accountTypelbl.setBounds(25, 171, 200, 30);
+        accountTypelbl.setBounds(45, 145, 200, 30);
         accountTypelbl.setFont(new Font("Arial", Font.BOLD, 14));
         summaryPanel.add(accountTypelbl);
         
         accountTypeval = new JLabel("Savings");
-        accountTypeval.setBounds(230, 171, 430, 30);
+        accountTypeval.setBounds(250, 145, 400, 30);
         accountTypeval.setFont(new Font("Arial", Font.PLAIN, 14));
         summaryPanel.add(accountTypeval);
         
         firstNamelbl = new JLabel("First Name:");
-        firstNamelbl.setBounds(25, 219, 200, 30);
+        firstNamelbl.setBounds(45, 180, 200, 30);
         firstNamelbl.setFont(new Font("Arial", Font.BOLD, 14));
         summaryPanel.add(firstNamelbl);
         
         firstNameval = new JLabel("Ezekiel");
-        firstNameval.setBounds(230, 219, 430, 30);
+        firstNameval.setBounds(250, 180, 400, 30);
         firstNameval.setFont(new Font("Arial", Font.PLAIN, 14));
         summaryPanel.add(firstNameval);
         
         purchaseNamelbl = new JLabel("Purchase Name:");
-        purchaseNamelbl.setBounds(25, 267, 200, 30);
+        purchaseNamelbl.setBounds(45, 215, 200, 30);
         purchaseNamelbl.setFont(new Font("Arial", Font.BOLD, 14));
         summaryPanel.add(purchaseNamelbl);
         
         purchaseNameval = new JLabel("Fully Booked");
-        purchaseNameval.setBounds(230, 267, 430, 30);
+        purchaseNameval.setBounds(250, 215, 400, 30);
         purchaseNameval.setFont(new Font("Arial", Font.PLAIN, 14));
         summaryPanel.add(purchaseNameval);
         
         datelbl = new JLabel("Date:");
-        datelbl.setBounds(25, 315, 200, 30);
+        datelbl.setBounds(45, 250, 200, 30);
         datelbl.setFont(new Font("Arial", Font.BOLD, 14));
         summaryPanel.add(datelbl);
         
-        dateval = new JLabel("May 10, 2026");
-        dateval.setBounds(230, 315, 430, 30);
+        dateval = new JLabel("May 25, 2026");
+        dateval.setBounds(250, 250, 400, 30);
         dateval.setFont(new Font("Arial", Font.PLAIN, 14));
         summaryPanel.add(dateval);
         
         amountlbl = new JLabel("Amount:");
-        amountlbl.setBounds(25, 363, 200, 30);
+        amountlbl.setBounds(45, 285, 200, 30);
         amountlbl.setFont(new Font("Arial", Font.BOLD, 14));
         summaryPanel.add(amountlbl);
         
         amountval = new JLabel("₱25,120.50");
-        amountval.setBounds(230, 363, 430, 30);
+        amountval.setBounds(250, 285, 400, 30);
         amountval.setFont(new Font("Arial", Font.PLAIN, 14));
         summaryPanel.add(amountval);
         
         statuslbl = new JLabel("Status:");
-        statuslbl.setBounds(25, 411, 200, 30);
+        statuslbl.setBounds(45, 320, 200, 30);
         statuslbl.setFont(new Font("Arial", Font.BOLD, 14));
         summaryPanel.add(statuslbl);
         
         statusval = new JLabel("Completed");
-        statusval.setBounds(230, 411, 430, 30);
+        statusval.setBounds(250, 320, 400, 30);
         statusval.setFont(new Font("Arial", Font.PLAIN, 14));
         summaryPanel.add(statusval);
         
@@ -162,7 +162,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         // buttons
         
         acceptBtn = new JButton("Accept");
-        acceptBtn.setBounds(30, 590, 150, 45);
+        acceptBtn.setBounds(50, 480, 150, 40);
         acceptBtn.setBackground(new Color(34, 139, 34));
         acceptBtn.setForeground(cs.white);
         acceptBtn.setFocusPainted(false);
@@ -171,7 +171,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         mainContentPanel.add(acceptBtn);
         
         declineBtn = new JButton("Decline");
-        declineBtn.setBounds(200, 590, 150, 45);
+        declineBtn.setBounds(220, 480, 150, 40);
         declineBtn.setBackground(new Color(178, 34, 34));
         declineBtn.setForeground(cs.white);
         declineBtn.setFocusPainted(false);
@@ -180,12 +180,12 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         mainContentPanel.add(declineBtn);
         
         returnBtn = new JButton("Return");
-        returnBtn.setBounds(370, 590, 150, 45);
+        returnBtn.setBounds(600, 480, 150, 40);
         returnBtn.setBackground(cs.darkPurple);
         returnBtn.setForeground(cs.white);
         returnBtn.setFocusPainted(false);
         returnBtn.setBorderPainted(false);
-        returnBtn.setFont(new Font("Arial", Font.BOLD, 13));
+        returnBtn.setFont(new Font("Arial", Font.BOLD, 14));
         mainContentPanel.add(returnBtn);
         
         add(mainContentPanel);
