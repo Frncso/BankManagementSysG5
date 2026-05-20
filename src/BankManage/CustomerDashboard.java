@@ -520,5 +520,9 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         //
         
     }
+    public static void main(String[] args){
+        CustomerDashboard bu = new CustomerDashboard();
+        bu.setVisible(true);
+    }
     
 }
