@@ -126,7 +126,7 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
         
         // account role
         
-        roleBtn = new JButton("Account Role", roleIcon);
+        roleBtn = new JButton("Account Controls", roleIcon);
         roleBtn.setBounds(0, 100, 180, 40);
         roleBtn.setBackground(cs.darkPurple);
         roleBtn.setForeground(cs.white);

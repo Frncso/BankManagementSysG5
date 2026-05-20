@@ -104,7 +104,7 @@ public class AccountRoleUI extends JFrame implements ActionListener{
         sidebarPanel.add(homeBtn);
 
         // Account Role Button (this will be the active/selected one)
-        roleBtn = new JButton("Account Role", accountsIcon);
+        roleBtn = new JButton("Account Controls", accountsIcon);
         roleBtn.setBounds(0, 100, 180, 40);
         roleBtn.setBackground(cs.btnColorSelect);
         roleBtn.setForeground(cs.white);

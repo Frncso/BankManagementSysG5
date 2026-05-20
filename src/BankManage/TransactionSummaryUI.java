@@ -35,7 +35,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         setTitle("Transaction Summary");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
-        setSize(1440, 960);
+        setSize(593, 720);
         setLocationRelativeTo(null); 
         setResizable(false);
         
@@ -43,7 +43,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
-        mainContentPanel.setBounds(0, 0, 1440, 960);
+        mainContentPanel.setBounds(0, 0, 593, 720);
         
         pageTitle = new JLabel("Transaction Summary");
         pageTitle.setBounds(30, 15, 300, 20);
@@ -52,7 +52,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         
         linePanel = new JPanel();
         
-        linePanel.setBounds(30, 50, 1185, 3);
+        linePanel.setBounds(30, 50, 520, 3);
         linePanel.setBackground(cs.darkPurple);
         mainContentPanel.add(linePanel);
         
@@ -60,7 +60,7 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         
         summaryPanel = new JPanel();
         summaryPanel.setLayout(null);
-        summaryPanel.setBounds(30, 80, 700, 480);
+        summaryPanel.setBounds(30, 80, 520, 480);
         summaryPanel.setBackground(cs.white);
         summaryPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         
@@ -222,6 +222,11 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
             dispose();
         }
         
+    }
+    
+    public static void main(String[] args){
+        TransactionSummaryUI tata = new TransactionSummaryUI();
+        tata.setVisible(true);
     }
     
 }

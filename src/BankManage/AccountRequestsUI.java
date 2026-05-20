@@ -97,7 +97,7 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         
         // account role
         
-        roleBtn = new JButton("Account Role", accountsIcon);
+        roleBtn = new JButton("Account Controls", accountsIcon);
         roleBtn.setBounds(0, 100, 180, 40);
         roleBtn.setBackground(cs.darkPurple);
         roleBtn.setForeground(cs.white);
