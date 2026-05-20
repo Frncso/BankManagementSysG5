@@ -88,13 +88,13 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     
     // mainContentPanel
     
-    private final JLabel dashboardTitle, welcomelbl, usrFName, datelbl, quicklbl;
+    private final JLabel dashboardTitle, welcomelbl, usrFName, datelbl;
     
     //
     
     // balance panel
     
-    private final JLabel vaultbankBalbl, availBalancelbl, availlbl;
+    private final JLabel vaultbankBalbl, availBalancelbl, availlbl, quicklbl;
     private final JButton withdrawBtn, depositBtn, transferBtn;
     
     //
@@ -519,11 +519,6 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         
         //
         
-    }
-    
-    public static void main(String[] args) {
-        CustomerDashboard cd = new CustomerDashboard();
-        cd.setVisible(true);
     }
     
 }

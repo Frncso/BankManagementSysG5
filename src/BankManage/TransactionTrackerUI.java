@@ -229,9 +229,4 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
             }
         }
     }
-
-    public static void main(String[] args) {
-        TransactionTrackerUI tt = new TransactionTrackerUI();
-        tt.setVisible(true);
-    }
 }

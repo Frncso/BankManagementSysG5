@@ -350,7 +350,7 @@ public class TransactUI extends JFrame implements ActionListener {
         tTitle.setBounds(20, 15, 300, 25);
         tPanel.add(tTitle);
         
-        tPhp = new JLabel("PHP -₱20,000.00"); 
+        tPhp = new JLabel("PHP +₱25,120.50"); 
         tPhp.setFont(new Font("Arial", Font.BOLD, 22));
         tPhp.setForeground(cs.darkerPurple);
         tPhp.setBounds(20, 50, 300, 35);

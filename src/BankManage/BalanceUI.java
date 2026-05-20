@@ -9,7 +9,7 @@ public class BalanceUI extends JFrame implements ActionListener {
     
     // panels
     
-    private final JPanel sidebarPanel, mainContentPanel, linePanel;
+    private final JPanel sidebarPanel, mainContentPanel, linePanel, accountsColumnPanel, balancePanel, savingsPanel, actionsColumnPanel, quickActionsPanel, insightsPanel;
     
     // import images
     
@@ -49,6 +49,24 @@ public class BalanceUI extends JFrame implements ActionListener {
     private Image logoutScale = logoutRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon logoutIcon = new ImageIcon(logoutScale);
     
+    java.net.URL historyImgURL = CustomerDashboard.class.getResource("resources/history.png");
+    
+    private ImageIcon historyRaw = new ImageIcon(historyImgURL);
+    private Image historyScale = historyRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon historyIcon = new ImageIcon(historyScale);
+    
+    java.net.URL withdrawImgURL = CustomerDashboard.class.getResource("resources/withdraw.png");
+    
+    private ImageIcon withdrawRaw = new ImageIcon(withdrawImgURL);
+    private Image withdrawScale = withdrawRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon withdrawIcon = new ImageIcon(withdrawScale);
+    
+    java.net.URL depositImgURL = CustomerDashboard.class.getResource("resources/deposit.png");
+    
+    private ImageIcon depositRaw = new ImageIcon(depositImgURL);
+    private Image depositScale = depositRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon depositIcon = new ImageIcon(depositScale);
+    
     // logo
     
     java.net.URL logoImgURL = CustomerDashboard.class.getResource("resources/bluewhiteLogo.png");
@@ -65,6 +83,46 @@ public class BalanceUI extends JFrame implements ActionListener {
     // main content
     
     private final JLabel dashboardTitle;
+    
+    // balance panel
+    
+    private final JLabel vaultbankBalbl, availBalancelbl, availlbl, quicklbl;
+    private final JButton gotoTransactionbtn;
+    protected String accNo = "ACC-1001";
+    
+    //
+    
+    // savings panel
+    
+    private final JLabel savingslbl, savingBalancelbl, savingavaillbl, savingquicklbl;
+    private final JButton gotoSavingsbtn, gotoHistorybtn;
+    
+    //
+    
+    // quick panel
+    
+    private final JLabel manageFundslbl, inputAmtLbl, selectAcclbl, actionlbl;
+    private final JButton withdrawBtn, depositBtn;
+    private JTextField inputAmttxb;
+    private JComboBox accountcmb;
+    
+    // not final
+    private String[] accountSelect = {
+        "Select Account",
+        accNo+" Checking",
+        accNo+" Saving"
+    };
+    
+    //
+    
+    // financial insights
+    
+    int yAutoSize = 245;
+    private JLabel insightlbl, totalBallbl, totallbl, breakdownlbl;
+    private JLabel account1lbl, account2lbl;
+    private double checkBal = 121502.60;
+    private double saveBal = 30242.55;
+    private double totalBal = checkBal + saveBal;
     
     //
     
@@ -199,6 +257,249 @@ public class BalanceUI extends JFrame implements ActionListener {
         linePanel.setBackground(cs.darkPurple);
         mainContentPanel.add(linePanel);
         
+        // accounts column panel
+        
+        accountsColumnPanel = new JPanel();
+        accountsColumnPanel.setLayout(null);
+        
+        // bal panel
+        
+        balancePanel = new JPanel();
+        balancePanel.setLayout(null);
+        balancePanel.setBounds(30, 80, 570, 245);
+        balancePanel.setBackground(cs.white);
+        balancePanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        
+        vaultbankBalbl = new JLabel(accNo+" Checking Balance"); 
+        vaultbankBalbl.setBounds(20, 20, 450, 20);
+        vaultbankBalbl.setFont(new Font("", Font.BOLD, 18));
+        vaultbankBalbl.setForeground(cs.darkerPurple);
+        balancePanel.add(vaultbankBalbl);
+        
+        availBalancelbl = new JLabel("₱"+String.valueOf(checkBal));
+        availBalancelbl.setBounds(20, 65, 300, 30);
+        availBalancelbl.setFont(new Font("Arial", Font.BOLD, 36));
+        availBalancelbl.setForeground(cs.darkerPurple);
+        balancePanel.add(availBalancelbl);
+        
+        quicklbl = new JLabel("Check History");
+        quicklbl.setBounds(20, 150, 150, 20);
+        quicklbl.setForeground(cs.darkerPurple);
+        balancePanel.add(quicklbl);
+        
+        availlbl = new JLabel("Available");
+        availlbl.setBounds(20, 108, 150, 20);
+        availlbl.setForeground(cs.gray);
+        balancePanel.add(availlbl);
+        
+        gotoTransactionbtn = new JButton("Go to Transactions", transactIcon);
+        gotoTransactionbtn.setBounds(20, 180, 530, 45);
+        gotoTransactionbtn.setBackground(cs.darkPurple);
+        gotoTransactionbtn.setForeground(cs.white);
+        gotoTransactionbtn.setFocusPainted(false);
+        gotoTransactionbtn.setBorderPainted(false);
+        
+        gotoTransactionbtn.setHorizontalAlignment(SwingConstants.CENTER);
+        gotoTransactionbtn.setMargin(new Insets(0, 0, 0, 10));
+        gotoTransactionbtn.setIconTextGap(10);
+        balancePanel.add(gotoTransactionbtn);
+        
+        accountsColumnPanel.add(balancePanel);
+        
+        // end bal
+        
+        // save panel
+        
+        savingsPanel = new JPanel();
+        savingsPanel.setLayout(null);
+        savingsPanel.setBounds(30, 350, 570, 245);
+        savingsPanel.setBackground(cs.white);
+        savingsPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        
+        savingslbl = new JLabel(accNo+" Savings Balance"); 
+        savingslbl.setBounds(20, 20, 450, 20);
+        savingslbl.setFont(new Font("", Font.BOLD, 18));
+        savingslbl.setForeground(cs.darkerPurple);
+        savingsPanel.add(savingslbl);
+        
+        savingBalancelbl = new JLabel("₱"+String.valueOf(saveBal));
+        savingBalancelbl.setBounds(20, 65, 300, 30);
+        savingBalancelbl.setFont(new Font("Arial", Font.BOLD, 36));
+        savingBalancelbl.setForeground(cs.darkerPurple);
+        savingsPanel.add(savingBalancelbl);
+
+        savingavaillbl = new JLabel("Available");
+        savingavaillbl.setBounds(20, 108, 150, 20);
+        savingavaillbl.setForeground(cs.gray);
+        savingsPanel.add(savingavaillbl);
+        
+        savingquicklbl = new JLabel("Quick Actions");
+        savingquicklbl.setBounds(20, 150, 150, 20);
+        savingquicklbl.setForeground(cs.darkerPurple);
+        savingsPanel.add(savingquicklbl);
+        
+        gotoSavingsbtn = new JButton("Go To Savings", savingsIcon);
+        gotoSavingsbtn.setBounds(20, 180, 255, 45);
+        gotoSavingsbtn.setBackground(cs.darkPurple);
+        gotoSavingsbtn.setForeground(cs.white);
+        gotoSavingsbtn.setFocusPainted(false);
+        gotoSavingsbtn.setBorderPainted(false);
+        
+        gotoSavingsbtn.setHorizontalAlignment(SwingConstants.CENTER);
+        gotoSavingsbtn.setMargin(new Insets(0, 0, 0, 10));
+        gotoSavingsbtn.setIconTextGap(10);
+        savingsPanel.add(gotoSavingsbtn);
+        
+        gotoHistorybtn = new JButton("Goal History", historyIcon);
+        gotoHistorybtn.setBounds(295, 180, 255, 45);
+        gotoHistorybtn.setBackground(cs.darkPurple);
+        gotoHistorybtn.setForeground(cs.white);
+        gotoHistorybtn.setFocusPainted(false);
+        gotoHistorybtn.setBorderPainted(false);
+        
+        gotoHistorybtn.setHorizontalAlignment(SwingConstants.CENTER);
+        gotoHistorybtn.setMargin(new Insets(0, 0, 0, 10));
+        gotoHistorybtn.setIconTextGap(10);
+        savingsPanel.add(gotoHistorybtn);
+        
+        accountsColumnPanel.add(savingsPanel);
+        
+        // end save
+        
+        // actions column panel
+        
+        actionsColumnPanel = new JPanel();
+        actionsColumnPanel.setLayout(null);
+        
+        // quick actions
+        
+        quickActionsPanel = new JPanel();
+        quickActionsPanel.setLayout(null);
+        quickActionsPanel.setBounds(15, 80, 570, 245);
+        quickActionsPanel.setBackground(cs.white);
+        quickActionsPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        actionsColumnPanel.add(quickActionsPanel);
+        
+        manageFundslbl = new JLabel("Manage Funds");
+        manageFundslbl.setBounds(20, 20, 250, 20);
+        manageFundslbl.setFont(new Font("", Font.BOLD, 18));
+        manageFundslbl.setForeground(cs.darkerPurple);
+        quickActionsPanel.add(manageFundslbl);
+        
+        inputAmtLbl = new JLabel("Input Amount");
+        inputAmtLbl.setBounds(20, 60, 250, 20);
+        inputAmtLbl.setForeground(cs.darkerPurple);
+        quickActionsPanel.add(inputAmtLbl);
+        
+        inputAmttxb = new JTextField("");
+        inputAmttxb.setBounds(20, 90, 255, 35);
+        inputAmttxb.setBackground(cs.white);
+        quickActionsPanel.add(inputAmttxb);
+        
+        selectAcclbl = new JLabel("Choose Account");
+        selectAcclbl.setBounds(295, 60, 250, 20);
+        selectAcclbl.setForeground(cs.darkerPurple);
+        quickActionsPanel.add(selectAcclbl);
+        
+        accountcmb = new JComboBox<>(accountSelect);
+        accountcmb.setBounds(295, 90, 255, 35);
+        accountcmb.setSelectedIndex(0);
+        accountcmb.setBackground(cs.white);
+        accountcmb.setForeground(cs.gray);
+        quickActionsPanel.add(accountcmb);
+        
+        actionlbl = new JLabel("Choose Action");
+        actionlbl.setBounds(20, 150, 250, 20);
+        actionlbl.setForeground(cs.darkerPurple);
+        quickActionsPanel.add(actionlbl);
+        
+        depositBtn = new JButton("Deposit", depositIcon);
+        depositBtn.setBounds(20, 180, 255, 45);
+        depositBtn.setBackground(cs.darkPurple);
+        depositBtn.setForeground(cs.white);
+        depositBtn.setFocusPainted(false);
+        depositBtn.setBorderPainted(false);
+        depositBtn.addActionListener(this);
+        
+        depositBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        depositBtn.setMargin(new Insets(0, 0, 0, 10));
+        depositBtn.setIconTextGap(10);
+        quickActionsPanel.add(depositBtn);
+        
+        withdrawBtn = new JButton("Withdraw", withdrawIcon);
+        withdrawBtn.setBounds(295, 180, 255, 45);
+        withdrawBtn.setBackground(cs.darkPurple);
+        withdrawBtn.setForeground(cs.white);
+        withdrawBtn.setFocusPainted(false);
+        withdrawBtn.setBorderPainted(false);
+        withdrawBtn.addActionListener(this);
+        
+        withdrawBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        withdrawBtn.setMargin(new Insets(0, 0, 0, 10));
+        withdrawBtn.setIconTextGap(10);
+        quickActionsPanel.add(withdrawBtn);
+        
+        mainContentPanel.add(actionsColumnPanel);
+        
+        // end input
+        
+        // brief history panel
+        
+        insightsPanel = new JPanel();
+        insightsPanel.setLayout(null);
+        insightsPanel.setBounds(15, 350, 570, yAutoSize);
+        insightsPanel.setBackground(cs.white);
+        insightsPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        
+        insightlbl = new JLabel("Financial Insights"); 
+        insightlbl.setBounds(20, 20, 450, 20);
+        insightlbl.setFont(new Font("", Font.BOLD, 18));
+        insightlbl.setForeground(cs.darkerPurple);
+        insightsPanel.add(insightlbl);
+        
+        totalBallbl = new JLabel("₱"+String.valueOf(totalBal));
+        totalBallbl.setBounds(20, 65, 300, 30);
+        totalBallbl.setFont(new Font("Arial", Font.BOLD, 36));
+        totalBallbl.setForeground(cs.darkerPurple);
+        insightsPanel.add(totalBallbl);
+        
+        totallbl = new JLabel("Total Balance Across Accounts");
+        totallbl.setBounds(20, 108, 250, 20);
+        totallbl.setForeground(cs.gray);
+        insightsPanel.add(totallbl);
+        
+        breakdownlbl = new JLabel("Breakdown"); 
+        breakdownlbl.setBounds(20, 150, 450, 20);
+        breakdownlbl.setFont(new Font("", Font.BOLD, 18));
+        breakdownlbl.setForeground(cs.darkerPurple);
+        insightsPanel.add(breakdownlbl);
+        
+        account1lbl = new JLabel(accNo + " Checking Balance: ₱"+ String.valueOf(checkBal));
+        account1lbl.setBounds(20, 180, 450, 20);
+        account1lbl.setForeground(cs.gray);
+        insightsPanel.add(account1lbl);
+        
+        account2lbl = new JLabel(accNo + " Saving Balance: ₱"+ String.valueOf(saveBal));
+        account2lbl.setBounds(20, 200, 450, 20);
+        account2lbl.setForeground(cs.gray);
+        insightsPanel.add(account2lbl);
+        
+        actionsColumnPanel.add(insightsPanel);
+        
+        // end linked
+        
+        // end actions
+        
+        accountsColumnPanel.setBounds(0, 0, 630, 960);
+        actionsColumnPanel.setBounds(630, 0, 630, 960);
+        mainContentPanel.add(accountsColumnPanel);
+        mainContentPanel.add(actionsColumnPanel);
+        
+        // end acc column panel
+        
+
+        //
+        
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
         
@@ -246,6 +547,11 @@ public class BalanceUI extends JFrame implements ActionListener {
             dispose();
         }
         
+    }
+    
+    public static void main(String[] args){
+        BalanceUI bu = new BalanceUI();
+        bu.setVisible(true);
     }
     
 }

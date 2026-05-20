@@ -56,6 +56,7 @@ public class RegisterUI extends JFrame implements ActionListener{
     
     private final String[] year = new String[127];
     private final int startYear = 1900;
+    private int accInt = 0;
     
     private final String[] staffType = {
         "Select Position",
@@ -551,7 +552,8 @@ public class RegisterUI extends JFrame implements ActionListener{
             String fname = txtFName.getText();
             String lname = txtLName.getText();
             String birthday = (String) cbxDay.getSelectedItem();
-            accountNumber = fname.substring(0,2).toUpperCase()+lname.substring(0,2).toUpperCase()+"-"+"2026-"+birthday;
+            accInt++;
+            accountNumber = fname.substring(0,2).toUpperCase()+lname.substring(0,2).toUpperCase()+"-2026-"+birthday+"-"+accInt;
             
             JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
             System.out.println("Account Number: "+accountNumber);
