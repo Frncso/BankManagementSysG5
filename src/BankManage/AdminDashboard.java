@@ -43,11 +43,10 @@ public class AdminDashboard extends JFrame implements ActionListener {
     private Image trackerScale = trackerRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon trackerIcon = new ImageIcon(trackerScale);
 
-    // Account Role icon (reusing accounts.png to match existing resources and clean look)
-    java.net.URL roleImgURL = AdminDashboard.class.getResource("resources/accounts.png");
-    private ImageIcon roleRaw = new ImageIcon(roleImgURL);
-    private Image roleScale = roleRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon roleIcon = new ImageIcon(roleScale);
+    java.net.URL reqImgURL = AdminDashboard.class.getResource("resources/requests.png");
+    private ImageIcon reqRaw = new ImageIcon(reqImgURL);
+    private Image reqScale = reqRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon reqIcon = new ImageIcon(reqScale);
 
     // sidebar
     
@@ -130,7 +129,7 @@ public class AdminDashboard extends JFrame implements ActionListener {
         
         // account role
         
-        roleBtn = new JButton("Account Role", roleIcon);
+        roleBtn = new JButton("Account Role", accountsIcon);
         roleBtn.setBounds(0, 100, 180, 40);
         roleBtn.setBackground(cs.darkPurple);
         roleBtn.setForeground(cs.white);
@@ -143,7 +142,7 @@ public class AdminDashboard extends JFrame implements ActionListener {
         
         // account requests
         
-        accRequestBtn = new JButton("Account Requests", accountsIcon);
+        accRequestBtn = new JButton("Account Requests", reqIcon);
         accRequestBtn.setBounds(0, 140, 180, 40);
         accRequestBtn.setBackground(cs.darkPurple);
         accRequestBtn.setForeground(cs.white);
@@ -253,7 +252,7 @@ public class AdminDashboard extends JFrame implements ActionListener {
         activeUsersDesclbl.setForeground(cs.gray);
         accountOverviewPanel.add(activeUsersDesclbl);
         
-        manageRolesBtn = new JButton("Manage Account Roles", roleIcon);
+        manageRolesBtn = new JButton("Manage Account Roles", accountsIcon);
         manageRolesBtn.setBounds(20, 180, 250, 45);
         manageRolesBtn.setBackground(cs.darkPurple);
         manageRolesBtn.setForeground(cs.white);
@@ -305,7 +304,7 @@ public class AdminDashboard extends JFrame implements ActionListener {
         approvedTodayDesclbl.setForeground(cs.gray);
         requestOverviewPanel.add(approvedTodayDesclbl);
         
-        viewRequestsBtn = new JButton("View All Requests", accountsIcon);
+        viewRequestsBtn = new JButton("View All Requests", reqIcon);
         viewRequestsBtn.setBounds(20, 180, 250, 45);
         viewRequestsBtn.setBackground(cs.darkPurple);
         viewRequestsBtn.setForeground(cs.white);

@@ -39,7 +39,12 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
     private Image trackerScale = trackerRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon trackerIcon = new ImageIcon(trackerScale);
     
-    private final JButton homeBtn, accRequestBtn, logoutBtn, transTrackerBtn;
+    java.net.URL reqImgURL = AdminDashboard.class.getResource("resources/requests.png");
+    private ImageIcon reqRaw = new ImageIcon(reqImgURL);
+    private Image reqScale = reqRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon reqIcon = new ImageIcon(reqScale);
+    
+    private final JButton homeBtn, accRequestBtn, logoutBtn, transTrackerBtn, roleBtn;
     private final JLabel logoName;
     
     private final JLabel dashboardTitle, pendinglbl;
@@ -86,7 +91,20 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         homeBtn.setIconTextGap(8);
         sidebarPanel.add(homeBtn);
         
-        accRequestBtn = new JButton("Account Requests", accountsIcon);
+        // account role
+        
+        roleBtn = new JButton("Account Role", accountsIcon);
+        roleBtn.setBounds(0, 100, 180, 40);
+        roleBtn.setBackground(cs.darkPurple);
+        roleBtn.setForeground(cs.white);
+        roleBtn.setFocusPainted(false);
+        roleBtn.setBorderPainted(false);
+        
+        roleBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        roleBtn.setIconTextGap(8);
+        sidebarPanel.add(roleBtn);
+        
+        accRequestBtn = new JButton("Account Requests", reqIcon);
         accRequestBtn.setBounds(0, 140, 180, 40);
         accRequestBtn.setBackground(cs.btnColorSelect);
         accRequestBtn.setForeground(cs.white);

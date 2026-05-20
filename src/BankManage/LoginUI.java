@@ -35,6 +35,8 @@ public class LoginUI extends JFrame  implements ActionListener {
     private JButton btnCusS, btnStfS, btnSignInS, btnRegisterS; //stf log btnsignins -- open form
     private JTextField txtAccNoS; 
     private JPasswordField txtPinS;
+    
+    private JLabel usrUandP, usrUandPs;
 
     LoginUI(){
 
@@ -88,7 +90,7 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnStf.setForeground(cs.gray);
         btnStf.setBorderPainted(false);
 
-        JLabel lblAcc = new JLabel("Account Number");
+        JLabel lblAcc = new JLabel("Email");
         lblAcc.setBounds(45,100,200,30);
         lblAcc.setForeground(cs.gray);
         txtAccNo = new JTextField();
@@ -117,6 +119,10 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnRegister.setContentAreaFilled(false);
         btnRegister.setForeground(cs.purple);
 
+        usrUandP = new JLabel("Email: 12345 Password: user123"); // para ma access ni sir
+        usrUandP.setBounds(130, 350, 200, 30);
+        
+        loginCus.add(usrUandP);
         loginCus.add(btnCus);
         loginCus.add(btnStf);
         loginCus.add(lblAcc);
@@ -170,7 +176,13 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnRegisterS.setBorderPainted(false);
         btnRegisterS.setContentAreaFilled(false);
         btnRegisterS.setForeground(cs.purple);
-
+        
+        usrUandPs = new JLabel("Account: admin Password: admin123"); // para ma access ni sir
+        usrUandPs.setBounds(115, 350, 250, 30);
+        
+        loginStf.add(usrUandPs);
+        
+        
         loginStf.setBackground(cs.white); // bg color white
         loginCus.setBackground(cs.white);
         
@@ -214,7 +226,7 @@ public class LoginUI extends JFrame  implements ActionListener {
             String pin = new String(txtPin.getPassword()).trim();
 
             //Pass ng CUS
-            if (accNo.equals("12345") && pin.equals("1111")) {
+            if (accNo.equals("12345") && pin.equals("user123")) {
                 JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Customer.");
                 CustomerDashboard dash = new CustomerDashboard(); 
                 dash.setVisible(true);
@@ -225,14 +237,14 @@ public class LoginUI extends JFrame  implements ActionListener {
         } 
         //for STF
         else if (e.getSource() == btnSignInS) {
-            String accNo = txtAccNo.getText().trim();
-            String pin = new String(txtPin.getPassword()).trim();
-
+            String accNo = txtAccNoS.getText().trim();
+            String pin = new String(txtPinS.getPassword()).trim();
+            System.out.println(accNo+" "+pin);
             //Pass ng STF
             if (accNo.equals("admin") && pin.equals("admin123")) {
                 JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Admin.");
-                CustomerDashboard dash = new CustomerDashboard(); 
-                dash.setVisible(true);
+                AdminDashboard admin = new AdminDashboard(); 
+                admin.setVisible(true);
                 dispose(); 
               //where/what? call for admin inter
             } else {

@@ -7,32 +7,74 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
 
+    // panels
+    
     private JPanel sidebarPanel, mainContentPanel, linePanel, tablePanel;
 
-    // --- Sidebar Icons ---
-    java.net.URL homeImgURL     = TransactionTrackerUI.class.getResource("resources/home.png");
+    // import images
+    
+    java.net.URL homeImgURL = TransactionTrackerUI.class.getResource("resources/home.png");
+
+    private ImageIcon homeRaw = new ImageIcon(homeImgURL);
+    private Image homeScale = homeRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon homeIcon = new ImageIcon(homeScale);
+    
     java.net.URL accountsImgURL = TransactionTrackerUI.class.getResource("resources/accounts.png");
-    java.net.URL trackerImgURL  = TransactionTrackerUI.class.getResource("resources/tracker.png");
-    java.net.URL logoutImgURL   = TransactionTrackerUI.class.getResource("resources/logout.png");
-    java.net.URL logoImgURL     = TransactionTrackerUI.class.getResource("resources/bluewhiteLogo.png");
+    
+    private ImageIcon accountsRaw = new ImageIcon(accountsImgURL);
+    private Image accountsScale = accountsRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon accountsIcon = new ImageIcon(accountsScale);
+    
+    java.net.URL trackerImgURL = TransactionTrackerUI.class.getResource("resources/tracker.png");
 
-    private ImageIcon homeIcon, accountsIcon, trackerIcon, logoutIcon;
+    private ImageIcon trackerRaw = new ImageIcon(trackerImgURL);
+    private Image trackerScale = trackerRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon trackerIcon = new ImageIcon(trackerScale);
 
-    private final JLabel logo;
-    private final JButton homeBtn, accRequestBtn, transTrackerBtn, logoutBtn;
+    // Account Role icon (reusing accounts.png to match AdminDashboard exactly)
+    java.net.URL roleImgURL = TransactionTrackerUI.class.getResource("resources/accounts.png");
+    private ImageIcon roleRaw = new ImageIcon(roleImgURL);
+    private Image roleScale = roleRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon roleIcon = new ImageIcon(roleScale);
+
+    java.net.URL logoutImgURL = TransactionTrackerUI.class.getResource("resources/logout.png");
+    
+    private ImageIcon logoutRaw = new ImageIcon(logoutImgURL);
+    private Image logoutScale = logoutRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon logoutIcon = new ImageIcon(logoutScale);
+    
+    java.net.URL logoImgURL = TransactionTrackerUI.class.getResource("resources/bluewhiteLogo.png");
+    
+    private final ImageIcon logoRaw = new ImageIcon(logoImgURL);
+    private final Image logoScale = logoRaw.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+    private final JLabel logo = new JLabel(new ImageIcon(logoScale));
+
+    // sidebar
+    
+    private final JButton homeBtn, roleBtn, accRequestBtn, transTrackerBtn, logoutBtn;
     private final JLabel logoName;
-
-    private final JLabel pageTitle, allTransLbl;
-    private JTable transTable;
-    private JScrollPane tableScrollPane;
+    
+    // mainContentPanel
+    
+    private final JLabel pageTitle;
+    
+    // search bar
+    
+    private JLabel searchLbl;
     private JTextField searchField;
     private JButton searchBtn;
-
+    
+    // table panel
+    
+    private final JLabel allTranslbl;
+    private JTable transTable;
+    private JScrollPane tableScrollPane;
+    
     protected String[] columnHeaders = {
         "Transaction ID", "Account ID", "Account Type", "First Name", "Purchase Name", "Date", "Amount", "Status"
     };
 
-    protected Object[][] tableData = {
+    protected String[][] tableData = {
         {"TXN-001", "ACC-12345", "Savings",  "Ezekiel", "Fully Booked",            "May 10, 2026",       "₱25,120.50", "Completed"},
         {"TXN-002", "ACC-12346", "Checking", "Inigo",   "Nintendo Shop",           "May 5, 2026",        "₱0.00",      "Declined"},
         {"TXN-003", "ACC-12347", "Savings",  "Athea",   "Fully Booked",            "January 7, 2026",    "₱250.00",    "Completed"},
@@ -48,69 +90,116 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
         {"TXN-013", "ACC-12357", "Savings",  "Sofia",   "Spotify Premium Yearly",  "September 25, 2025", "₱2,000.00",  "Completed"},
         {"TXN-014", "ACC-12358", "Checking", "Diego",   "PayPal Transfer",         "September 24, 2025", "₱10,600.00", "Completed"},
     };
-
+    
     public TransactionTrackerUI() {
         setTitle("Admin Dashboard - Transaction Tracker");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setSize(1440, 960);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(null); 
         setResizable(false);
-
-        // Scale icons
-        homeIcon     = scaleIcon(homeImgURL, 20, 20);
-        accountsIcon = scaleIcon(accountsImgURL, 20, 20);
-        trackerIcon  = scaleIcon(trackerImgURL, 20, 20);
-        logoutIcon   = scaleIcon(logoutImgURL, 20, 20);
-
-        logo = new JLabel(scaleIcon(logoImgURL, 30, 30));
-
-        // ── Sidebar ──────────────────────────────────────────────
+        
         sidebarPanel = new JPanel();
         sidebarPanel.setLayout(null);
-        sidebarPanel.setBackground(cs.purple);
-        sidebarPanel.setBounds(0, 0, 180, 960);
-
+        
         logoName = new JLabel("VAULTBANK");
         logoName.setBounds(52, 14, 130, 30);
         logoName.setForeground(cs.white);
         logoName.setFont(new Font("Cascadia Code", Font.BOLD, 20));
         sidebarPanel.add(logoName);
-
+        
         logo.setBounds(12, 15, 30, 30);
         sidebarPanel.add(logo);
-
-        homeBtn = makeSidebarBtn("Home", homeIcon, cs.darkPurple, 60);
+        
+        // home icon
+        
+        homeBtn = new JButton("Home", homeIcon);
+        homeBtn.setBounds(0, 60, 180, 40);
+        homeBtn.setBackground(cs.darkPurple);
+        homeBtn.setForeground(cs.white);
+        homeBtn.setFocusPainted(false);
+        homeBtn.setBorderPainted(false);
+        
+        homeBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        homeBtn.setIconTextGap(8);
         sidebarPanel.add(homeBtn);
-
-        accRequestBtn = makeSidebarBtn("Account Requests", accountsIcon, cs.darkPurple, 140);
+        
+        // account role
+        
+        roleBtn = new JButton("Account Role", roleIcon);
+        roleBtn.setBounds(0, 100, 180, 40);
+        roleBtn.setBackground(cs.darkPurple);
+        roleBtn.setForeground(cs.white);
+        roleBtn.setFocusPainted(false);
+        roleBtn.setBorderPainted(false);
+        
+        roleBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        roleBtn.setIconTextGap(8);
+        sidebarPanel.add(roleBtn);
+        
+        // account requests
+        
+        accRequestBtn = new JButton("Account Requests", accountsIcon);
+        accRequestBtn.setBounds(0, 140, 180, 40);
+        accRequestBtn.setBackground(cs.darkPurple);
+        accRequestBtn.setForeground(cs.white);
+        accRequestBtn.setFocusPainted(false);
+        accRequestBtn.setBorderPainted(false);
+        
+        accRequestBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        accRequestBtn.setIconTextGap(8);
         sidebarPanel.add(accRequestBtn);
-
-        transTrackerBtn = makeSidebarBtn("Transaction Tracker", trackerIcon, cs.btnColorSelect, 180);
+        
+        // transaction tracker (selected)
+        
+        transTrackerBtn = new JButton("Transaction Tracker", trackerIcon);
+        transTrackerBtn.setBounds(0, 180, 180, 40);
+        transTrackerBtn.setBackground(cs.btnColorSelect);
+        transTrackerBtn.setForeground(cs.white);
+        transTrackerBtn.setFocusPainted(false);
+        transTrackerBtn.setBorderPainted(false);
+        
+        transTrackerBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        transTrackerBtn.setIconTextGap(8);
         sidebarPanel.add(transTrackerBtn);
 
-        logoutBtn = makeSidebarBtn("Logout", logoutIcon, cs.darkPurple, 840);
+        // logout
+        
+        logoutBtn = new JButton("Logout", logoutIcon);
+        logoutBtn.setBounds(0, 840, 180, 40);
+        logoutBtn.setBackground(cs.darkPurple);
+        logoutBtn.setForeground(cs.white);
+        logoutBtn.setFocusPainted(false);
+        logoutBtn.setBorderPainted(false);
+        
+        logoutBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        logoutBtn.setIconTextGap(8);
         sidebarPanel.add(logoutBtn);
-
+        
+        sidebarPanel.setBackground(cs.purple);
+        
+        sidebarPanel.setBounds(0, 0, 180, 960);
         add(sidebarPanel);
-
-        // ── Main Content ──────────────────────────────────────────
+        
+        // main content panel
+        
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
-        mainContentPanel.setBounds(180, 0, 1260, 960);
-
+        
         pageTitle = new JLabel("Transaction Tracker");
         pageTitle.setBounds(30, 15, 300, 20);
         pageTitle.setFont(new Font("", Font.BOLD, 16));
         mainContentPanel.add(pageTitle);
-
+        
         linePanel = new JPanel();
+        
         linePanel.setBounds(30, 50, 1185, 3);
         linePanel.setBackground(cs.darkPurple);
         mainContentPanel.add(linePanel);
-
-        // Search bar
-        JLabel searchLbl = new JLabel("Search Transaction ID:");
+        
+        // search bar
+        
+        searchLbl = new JLabel("Search Transaction ID:");
         searchLbl.setBounds(30, 65, 200, 30);
         searchLbl.setFont(new Font("Arial", Font.PLAIN, 13));
         mainContentPanel.add(searchLbl);
@@ -127,106 +216,121 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
         searchBtn.setForeground(cs.white);
         searchBtn.setFocusPainted(false);
         searchBtn.setBorderPainted(false);
-        searchBtn.setContentAreaFilled(true);
-        searchBtn.setOpaque(true);
         searchBtn.setFont(new Font("Arial", Font.BOLD, 13));
-        searchBtn.addActionListener(this);
         mainContentPanel.add(searchBtn);
-
-        // Table panel
+        
+        // table panel
+        
         tablePanel = new JPanel();
         tablePanel.setLayout(null);
         tablePanel.setBounds(30, 110, 1185, 790);
         tablePanel.setBackground(cs.white);
         tablePanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-
-        allTransLbl = new JLabel("All Transactions");
-        allTransLbl.setBounds(20, 15, 300, 30);
-        allTransLbl.setFont(new Font("", Font.BOLD, 18));
-        allTransLbl.setForeground(cs.darkerPurple);
-        tablePanel.add(allTransLbl);
-
+        
+        allTranslbl = new JLabel("All Transactions"); 
+        allTranslbl.setBounds(20, 20, 300, 30);
+        allTranslbl.setFont(new Font("", Font.BOLD, 18));
+        allTranslbl.setForeground(cs.darkerPurple);
+        tablePanel.add(allTranslbl);
+        
+        // table (objects papasok dito)
+        
         transTable = new JTable(tableData, columnHeaders);
         transTable.setRowHeight(40);
-        transTable.setFont(new Font("Arial", Font.PLAIN, 13));
+        transTable.setFont(new Font("Arial", Font.PLAIN, 14));
         transTable.setFocusable(false);
         transTable.getTableHeader().setReorderingAllowed(false);
         transTable.getTableHeader().setBackground(cs.darkPurple);
         transTable.getTableHeader().setForeground(cs.white);
-        transTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
-        transTable.getTableHeader().setPreferredSize(new Dimension(0, 45));
         transTable.setSelectionBackground(cs.lightPurple);
         transTable.setSelectionForeground(cs.white);
         transTable.setShowGrid(false);
         transTable.setDefaultEditor(Object.class, null);
-
+        
+        transTable.getTableHeader().setFont(
+            new Font("Arial", Font.BOLD, 14)
+        );
+        transTable.getTableHeader().setPreferredSize(
+            new Dimension(0, 45)
+        );
+        
+        // no scroll
+        
         tableScrollPane = new JScrollPane(transTable);
+        
+        tableScrollPane.setVerticalScrollBarPolicy(
+            JScrollPane.VERTICAL_SCROLLBAR_NEVER
+        );
+
+        tableScrollPane.setHorizontalScrollBarPolicy(
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
+        
         tableScrollPane.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         tableScrollPane.setBounds(20, 55, 1145, 715);
         tablePanel.add(tableScrollPane);
-
+        
         mainContentPanel.add(tablePanel);
+        
+        // end table
+        
+        mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
-
+        
+        // end content panel
+        
         homeBtn.addActionListener(this);
+        roleBtn.addActionListener(this);
         accRequestBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────
-    private ImageIcon scaleIcon(java.net.URL url, int w, int h) {
-        if (url == null) return new ImageIcon();
-        return new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
-    }
-
-    private JButton makeSidebarBtn(String text, ImageIcon icon, Color bg, int y) {
-        JButton btn = new JButton(text, icon);
-        btn.setBounds(0, y, 180, 40);
-        btn.setBackground(bg);
-        btn.setForeground(cs.white);
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setHorizontalAlignment(SwingConstants.LEFT);
-        btn.setIconTextGap(8);
-        return btn;
+        searchBtn.addActionListener(this);
+        
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == homeBtn) {
-            new AdminDashboard().setVisible(true);
+        
+        // side bar
+        
+        if(e.getSource() == homeBtn){
+            AdminDashboard ad = new AdminDashboard();
+            ad.setVisible(true);
             dispose();
 
-        } else if (e.getSource() == accRequestBtn) {
-            new AccountRequestsUI().setVisible(true);
-            dispose();
-
-        } else if (e.getSource() == logoutBtn) {
-            new LoginUI().setVisible(true);
-            dispose();
-
-        } else if (e.getSource() == searchBtn) {
-            String query = searchField.getText().trim();
-            if (query.isEmpty()) {
-                JOptionPane.showMessageDialog(this,
-                    "Please enter a Transaction ID.", "Search", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            Object[] found = null;
-            for (Object[] row : tableData) {
-                if (row[0].toString().equalsIgnoreCase(query)) {
-                    found = row;
-                    break;
-                }
-            }
-            if (found == null) {
-                JOptionPane.showMessageDialog(this,
-                    "No transaction found for ID: " + query, "Not Found", JOptionPane.ERROR_MESSAGE);
-            } else {
-                TransactionSummaryUI summaryUI = new TransactionSummaryUI(found, this);
-                summaryUI.setVisible(true);
-                setVisible(false);
-            }
         }
+        
+        else if(e.getSource() == roleBtn){
+//            AccountRoleUI roleUI = new AccountRoleUI();
+//            roleUI.setVisible(true);
+//            dispose();
+        }
+        
+        else if(e.getSource() == accRequestBtn){
+            AccountRequestsUI ar = new AccountRequestsUI();
+            ar.setVisible(true);
+            dispose();
+        }
+        
+        else if(e.getSource() == logoutBtn){
+            LoginUI lu = new LoginUI();
+            lu.setVisible(true);
+            dispose();
+        }
+        
+        else if(e.getSource() == searchBtn){
+            // query and search code here:
+            TransactionSummaryUI ts = new TransactionSummaryUI();
+            ts.setVisible(true);
+            dispose();
+        }
+        
+        // side bar end
+        
+        // main content
+        
+        
+        //
+        
     }
+    
 }
