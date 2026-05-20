@@ -51,6 +51,10 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
     private JTable requestsTable;
     private JScrollPane tableScrollPane;
     
+    private JLabel searchLbl;
+    private JTextField searchField;
+    private JButton searchBtn;
+    
     protected String[] columnHeaders = {
         "Request ID", "Full Name", "Email Address", "Account Type", "Date Applied"
     };
@@ -153,7 +157,7 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         
         requestsTablePanel = new JPanel();
         requestsTablePanel.setLayout(null);
-        requestsTablePanel.setBounds(30, 90, 1185, 795);
+        requestsTablePanel.setBounds(30, 110, 1185, 790);
         requestsTablePanel.setBackground(cs.white);
         requestsTablePanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         
@@ -188,10 +192,31 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
         
+        searchLbl = new JLabel("Search Requests ID:");
+        searchLbl.setBounds(30, 65, 200, 30);
+        searchLbl.setFont(new Font("Arial", Font.PLAIN, 13));
+        mainContentPanel.add(searchLbl);
+
+        searchField = new JTextField();
+        searchField.setBounds(235, 65, 280, 30);
+        searchField.setFont(new Font("Arial", Font.PLAIN, 13));
+        searchField.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        mainContentPanel.add(searchField);
+
+        searchBtn = new JButton("Search");
+        searchBtn.setBounds(525, 65, 100, 30);
+        searchBtn.setBackground(cs.darkPurple);
+        searchBtn.setForeground(cs.white);
+        searchBtn.setFocusPainted(false);
+        searchBtn.setBorderPainted(false);
+        searchBtn.setFont(new Font("Arial", Font.BOLD, 13));
+        mainContentPanel.add(searchBtn);
+
         roleBtn.addActionListener(this);
         homeBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
         transTrackerBtn.addActionListener(this);
+        searchBtn.addActionListener(this);
     }
 
     @Override
@@ -200,12 +225,15 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
             AdminDashboard admUI = new AdminDashboard();
             admUI.setVisible(true);
             dispose();
-            
-        } if(e.getSource() == roleBtn){
+        } else if(e.getSource() == roleBtn){
             AccountRoleUI roleUI = new AccountRoleUI();
             roleUI.setVisible(true);
             dispose();
-        }else if (e.getSource() == logoutBtn) {
+        } else if (e.getSource() == searchBtn) {
+            AccountRequestsSummaryUI ars = new AccountRequestsSummaryUI();    
+            ars.setVisible(true);
+            dispose();
+        } else if (e.getSource() == logoutBtn) {
             LoginUI logUI = new LoginUI();
             logUI.setVisible(true);
             dispose();
