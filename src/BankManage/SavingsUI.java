@@ -50,6 +50,37 @@ public class SavingsUI extends JFrame implements ActionListener {
     private Image logoutScale = logoutRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon logoutIcon = new ImageIcon(logoutScale);
     
+    java.net.URL targetImgURL = CustomerDashboard.class.getResource("resources/logout.png");
+    
+    private ImageIcon targetRaw = new ImageIcon(targetImgURL);
+    private Image targetScale = targetRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon targetIcon = new ImageIcon(targetScale);
+    
+    java.net.URL completeImgURL = CustomerDashboard.class.getResource("resources/logout.png");
+    
+    private ImageIcon completeRaw = new ImageIcon(completeImgURL);
+    private Image completeScale = completeRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon completeIcon = new ImageIcon(completeScale);
+    
+    java.net.URL checkImgURL = CustomerDashboard.class.getResource("resources/logout.png");
+    
+    private ImageIcon checkRaw = new ImageIcon(checkImgURL);
+    private Image checkScale = checkRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon checkIcon = new ImageIcon(checkScale);
+    
+    java.net.URL calcImgURL = CustomerDashboard.class.getResource("resources/logout.png");
+    
+    private ImageIcon calcRaw = new ImageIcon(calcImgURL);
+    private Image calcScale = calcRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon calcIcon = new ImageIcon(calcScale);
+    
+    java.net.URL eyeImgURL = CustomerDashboard.class.getResource("resources/logout.png");
+    
+    private ImageIcon eyeRaw = new ImageIcon(eyeImgURL);
+    private Image eyeScale = eyeRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon eyeIcon = new ImageIcon(eyeScale);
+    
+    
     // logo
     
     java.net.URL logoImgURL = CustomerDashboard.class.getResource("resources/bluewhiteLogo.png");
@@ -69,6 +100,8 @@ public class SavingsUI extends JFrame implements ActionListener {
     monthlyGrowthLabel, enterMonthsLabel, resultLabel, savingsHistoryLabel, historyListLabel;
     private JLabel historyListTitleLabel, history1Label, history2Label;
     private JTextField monthsInputText;
+    
+    private double savingsBal = 30242.55;
     
     private JLabel dashboardTitle;
     private JLabel lTitle, lLabel, lcurLabel;
@@ -215,7 +248,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         lTitle.setBounds(20, 15, 300, 25);
         lPanel.add(lTitle); 
         
-        lLabel = new JLabel("PHP 18,500.00"); 
+        lLabel = new JLabel("₱"+String.valueOf(savingsBal)); 
         lLabel.setFont(new Font("Arial", Font.BOLD, 26));
         lLabel.setBounds(20, 50, 300, 35);
         lPanel.add(lLabel); 
@@ -226,33 +259,42 @@ public class SavingsUI extends JFrame implements ActionListener {
         lcurLabel.setBounds(20, 90, 100, 20);
         lPanel.add(lcurLabel); 
         
-        targetBtn = new JButton("Target");
+        targetBtn = new JButton("Target", targetIcon);
         targetBtn.setBounds(20, 130, 160, 45); 
         targetBtn.setBackground(cs.darkPurple); 
         targetBtn.setForeground(Color.WHITE);
         targetBtn.setFont(new Font("Arial", Font.BOLD, 15));
         targetBtn.setBorderPainted(false);
         targetBtn.setFocusable(false);
+        targetBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        targetBtn.setMargin(new Insets(0, 0, 0, 10));
+        targetBtn.setIconTextGap(10);
         targetBtn.addActionListener(this);
         lPanel.add(targetBtn);
         
-        completedBtn = new JButton("Completed");
+        completedBtn = new JButton("Completed", checkIcon);
         completedBtn.setBounds(200, 130, 160, 45);
         completedBtn.setBackground(cs.darkPurple);
         completedBtn.setForeground(Color.WHITE);
         completedBtn.setFont(new Font("Arial", Font.BOLD, 15));
         completedBtn.setBorderPainted(false);
         completedBtn.setFocusable(false);
+        completedBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        completedBtn.setMargin(new Insets(0, 0, 0, 10));
+        completedBtn.setIconTextGap(10);
         completedBtn.addActionListener(this);
         lPanel.add(completedBtn);
         
-        viewGoalBtn = new JButton("View GOAL");
+        viewGoalBtn = new JButton("View GOAL", completeIcon);
         viewGoalBtn.setBounds(380, 130, 180, 45);
         viewGoalBtn.setBackground(cs.darkPurple);
         viewGoalBtn.setForeground(Color.WHITE);
         viewGoalBtn.setFont(new Font("Arial", Font.BOLD, 15));
         viewGoalBtn.setBorderPainted(false);
         viewGoalBtn.setFocusable(false);
+        viewGoalBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        viewGoalBtn.setMargin(new Insets(0, 0, 0, 10));
+        viewGoalBtn.setIconTextGap(10);
         viewGoalBtn.addActionListener(this);
         lPanel.add(viewGoalBtn);
         
@@ -289,13 +331,16 @@ public class SavingsUI extends JFrame implements ActionListener {
         resultLabel.setBounds(215, 90, 240, 25); 
         rPanel.add(resultLabel);
         
-        calculateBtn = new JButton("Calculate");
+        calculateBtn = new JButton("Calculate", calcIcon);
         calculateBtn.setBounds(20, 130, 540, 45); 
         calculateBtn.setBackground(cs.darkPurple);
         calculateBtn.setForeground(Color.WHITE);
         calculateBtn.setFont(new Font("Arial", Font.BOLD, 15));
         calculateBtn.setBorderPainted(false);
         calculateBtn.setFocusable(false);
+        calculateBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        calculateBtn.setMargin(new Insets(0, 0, 0, 10));
+        calculateBtn.setIconTextGap(10);
         calculateBtn.addActionListener(this);
         rPanel.add(calculateBtn);
         
@@ -322,13 +367,16 @@ public class SavingsUI extends JFrame implements ActionListener {
         achievedSubLabel.setBounds(20, 90, 150, 20);
         achievedPanel.add(achievedSubLabel);
         
-        viewAchievedBtn = new JButton("View Achieved");
+        viewAchievedBtn = new JButton("View Achieved", eyeIcon);
         viewAchievedBtn.setBounds(20, 130, 500, 45); 
         viewAchievedBtn.setBackground(cs.darkPurple);
         viewAchievedBtn.setForeground(Color.WHITE);
         viewAchievedBtn.setFont(new Font("Arial", Font.BOLD, 15));
         viewAchievedBtn.setBorderPainted(false); 
         viewAchievedBtn.setFocusable(false);     
+        viewAchievedBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        viewAchievedBtn.setMargin(new Insets(0, 0, 0, 10));
+        viewAchievedBtn.setIconTextGap(10);
         viewAchievedBtn.addActionListener(this);
         achievedPanel.add(viewAchievedBtn);
 

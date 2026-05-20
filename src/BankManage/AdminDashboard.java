@@ -89,10 +89,10 @@ public class AdminDashboard extends JFrame implements ActionListener {
     
     private String adminName = "Juanito";
     private String currentDate = "May 20, 2026";
-    private int totalAccountsCount = 1245;
-    private int activeUsersCount = 1180;
-    private int pendingRequestsCount = 12;
-    private int approvedTodayCount = 8;
+    private int totalAccountsCount = 8;
+    private int activeUsersCount = 4;
+    private int pendingRequestsCount = 3;
+    private int approvedTodayCount = 2;
     
     public AdminDashboard() {
         setTitle("Admin Dashboard - Home");
@@ -424,10 +424,5 @@ public class AdminDashboard extends JFrame implements ActionListener {
         
         //
         
-    }
-    
-    public static void main(String[] args) {
-        AdminDashboard ad = new AdminDashboard();
-        ad.setVisible(true);
     }
 }

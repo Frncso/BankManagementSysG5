@@ -302,6 +302,7 @@ public class BalanceUI extends JFrame implements ActionListener {
         gotoTransactionbtn.setHorizontalAlignment(SwingConstants.CENTER);
         gotoTransactionbtn.setMargin(new Insets(0, 0, 0, 10));
         gotoTransactionbtn.setIconTextGap(10);
+        gotoTransactionbtn.addActionListener(this);
         balancePanel.add(gotoTransactionbtn);
         
         accountsColumnPanel.add(balancePanel);
@@ -348,6 +349,7 @@ public class BalanceUI extends JFrame implements ActionListener {
         gotoSavingsbtn.setHorizontalAlignment(SwingConstants.CENTER);
         gotoSavingsbtn.setMargin(new Insets(0, 0, 0, 10));
         gotoSavingsbtn.setIconTextGap(10);
+        gotoSavingsbtn.addActionListener(this);
         savingsPanel.add(gotoSavingsbtn);
         
         gotoHistorybtn = new JButton("Goal History", historyIcon);
@@ -360,6 +362,7 @@ public class BalanceUI extends JFrame implements ActionListener {
         gotoHistorybtn.setHorizontalAlignment(SwingConstants.CENTER);
         gotoHistorybtn.setMargin(new Insets(0, 0, 0, 10));
         gotoHistorybtn.setIconTextGap(10);
+        gotoHistorybtn.addActionListener(this);
         savingsPanel.add(gotoHistorybtn);
         
         accountsColumnPanel.add(savingsPanel);
@@ -547,11 +550,23 @@ public class BalanceUI extends JFrame implements ActionListener {
             dispose();
         }
         
+        else if(e.getSource() == gotoTransactionbtn){
+            TransactUI trUI = new TransactUI();
+            trUI.setVisible(true);
+            dispose();
+        }
+        
+        else if(e.getSource() == gotoHistorybtn){
+            SavingsUI saveUI = new SavingsUI();
+            saveUI.setVisible(true);
+            dispose();
+        }
+        else if(e.getSource() == gotoSavingsbtn){
+            SavingsUI saveUI = new SavingsUI();
+            saveUI.setVisible(true);
+            dispose();
+        }
+        
+        
     }
-    
-    public static void main(String[] args){
-        BalanceUI bu = new BalanceUI();
-        bu.setVisible(true);
-    }
-    
 }

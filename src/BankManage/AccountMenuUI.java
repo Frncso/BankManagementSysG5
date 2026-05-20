@@ -2,7 +2,6 @@ package BankManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashSet;
 
 public class AccountMenuUI extends JFrame implements ActionListener {
 
@@ -32,11 +31,17 @@ public class AccountMenuUI extends JFrame implements ActionListener {
     private Image balanceScale = balanceRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon balanceIcon = new ImageIcon(balanceScale);
     
-    java.net.URL withdrawImgURL = CustomerDashboard.class.getResource("resources/withdraw.png");
+    java.net.URL totalbalImgURL = CustomerDashboard.class.getResource("resources/money.png");
     
-    private ImageIcon withdrawRaw = new ImageIcon(withdrawImgURL);
-    private Image withdrawScale = withdrawRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon withdrawIcon = new ImageIcon(withdrawScale);
+    private ImageIcon totalbalRaw = new ImageIcon(totalbalImgURL);
+    private Image totalbalScale = totalbalRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon totalbalIcon = new ImageIcon(totalbalScale);
+    
+//    java.net.URL withdrawImgURL = CustomerDashboard.class.getResource("resources/withdraw.png");
+//    
+//    private ImageIcon withdrawRaw = new ImageIcon(withdrawImgURL);
+//    private Image withdrawScale = withdrawRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+//    private ImageIcon withdrawIcon = new ImageIcon(withdrawScale);
     
     java.net.URL savingsImgURL = CustomerDashboard.class.getResource("resources/savings.png");
     
@@ -56,17 +61,48 @@ public class AccountMenuUI extends JFrame implements ActionListener {
     private Image logoutScale = logoutRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon logoutIcon = new ImageIcon(logoutScale);
     
-     java.net.URL transferImgURL = CustomerDashboard.class.getResource("resources/transfer.png");
+    java.net.URL changeImgURL = CustomerDashboard.class.getResource("resources/change.png");
     
-    private ImageIcon transferRaw = new ImageIcon(transferImgURL);
-    private Image transferScale = transferRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon transferIcon = new ImageIcon(transferScale);
+    private ImageIcon changeRaw = new ImageIcon(changeImgURL);
+    private Image changeScale = changeRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon changeIcon = new ImageIcon(changeScale);
     
-    java.net.URL depositImgURL = CustomerDashboard.class.getResource("resources/deposit.png");
+    java.net.URL moneyImgURL = CustomerDashboard.class.getResource("resources/money.png");
     
-    private ImageIcon depositRaw = new ImageIcon(depositImgURL);
-    private Image depositScale = depositRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon depositIcon = new ImageIcon(depositScale);
+    private ImageIcon moneyRaw = new ImageIcon(moneyImgURL);
+    private Image moneyScale = moneyRaw.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+    private JLabel moneyIMG = new JLabel(new ImageIcon(moneyScale));
+    
+    java.net.URL checkTotalImgURL = CustomerDashboard.class.getResource("resources/balanceIMG.png");
+    
+    private ImageIcon checkTotalRaw = new ImageIcon(checkTotalImgURL);
+    private Image checkTotalScale = checkTotalRaw.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+    private JLabel checkTotalIMG = new JLabel(new ImageIcon(checkTotalScale));
+    
+    java.net.URL saveTotalImgURL = CustomerDashboard.class.getResource("resources/savingsIMG.png");
+    
+    private ImageIcon saveTotalRaw = new ImageIcon(saveTotalImgURL);
+    private Image saveTotalScale = saveTotalRaw.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+    private JLabel saveTotalIMG = new JLabel(new ImageIcon(saveTotalScale));
+    
+    
+//    java.net.URL transferImgURL = CustomerDashboard.class.getResource("resources/transfer.png");
+//    
+//    private ImageIcon transferRaw = new ImageIcon(transferImgURL);
+//    private Image transferScale = transferRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+//    private ImageIcon transferIcon = new ImageIcon(transferScale);
+//    
+//    java.net.URL depositImgURL = CustomerDashboard.class.getResource("resources/deposit.png");
+//    
+//    private ImageIcon depositRaw = new ImageIcon(depositImgURL);
+//    private Image depositScale = depositRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+//    private ImageIcon depositIcon = new ImageIcon(depositScale);
+    
+    java.net.URL plusImgURL = CustomerDashboard.class.getResource("resources/plus.png");
+    
+    private ImageIcon plusRaw = new ImageIcon(plusImgURL);
+    private Image plusScale = plusRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon plusIcon = new ImageIcon(plusScale);
     // logo
     
     java.net.URL logoImgURL = CustomerDashboard.class.getResource("resources/bluewhiteLogo.png");
@@ -79,25 +115,28 @@ public class AccountMenuUI extends JFrame implements ActionListener {
     
     private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, accountsBtn, logoutBtn;
     private final JLabel logoName, totalbankBalbl, availBalancelbl, welcomelbl, accCount;
-    private final JLabel totalSavings, savingsAmnt, checkingLbl, checkingAmnt, otherLbl, otherAmnt;
-    private final JButton addAcc;
-    private final JTextField searchField;
-    
-    // components for historyPanel headers
-    private final JLabel accountHeader, typeHeader, customerHeader, balanceHeader;
-    
-    // components for row 1
-    private final JLabel account1, type1, customer1, balance1;
-    private final JLabel account2, type2, customer2, balance2;
+    private final JLabel totalSavings, savingsAmnt, checkingLbl, checkingAmnt;
+    private final JButton addAcc, changeAcc;
 
-    
     // main
     
     private JLabel dashboardTitle;
-    private JPanel balancePanel, savingsPanel, checkingPanel, othersPanel, historyPanel;
+    private JPanel balancePanel, savingsPanel, checkingPanel, historyPanel;
     
-    // separator panels
-    private JPanel separator;
+    // list of accounts
+    
+    private JLabel listlbl;
+    private JTable listacctbl;
+    private JScrollPane listnoScroll;
+    
+    protected String[] listColumns = {
+        "Account No.", "Type", "Status", "Balance"
+    };
+    
+    protected String[][] sampleData = {
+        {"ACC-1001", "Checking", "Active", "₱121,502.60"},
+        {"ACC-1001", "Savings", "Active", "₱30,242.55"}
+    };
     
     
     //
@@ -233,8 +272,6 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         linePanel.setBackground(cs.darkPurple);
         mainContentPanel.add(linePanel);
         
-        
-        
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
         
@@ -248,19 +285,38 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         accCount.setFont(new Font("", Font.BOLD, 12));
         mainContentPanel.add(accCount);
         
-        addAcc = new JButton("+ New Account");
-        addAcc.setBounds(1030, 65, 170, 45);
+        changeAcc = new JButton("Request Info Update", changeIcon);
+        changeAcc.setBounds(695, 65, 250, 45);
+        changeAcc.setBackground(cs.darkPurple);
+        changeAcc.setForeground(cs.white);
+        changeAcc.setFocusPainted(false);
+        changeAcc.setBorderPainted(false);
+        changeAcc.setHorizontalAlignment(SwingConstants.CENTER);
+        changeAcc.setMargin(new Insets(0, 0, 0, 10));
+        changeAcc.setIconTextGap(10);
+        changeAcc.addActionListener(this);
+        mainContentPanel.add(changeAcc);
+        
+        addAcc = new JButton("Request a New Account", plusIcon);
+        addAcc.setBounds(965, 65, 250, 45);
         addAcc.setBackground(cs.darkPurple);
         addAcc.setForeground(cs.white);
         addAcc.setFocusPainted(false);
         addAcc.setBorderPainted(false);
+        addAcc.setHorizontalAlignment(SwingConstants.CENTER);
+        addAcc.setMargin(new Insets(0, 0, 0, 10));
+        addAcc.setIconTextGap(10);
+        addAcc.addActionListener(this);
         mainContentPanel.add(addAcc);
         
         balancePanel = new JPanel();
         balancePanel.setLayout(null);
-        balancePanel.setBounds(30, 140, 270, 100);
+        balancePanel.setBounds(30, 140, 368, 100);
         balancePanel.setBackground(cs.white);
         balancePanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        
+        moneyIMG.setBounds(6, 15, 70, 70);
+        balancePanel.add(moneyIMG);
         
         totalbankBalbl = new JLabel("Total Balance"); 
         totalbankBalbl.setBounds(80, 20, 250, 20);
@@ -268,7 +324,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         totalbankBalbl.setForeground(cs.darkerPurple);
         balancePanel.add(totalbankBalbl);
         
-        availBalancelbl = new JLabel("₱2523.00");
+        availBalancelbl = new JLabel("₱151,745.15");
         availBalancelbl.setBounds(80, 50, 300, 30);
         availBalancelbl.setFont(new Font("Arial", Font.BOLD, 36));
         availBalancelbl.setForeground(cs.darkerPurple);
@@ -276,17 +332,20 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         
         savingsPanel = new JPanel();
         savingsPanel.setLayout(null);
-        savingsPanel.setBounds(330, 140, 270, 100);
+        savingsPanel.setBounds(438, 140, 368, 100);
         savingsPanel.setBackground(cs.white);
         savingsPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         
-        totalSavings = new JLabel("Savings"); 
-        totalSavings.setBounds(80, 20, 250, 20);
-        totalSavings.setFont(new Font("", Font.BOLD, 12));
-        totalSavings.setForeground(cs.darkerPurple);
-        savingsPanel.add(totalSavings);
+        checkTotalIMG.setBounds(6, 15, 70, 70);
+        savingsPanel.add(checkTotalIMG);
         
-        savingsAmnt = new JLabel("₱2000.00");
+        checkingAmnt = new JLabel("Total Checking"); 
+        checkingAmnt.setBounds(80, 20, 250, 20);
+        checkingAmnt.setFont(new Font("", Font.BOLD, 12));
+        checkingAmnt.setForeground(cs.darkerPurple);
+        savingsPanel.add(checkingAmnt);
+        
+        savingsAmnt = new JLabel("₱121,502.60");
         savingsAmnt.setBounds(80, 50, 300, 30);
         savingsAmnt.setFont(new Font("Arial", Font.BOLD, 36));
         savingsAmnt.setForeground(cs.darkerPurple);
@@ -294,166 +353,78 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         
         checkingPanel = new JPanel();
         checkingPanel.setLayout(null);
-        checkingPanel.setBounds(630, 140, 270, 100);
+        checkingPanel.setBounds(846, 140, 368, 100);
         checkingPanel.setBackground(cs.white);
         checkingPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         
-        checkingLbl = new JLabel("Checking"); 
+        saveTotalIMG.setBounds(6, 15, 70, 70);
+        checkingPanel.add(saveTotalIMG);
+        
+        checkingLbl = new JLabel("Total Savings"); 
         checkingLbl.setBounds(80, 20, 250, 20);
         checkingLbl.setFont(new Font("", Font.BOLD, 12));
         checkingLbl.setForeground(cs.darkerPurple);
         checkingPanel.add(checkingLbl);
         
-        checkingAmnt = new JLabel("₱34,000.00");
-        checkingAmnt.setBounds(80, 50, 300, 30);
-        checkingAmnt.setFont(new Font("Arial", Font.BOLD, 36));
-        checkingAmnt.setForeground(cs.darkerPurple);
-        checkingPanel.add(checkingAmnt);
-        
-        othersPanel = new JPanel();
-        othersPanel.setLayout(null);
-        othersPanel.setBounds(930, 140, 270, 100);
-        othersPanel.setBackground(cs.white);
-        othersPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-        
-        otherLbl = new JLabel("Other"); 
-        otherLbl.setBounds(80, 20, 250, 20);
-        otherLbl.setFont(new Font("", Font.BOLD, 12));
-        otherLbl.setForeground(cs.darkerPurple);
-        othersPanel.add(otherLbl);
-        
-        otherAmnt = new JLabel("₱0.00");
-        otherAmnt.setBounds(80, 50, 300, 30);
-        otherAmnt.setFont(new Font("Arial", Font.BOLD, 36));
-        otherAmnt.setForeground(cs.darkerPurple);
-        othersPanel.add(otherAmnt);
+        totalSavings = new JLabel("₱30,242.55");
+        totalSavings.setBounds(80, 50, 300, 30);
+        totalSavings.setFont(new Font("Arial", Font.BOLD, 36));
+        totalSavings.setForeground(cs.darkerPurple);
+        checkingPanel.add(totalSavings);
         
         historyPanel = new JPanel();
         historyPanel.setLayout(null);
-        historyPanel.setBounds(30, 280, 1170, 400);
+        historyPanel.setBounds(30, 280, 1185, 600);
         historyPanel.setBackground(cs.white);
         historyPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         
-        searchField = new JTextField("   Search accounts...");
-        searchField.setBounds(15, 10, 250, 28);
-        searchField.setFont(new Font("Arial", Font.PLAIN, 13));
-        searchField.setBorder(null);
-        searchField.setBackground(new Color(240, 240, 240));
-        historyPanel.add(searchField);
+        // Transaction
         
-        accountHeader = new JLabel("ACCOUNT #");
-        accountHeader.setBounds(15, 50, 200, 25);
-        accountHeader.setFont(new Font("Arial", Font.BOLD, 12));
-        historyPanel.add(accountHeader);
+        listlbl = new JLabel("Your Accounts"); 
+        listlbl.setBounds(20, 20, 250, 20);
+        listlbl.setFont(new Font("", Font.BOLD, 18));
+        listlbl.setForeground(cs.darkerPurple);
+        historyPanel.add(listlbl);
         
-        typeHeader = new JLabel("TYPE");
-        typeHeader.setBounds(300, 50, 150, 25);
-        typeHeader.setFont(new Font("Arial", Font.BOLD, 12));
-        historyPanel.add(typeHeader);
+        // table (objects papasok dito)
         
-        customerHeader = new JLabel("CUSTOMER");
-        customerHeader.setBounds(500, 50, 400, 25);
-        customerHeader.setFont(new Font("Arial", Font.BOLD, 12));
-        historyPanel.add(customerHeader);
+        listacctbl = new JTable(sampleData, listColumns);
+        listacctbl.setRowHeight(40);
+        listacctbl.setFont(new Font("Arial", Font.PLAIN, 14));
+        listacctbl.setFocusable(false);
+        listacctbl.getTableHeader().setReorderingAllowed(false);
+        listacctbl.getTableHeader().setBackground(cs.darkPurple);
+        listacctbl.getTableHeader().setForeground(cs.white);
+        listacctbl.setSelectionBackground(cs.lightPurple);
+        listacctbl.setSelectionForeground(cs.white);
+        listacctbl.setShowGrid(false);
+        listacctbl.setDefaultEditor(Object.class, null);
         
-        balanceHeader = new JLabel("BALANCE");
-        balanceHeader.setBounds(1100, 50, 300, 25);
-        balanceHeader.setFont(new Font("Arial", Font.BOLD, 12));
-        historyPanel.add(balanceHeader);
+        listacctbl.getTableHeader().setFont(
+            new Font("Arial", Font.BOLD, 14)
+        );
+        listacctbl.getTableHeader().setPreferredSize(
+            new Dimension(0, 45)
+        );
         
-        separator = new JPanel();
-        separator.setBounds(0, 80, 1170, 1);
-        separator.setBackground(new Color(200, 200, 200));
-        historyPanel.add(separator);
+        // no scroll
         
-        account1 = new JLabel("SA-100001");
-        account1.setBounds(15, 95, 200, 25);
-        account1.setFont(new Font("Arial", Font.PLAIN, 12));
-        historyPanel.add(account1);
+        listnoScroll = new JScrollPane(listacctbl);
         
-        type1 = new JLabel("savings");
-        type1.setBounds(300, 95, 150, 25);
-        type1.setFont(new Font("Arial", Font.PLAIN, 12));
-        historyPanel.add(type1);
+        listnoScroll.setVerticalScrollBarPolicy(
+            JScrollPane.VERTICAL_SCROLLBAR_NEVER
+        );
+
+        listnoScroll.setHorizontalScrollBarPolicy(
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
         
-        customer1 = new JLabel("Maria Santos");
-        customer1.setBounds(500, 95, 400, 25);
-        customer1.setFont(new Font("Arial", Font.PLAIN, 12));
-        historyPanel.add(customer1);
-        
-        balance1 = new JLabel("$78,989.09");
-        balance1.setBounds(1100, 95, 300, 25);
-        balance1.setFont(new Font("Arial", Font.PLAIN, 12));
-        historyPanel.add(balance1);
-        
-        account2 = new JLabel("CK-100002");
-        account2.setBounds(15, 130, 200, 25);
-        account2.setFont(new Font("Arial", Font.PLAIN, 12));
-        historyPanel.add(account2);
-        
-        type2 = new JLabel("checking");
-        type2.setBounds(300, 130, 150, 25);
-        type2.setFont(new Font("Arial", Font.PLAIN, 12));
-        historyPanel.add(type2);
-        
-        customer2 = new JLabel("Maria Santos");
-        customer2.setBounds(500, 130, 400, 25);
-        customer2.setFont(new Font("Arial", Font.PLAIN, 12));
-        historyPanel.add(customer2);
-        
-        balance2 = new JLabel("$32,678.90");
-        balance2.setBounds(1100, 130, 300, 25);
-        balance2.setFont(new Font("Arial", Font.PLAIN, 12));
-        historyPanel.add(balance2);
-//        availlbl = new JLabel("Checking + Saving");
-//        availlbl.setBounds(20, 108, 150, 20);
-//        availlbl.setForeground(cs.gray);
-//        balancePanel.add(availlbl);
-//        
-//        quicklbl = new JLabel("Quick Actions");
-//        quicklbl.setBounds(20, 150, 150, 20);
-//        quicklbl.setForeground(cs.darkerPurple);
-//        balancePanel.add(quicklbl);
-//        
-//        withdrawBtn = new JButton("Withdraw", withdrawIcon);
-//        withdrawBtn.setBounds(20, 180, 170, 45);
-//        withdrawBtn.setBackground(cs.darkPurple);
-//        withdrawBtn.setForeground(cs.white);
-//        withdrawBtn.setFocusPainted(false);
-//        withdrawBtn.setBorderPainted(false);
-//        
-//        withdrawBtn.setHorizontalAlignment(SwingConstants.CENTER);
-//        withdrawBtn.setMargin(new Insets(0, 0, 0, 10));
-//        withdrawBtn.setIconTextGap(10);
-//        balancePanel.add(withdrawBtn);
-//        
-//        depositBtn = new JButton("Deposit", depositIcon);
-//        depositBtn.setBounds(205, 180, 170, 45);
-//        depositBtn.setBackground(cs.darkPurple);
-//        depositBtn.setForeground(cs.white);
-//        depositBtn.setFocusPainted(false);
-//        depositBtn.setBorderPainted(false);
-//        
-//        depositBtn.setHorizontalAlignment(SwingConstants.CENTER);
-//        depositBtn.setMargin(new Insets(0, 0, 0, 10));
-//        depositBtn.setIconTextGap(10);
-//        balancePanel.add(depositBtn);
-//        
-//        transferBtn = new JButton("Transfer", transferIcon);
-//        transferBtn.setBounds(390, 180, 170, 45);
-//        transferBtn.setBackground(cs.darkPurple);
-//        transferBtn.setForeground(cs.white);
-//        transferBtn.setFocusPainted(false);
-//        transferBtn.setBorderPainted(false);
-//        
-//        transferBtn.setHorizontalAlignment(SwingConstants.CENTER);
-//        transferBtn.setMargin(new Insets(0, 0, 0, 5));
-//        transferBtn.setIconTextGap(10);
-//        balancePanel.add(transferBtn);
+        listnoScroll.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        listnoScroll.setBounds(20, 60, 1145, 520);
+        historyPanel.add(listnoScroll);
 
           mainContentPanel.add(historyPanel);
           mainContentPanel.add(checkingPanel);
-          mainContentPanel.add(othersPanel);
           mainContentPanel.add(savingsPanel);
           mainContentPanel.add(balancePanel);
         
@@ -498,6 +469,30 @@ public class AccountMenuUI extends JFrame implements ActionListener {
             // logout code
             LoginUI logUI = new LoginUI();
             logUI.setVisible(true);
+            dispose();
+        }
+        else if(e.getSource() == addAcc){   
+            
+            String[] accountTypes = {"Checking", "Savings"};
+            JComboBox<String> typeCombo = new JComboBox<>(accountTypes);
+            typeCombo.setFont(new Font("Arial", Font.PLAIN, 14));
+            
+            int result = JOptionPane.showConfirmDialog(this,
+                typeCombo,
+                "Select Account Type",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+            
+            if (result == JOptionPane.OK_OPTION) {
+                String selectedType = (String) typeCombo.getSelectedItem();
+                RequestNewAccUI reqUI = new RequestNewAccUI(selectedType);
+                reqUI.setVisible(true);
+                dispose();
+            }
+        }
+        else if(e.getSource() == changeAcc){
+            RequestChangeInfoUI reqUI = new RequestChangeInfoUI();
+            reqUI.setVisible(true);
             dispose();
         }
         

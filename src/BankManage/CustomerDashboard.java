@@ -317,6 +317,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         withdrawBtn.setHorizontalAlignment(SwingConstants.CENTER);
         withdrawBtn.setMargin(new Insets(0, 0, 0, 10));
         withdrawBtn.setIconTextGap(10);
+        withdrawBtn.addActionListener(this);
         balancePanel.add(withdrawBtn);
         
         depositBtn = new JButton("Deposit", depositIcon);
@@ -329,6 +330,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         depositBtn.setHorizontalAlignment(SwingConstants.CENTER);
         depositBtn.setMargin(new Insets(0, 0, 0, 10));
         depositBtn.setIconTextGap(10);
+        depositBtn.addActionListener(this);
         balancePanel.add(depositBtn);
         
         transferBtn = new JButton("Transfer", transferIcon);
@@ -341,6 +343,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         transferBtn.setHorizontalAlignment(SwingConstants.CENTER);
         transferBtn.setMargin(new Insets(0, 0, 0, 5));
         transferBtn.setIconTextGap(10);
+        transferBtn.addActionListener(this);
         balancePanel.add(transferBtn);
            
         mainContentPanel.add(balancePanel);
@@ -387,6 +390,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         gotoSavingsbtn.setHorizontalAlignment(SwingConstants.CENTER);
         gotoSavingsbtn.setMargin(new Insets(0, 0, 0, 10));
         gotoSavingsbtn.setIconTextGap(10);
+        gotoSavingsbtn.addActionListener(this);
         savingsPanel.add(gotoSavingsbtn);
         
         gotoHistorybtn = new JButton("Goal History", historyIcon);
@@ -399,6 +403,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         gotoHistorybtn.setHorizontalAlignment(SwingConstants.CENTER);
         gotoHistorybtn.setMargin(new Insets(0, 0, 0, 10));
         gotoHistorybtn.setIconTextGap(10);
+        gotoHistorybtn.addActionListener(this);
         savingsPanel.add(gotoHistorybtn);
   
         mainContentPanel.add(savingsPanel);
@@ -508,6 +513,36 @@ public class CustomerDashboard extends JFrame implements ActionListener {
             // logout code
             LoginUI logUI = new LoginUI();
             logUI.setVisible(true);
+            dispose();
+        }
+        
+        else if(e.getSource() == withdrawBtn){
+            TransactUI trUI = new TransactUI();
+            trUI.setVisible(true);
+            dispose();
+        }
+        
+        else if(e.getSource() == depositBtn){
+            TransactUI trUI = new TransactUI();
+            trUI.setVisible(true);
+            dispose();
+        }
+        
+        else if(e.getSource() == transferBtn){
+            TransactUI trUI = new TransactUI();
+            trUI.setVisible(true);
+            dispose();
+        }
+        
+        else if(e.getSource() == gotoSavingsbtn){
+            SavingsUI saveUI = new SavingsUI();
+            saveUI.setVisible(true);
+            dispose();
+        }
+        
+        else if(e.getSource() == gotoHistorybtn){
+            SavingsUI saveUI = new SavingsUI();
+            saveUI.setVisible(true);
             dispose();
         }
         
