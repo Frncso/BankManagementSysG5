@@ -549,14 +549,8 @@ public class RegisterUI extends JFrame implements ActionListener{
             // rs.AddAccount(customer);
             
             // TEST CONCATENATION FOR ACC NO. (must have try catch soon)
-            String fname = txtFName.getText();
-            String lname = txtLName.getText();
-            String birthday = (String) cbxDay.getSelectedItem();
-            accInt++;
-            accountNumber = fname.substring(0,2).toUpperCase()+lname.substring(0,2).toUpperCase()+"-2026-"+birthday+"-"+accInt;
-            
+
             JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
-            System.out.println("Account Number: "+accountNumber);
             
             LoginUI ln = new LoginUI();
             ln.setVisible(true);

@@ -224,9 +224,4 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
         
     }
     
-    public static void main(String[] args){
-        TransactionSummaryUI tata = new TransactionSummaryUI();
-        tata.setVisible(true);
-    }
-    
 }

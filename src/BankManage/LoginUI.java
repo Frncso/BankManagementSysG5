@@ -157,7 +157,7 @@ public class LoginUI extends JFrame  implements ActionListener {
         JLabel lblPinS = new JLabel("Password");
         lblPinS.setBounds(45, 180, 200, 30);
         lblPinS.setForeground(cs.gray);
-        txtPinS = new JPasswordField();
+        txtPinS = new JPasswordField("1234");
         txtPinS.setBounds(45, 210, 350, 35);
 
         btnSignInS = new JButton("Sign In");
