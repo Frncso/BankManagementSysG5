@@ -300,9 +300,9 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == roleBtn){
-//            AccountRoleUI roleUI = new AccountRoleUI();
-//            roleUI.setVisible(true);
-//            dispose();
+            AccountRoleUI roleUI = new AccountRoleUI();
+            roleUI.setVisible(true);
+            dispose();
         }
         
         else if(e.getSource() == accRequestBtn){

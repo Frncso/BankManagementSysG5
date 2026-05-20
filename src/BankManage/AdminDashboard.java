@@ -395,9 +395,9 @@ public class AdminDashboard extends JFrame implements ActionListener {
         // side bar
         
         if(e.getSource() == roleBtn){
-//            AccountRoleUI roleUI = new AccountRoleUI();
-//            roleUI.setVisible(true);
-//            dispose();
+            AccountRoleUI roleUI = new AccountRoleUI();
+            roleUI.setVisible(true);
+            dispose();
         }
         
         else if(e.getSource() == accRequestBtn){

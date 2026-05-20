@@ -188,6 +188,7 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
         
+        roleBtn.addActionListener(this);
         homeBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
         transTrackerBtn.addActionListener(this);
@@ -200,7 +201,11 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
             admUI.setVisible(true);
             dispose();
             
-        } else if (e.getSource() == logoutBtn) {
+        } if(e.getSource() == roleBtn){
+            AccountRoleUI roleUI = new AccountRoleUI();
+            roleUI.setVisible(true);
+            dispose();
+        }else if (e.getSource() == logoutBtn) {
             LoginUI logUI = new LoginUI();
             logUI.setVisible(true);
             dispose();
