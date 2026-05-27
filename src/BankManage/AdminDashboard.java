@@ -1,4 +1,5 @@
 package BankManage; 
+import BankManage.AppService.RegisterService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -6,6 +7,7 @@ import java.awt.event.*;
 public class AdminDashboard extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
+    RegisterService rs = new RegisterService();
     
     // panels
     
@@ -56,6 +58,7 @@ public class AdminDashboard extends JFrame implements ActionListener {
     // mainContentPanel
     
     private final JLabel dashboardTitle, welcomelbl, adminNamelbl, datelbl;
+    private final JButton testBtn;
     
     // account overview panel
     
@@ -223,6 +226,13 @@ public class AdminDashboard extends JFrame implements ActionListener {
         accountOverviewPanel.setBounds(30, 150, 580, 245);
         accountOverviewPanel.setBackground(cs.white);
         accountOverviewPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        
+        // test
+        
+        testBtn = new JButton("Retrieve");
+        testBtn.setBounds(100, 100, 100, 40);
+        testBtn.addActionListener(this);
+        mainContentPanel.add(testBtn);
         
         accountOverviewTitlelbl = new JLabel("Account Overview"); 
         accountOverviewTitlelbl.setBounds(20, 20, 250, 20);
@@ -415,6 +425,10 @@ public class AdminDashboard extends JFrame implements ActionListener {
             LoginUI logUI = new LoginUI();
             logUI.setVisible(true);
             dispose();
+        }
+        
+        else if(e.getSource() == testBtn){
+            rs.printAllRegisteredUsers();
         }
         
         // side bar end

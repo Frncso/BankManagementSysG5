@@ -535,51 +535,10 @@ public class RegisterUI extends JFrame implements ActionListener{
             }
         }
         else if(e.getSource() == btnReg){
-            /* 
-            
-            Customer customer = new Customer{
-                CusName = cusName,
-                CusName = cusName,
-                ... fields
-                accType = user
-            };
-            
-            */
-            
-            // rs.AddAccount(customer);
-            
-            // TEST CONCATENATION FOR ACC NO. (must have try catch soon)
-
-            JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
-            
-            LoginUI ln = new LoginUI();
-            ln.setVisible(true);
-            dispose();
-            
+            registerCustomer();
         }
         else if(e.getSource() == btnStfReg){
-            /* 
-            
-            if pos == staff,
-            
-            Employee staff = new Employee{
-                StFName = stFName,
-                StLName = stLName,
-                ... fields
-                accType = admin
-            };
-            
-            rs.AddAccount(staff);
-            
-            */
-            
-            JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
-            
-            LoginUI ln = new LoginUI();
-            ln.setVisible(true);
-            ln.staffRegister(true); // ensures it switches to staff tab upon registration
-            dispose();
-            
+            registerStaff();
         }
     }
     
@@ -614,6 +573,64 @@ public class RegisterUI extends JFrame implements ActionListener{
         }
         
         return isThirtyOne;
+    }
+    
+    private void registerCustomer() {
+        String fname = txtFName.getText().trim();
+        String lname = txtLName.getText().trim();
+        String pass = new String(passField.getPassword()).trim();
+        String dob = cbxMonth.getSelectedItem() + "/" + cbxDay.getSelectedItem() + "/" + cbxYear.getSelectedItem();
+        String occupation = (String) cbxOccu.getSelectedItem();
+        String income = (String) cbxSalary.getSelectedItem();
+        String idtype = (String) cbxIDType.getSelectedItem();
+        String idno = txtIDNo.getText().trim();
+
+        if (fname.isEmpty() || lname.isEmpty() || pass.isEmpty() || 
+            occupation.equals("Select Occupation") || income.equals("Select Range") || 
+            idtype.equals("Select ID") || idno.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all required fields.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        CustomerModel customer = new CustomerModel(null, fname, lname, pass, dob, occupation, income, idtype, idno);
+        boolean success = rs.addCustomer(customer);
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
+            LoginUI ln = new LoginUI();
+            ln.setVisible(true);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Registration failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void registerStaff() {
+        String fname = txtFNameS.getText().trim();
+        String lname = txtLNameS.getText().trim();
+        String pass = new String(passFieldS.getPassword()).trim();
+        String dob = cbxMonth.getSelectedItem() + "/" + cbxDay.getSelectedItem() + "/" + cbxYear.getSelectedItem();
+        String position = (String) cbxStaffType.getSelectedItem();
+        String accessCode = txtAccess.getText().trim();
+
+        if (fname.isEmpty() || lname.isEmpty() || pass.isEmpty() || position.equals("Select Position")) {
+            JOptionPane.showMessageDialog(this, "Please fill all required fields.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        EmployeeModel employee = new EmployeeModel(null, fname, lname, accessCode, dob, pass, position, "", "");
+
+        boolean success = rs.addEmployee(employee);
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
+            LoginUI ln = new LoginUI();
+            ln.setVisible(true);
+            ln.staffRegister(true);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Registration failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     public final boolean FebruaryCheck(String month){
