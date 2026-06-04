@@ -1,10 +1,13 @@
 package BankManage.DataService;
 
 import BankManage.AccountModels.CustomerModel;
+import BankManage.AppService.Encryption;
 import java.sql.*;
 
 public class CustomerDataService {
 
+    Encryption en = new Encryption();
+    
     public boolean save(CustomerModel customer) {
     String sql = "INSERT INTO customers " +
                  "(first_name, last_name, password, date_of_birth, occupation, income_range, id_type, id_number, is_active, is_frozen, is_suspended, customer_id)" +
@@ -39,8 +42,8 @@ public class CustomerDataService {
                 // custom id based on the auto_increment from sql
                 int year = java.time.LocalDate.now().getYear();
                 String seq = String.format("%05d", generatedId);
-                String initials = (customer.getFirstName().substring(0, 1) +
-                                   customer.getLastName().substring(0, 1)).toUpperCase();
+                String initials = (en.decrypt(customer.getFirstName().substring(0, 1)).toUpperCase() +
+                                   en.decrypt(customer.getLastName().substring(0, 1)).toUpperCase());
 
                 String customId = "U" + year + "-" + seq + "-" + initials;
                 customer.setCustomerId(customId);

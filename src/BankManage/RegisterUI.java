@@ -1,6 +1,7 @@
 package BankManage;
 
 import BankManage.AppService.RegisterService;
+import BankManage.AppService.Encryption;
 import BankManage.AccountModels.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -11,6 +12,7 @@ public class RegisterUI extends JFrame implements ActionListener{
     
     ColorScheme cs = new ColorScheme();
     RegisterService rs = new RegisterService();
+    Encryption en = new Encryption();
     // Account Models
     
     private final String[] occuList = {
@@ -594,7 +596,8 @@ public class RegisterUI extends JFrame implements ActionListener{
         boolean success = rs.registerCustomer(customer);
 
         if (success) {
-            JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Successfully Created Account. \n" 
+                    + "Your ID is: " + customer.getCustomerId() + ".", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
             LoginUI ln = new LoginUI();
             ln.setVisible(true);
             dispose();
@@ -621,7 +624,8 @@ public class RegisterUI extends JFrame implements ActionListener{
         boolean success = rs.registerEmployee(employee);
 
         if (success) {
-            JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Successfully Created Account. \n"
+                    + "Your ID is: " + employee.getEmployeeId() + ".", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
             LoginUI ln = new LoginUI();
             ln.setVisible(true);
             ln.staffRegister(true);

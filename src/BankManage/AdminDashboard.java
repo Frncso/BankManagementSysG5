@@ -1,5 +1,8 @@
 package BankManage; 
-import BankManage.AppService.RegisterService;
+import BankManage.AppService.Encryption;
+import BankManage.AppService.SessionManage;
+import BankManage.AppService.GetDateAndTime;
+import BankManage.AccountModels.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -7,7 +10,8 @@ import java.awt.event.*;
 public class AdminDashboard extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
-    RegisterService rs = new RegisterService();
+    GetDateAndTime dateTime = new GetDateAndTime();
+    Encryption en = new Encryption();
     
     // panels
     
@@ -58,7 +62,6 @@ public class AdminDashboard extends JFrame implements ActionListener {
     // mainContentPanel
     
     private final JLabel dashboardTitle, welcomelbl, adminNamelbl, datelbl;
-    private final JButton testBtn;
     
     // account overview panel
     
@@ -90,14 +93,21 @@ public class AdminDashboard extends JFrame implements ActionListener {
     
     //
     
-    private String adminName = "Juanito";
-    private String currentDate = "May 20, 2026";
+    private String adminName = SessionManage.getCurrentUserDisplayName();
+    private String currentDate = dateTime.currentTime();
     private int totalAccountsCount = 8;
     private int activeUsersCount = 4;
     private int pendingRequestsCount = 3;
     private int approvedTodayCount = 2;
     
     public AdminDashboard() {
+        
+        if (SessionManage.isStaffLoggedIn()){
+            EmployeeModel staff = SessionManage.getCurrentStaff();
+            
+            System.out.println("Logged in as: " + en.decrypt(staff.getEmployeeFName())); // debug
+        }
+        
         setTitle("Admin Dashboard - Home");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -226,13 +236,6 @@ public class AdminDashboard extends JFrame implements ActionListener {
         accountOverviewPanel.setBounds(30, 150, 580, 245);
         accountOverviewPanel.setBackground(cs.white);
         accountOverviewPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-        
-        // test
-        
-        testBtn = new JButton("Retrieve");
-        testBtn.setBounds(100, 100, 100, 40);
-        testBtn.addActionListener(this);
-        mainContentPanel.add(testBtn);
         
         accountOverviewTitlelbl = new JLabel("Account Overview"); 
         accountOverviewTitlelbl.setBounds(20, 20, 250, 20);
@@ -422,13 +425,19 @@ public class AdminDashboard extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == logoutBtn){
-            LoginUI logUI = new LoginUI();
-            logUI.setVisible(true);
-            dispose();
-        }
-        
-        else if(e.getSource() == testBtn){
-            //rs.printAllRegisteredUsers();
+            
+            int confirm = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout", 
+            JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                SessionManage.logout();
+                LoginUI logUI = new LoginUI();
+                logUI.setVisible(true);
+                dispose();
+            }
+            
         }
         
         // side bar end

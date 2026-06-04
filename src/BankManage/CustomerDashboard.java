@@ -1,11 +1,17 @@
 package BankManage; 
+import BankManage.AppService.Encryption;
+import BankManage.AppService.SessionManage;
+import BankManage.AppService.GetDateAndTime;
+import BankManage.AccountModels.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class CustomerDashboard extends JFrame implements ActionListener {
 
-    ColorScheme cs = new ColorScheme();
+    ColorScheme cs = new ColorScheme();         
+    GetDateAndTime dateTime = new GetDateAndTime();
+    Encryption en = new Encryption();
     
     // panels
     
@@ -125,12 +131,20 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     
     //
     
-    private String fname = "Juan", date = "May 15, 2026";
+    private String fname = SessionManage.getCurrentUserDisplayName();
+    private String date = dateTime.currentTime();
     private double checkBal = 121502.60;
     private double saveBal = 30242.55;
     private double totalBal = checkBal + saveBal;
     
     public CustomerDashboard() {
+        
+        if (SessionManage.isCustomerLoggedIn()){
+            CustomerModel customer = SessionManage.getCurrentCustomer();
+            
+            System.out.println("Logged in as: " + en.decrypt(customer.getFirstName())); // debug
+        }
+        
         setTitle("Dashboard - Home");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -267,7 +281,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         mainContentPanel.add(welcomelbl);
         
         usrFName = new JLabel(fname);
-        usrFName.setBounds(210, 67, 200, 30);
+        usrFName.setBounds(210, 67, 500, 30);
         usrFName.setFont(new Font("", Font.BOLD, 24));
         usrFName.setForeground(cs.btnColorSelect);
         mainContentPanel.add(usrFName);
@@ -510,10 +524,19 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == logoutBtn){
-            // logout code
-            LoginUI logUI = new LoginUI();
-            logUI.setVisible(true);
-            dispose();
+            
+            int confirm = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout", 
+            JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                SessionManage.logout();
+                LoginUI logUI = new LoginUI();
+                logUI.setVisible(true);
+                dispose();
+            }
+
         }
         
         else if(e.getSource() == withdrawBtn){
@@ -555,5 +578,5 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         //
         
     }
-
+    
 }

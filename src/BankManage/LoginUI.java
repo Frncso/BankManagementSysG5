@@ -4,13 +4,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 import BankManage.AppService.LoginService;
+import BankManage.AppService.SessionManage;
+import BankManage.AppService.Encryption;
 import BankManage.AccountModels.*;
 
-public class LoginUI extends JFrame  implements ActionListener {
+public class LoginUI extends JFrame implements ActionListener {
    
     ColorScheme cs = new ColorScheme();
     LoginService ls = new LoginService();
-    
+    Encryption en = new Encryption();
 
     // logo
     
@@ -39,8 +41,6 @@ public class LoginUI extends JFrame  implements ActionListener {
     private JButton btnCusS, btnStfS, btnSignInS, btnRegisterS; //stf log btnsignins -- open form
     private JTextField txtAccNoS; 
     private JPasswordField txtPinS;
-    
-    private JLabel usrUandP, usrUandPs;
 
     LoginUI(){
 
@@ -94,7 +94,7 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnStf.setForeground(cs.gray);
         btnStf.setBorderPainted(false);
 
-        JLabel lblAcc = new JLabel("Email");
+        JLabel lblAcc = new JLabel("User ID");
         lblAcc.setBounds(45,100,200,30);
         lblAcc.setForeground(cs.gray);
         txtAccNo = new JTextField();
@@ -122,11 +122,7 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnRegister.setBorderPainted(false);
         btnRegister.setContentAreaFilled(false);
         btnRegister.setForeground(cs.purple);
-
-        usrUandP = new JLabel("Email: 12345 Password: user123"); // para ma access ni sir
-        usrUandP.setBounds(130, 350, 200, 30);
         
-        loginCus.add(usrUandP);
         loginCus.add(btnCus);
         loginCus.add(btnStf);
         loginCus.add(lblAcc);
@@ -152,7 +148,7 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnStfS.setBackground(cs.btnColorSelect);
         btnStfS.setForeground(cs.white);
         
-        JLabel lblAccS = new JLabel("Account Name");
+        JLabel lblAccS = new JLabel("Account ID");
         lblAccS.setBounds(45, 100, 200, 30);
         lblAccS.setForeground(cs.gray);
         txtAccNoS = new JTextField();
@@ -180,11 +176,6 @@ public class LoginUI extends JFrame  implements ActionListener {
         btnRegisterS.setBorderPainted(false);
         btnRegisterS.setContentAreaFilled(false);
         btnRegisterS.setForeground(cs.purple);
-        
-        usrUandPs = new JLabel("Account: admin Password: admin123"); // para ma access ni sir
-        usrUandPs.setBounds(115, 350, 250, 30);
-        
-        loginStf.add(usrUandPs);
         
         
         loginStf.setBackground(cs.white); // bg color white
@@ -226,35 +217,10 @@ public class LoginUI extends JFrame  implements ActionListener {
         }
         //for CUS access
         else if (e.getSource() == btnSignIn) {
-//            String accNo = txtAccNo.getText().trim();
-//            String pin = new String(txtPin.getPassword()).trim();
-//
-//            //Pass ng CUS
-//            if (accNo.equals("12345") && pin.equals("user123")) {
-//                JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Customer.");
-//                CustomerDashboard dash = new CustomerDashboard(); 
-//                dash.setVisible(true);
-//             dispose(); 
-//            } else {
-//                JOptionPane.showMessageDialog(this, "Invalid Customer Account or PIN.", "Login Error", JOptionPane.ERROR_MESSAGE);
-//            }
             loginCustomer();
         } 
         //for STF
         else if (e.getSource() == btnSignInS) {
-//            String accNo = txtAccNoS.getText().trim();
-//            String pin = new String(txtPinS.getPassword()).trim();
-//            System.out.println(accNo+" "+pin);
-//            //Pass ng STF
-//            if (accNo.equals("admin") && pin.equals("admin123")) {
-//                JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Admin.");
-//                AdminDashboard admin = new AdminDashboard(); 
-//                admin.setVisible(true);
-//                dispose(); 
-//              //where/what? call for admin inter
-//            } else {
-//                JOptionPane.showMessageDialog(this, "Invalid Staff Credentials.", "Login Error", JOptionPane.ERROR_MESSAGE);
-//            }
             loginStaff();
 
         } else if (e.getSource() == btnRegister || e.getSource() == btnRegisterS) {
@@ -276,7 +242,10 @@ public class LoginUI extends JFrame  implements ActionListener {
         
         CustomerModel customer = ls.loginCustomer(customerID, pass);
         if (customer != null) {
-            JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Customer.");
+            customer.setFirstName(en.decrypt(customer.getFirstName()));
+            SessionManage.loginCustomer(customer);
+            
+            JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + customer.getFirstName() + "!");
             new CustomerDashboard().setVisible(true);
             dispose();
         }
@@ -291,7 +260,9 @@ public class LoginUI extends JFrame  implements ActionListener {
         
         EmployeeModel staff = ls.loginStaff(staffID, pass);
         if (staff != null) {
-            JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Admin.");
+            staff.setEmployeeFName(en.decrypt(staff.getEmployeeFName()));
+            SessionManage.loginStaff(staff);
+            JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + staff.getEmployeeFName() + "!");
             new AdminDashboard().setVisible(true);
             dispose();
         }

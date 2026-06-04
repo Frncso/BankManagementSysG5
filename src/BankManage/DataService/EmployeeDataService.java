@@ -36,7 +36,7 @@ public class EmployeeDataService {
                 // display id gen
                 int year = java.time.LocalDate.now().getYear();
                 String seq = String.format("%05d", generatedId);
-                String initials = (en.decrypt(employee.getEmployeeFName().substring(0, 1)) +
+                String initials = (en.decrypt(employee.getEmployeeFName().substring(0, 1)).toUpperCase() +
                                    en.decrypt(employee.getEmployeeLName().substring(0, 1)).toUpperCase());
 
                 String customEmployeeId = "AU" + year + "-" + seq + "-" + initials;
