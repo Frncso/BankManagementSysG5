@@ -2,6 +2,7 @@ package BankManage.AccountModels;
 
 public class CustomerModel {
 
+    private int cId;
     private String customerId;
     private String firstName;
     private String lastName;
@@ -17,10 +18,9 @@ public class CustomerModel {
 
     public CustomerModel() {}
 
-    public CustomerModel(String customerId, String firstName, String lastName, String password,
+    public CustomerModel(String firstName, String lastName, String password,
                          String dateOfBirth, String occupation, String incomeRange,
                          String idType, String idNumber) {
-        this.customerId = customerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
@@ -32,6 +32,9 @@ public class CustomerModel {
     }
 
     // get set
+    
+    public int getCId() { return cId; }
+    
     public String getCustomerId() { return customerId; }
     public void setCustomerId(String customerId) { this.customerId = customerId; }
 

@@ -6,12 +6,12 @@ import java.sql.*;
 public class CustomerDataService {
 
     public boolean save(CustomerModel customer) {
-    String sql = "INSERT INTO customers (first_name, last_name, password, date_of_birth, " +
-                 "occupation, income_range, id_type, id_number, is_active, is_frozen, is_suspended) " +
-                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO customers " +
+                 "(first_name, last_name, password, date_of_birth, occupation, income_range, id_type, id_number, is_active, is_frozen, is_suspended, customer_id)" +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'TEMP')";
 
     try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
         stmt.setString(1, customer.getFirstName());
         stmt.setString(2, customer.getLastName());
@@ -31,24 +31,24 @@ public class CustomerDataService {
             return false;
         }
 
-        // grab auto_increment from sql
+        // gen id
         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
             if (generatedKeys.next()) {
                 int generatedId = generatedKeys.getInt(1);
 
-                // display id gen
+                // custom id based on the auto_increment from sql
                 int year = java.time.LocalDate.now().getYear();
                 String seq = String.format("%05d", generatedId);
                 String initials = (customer.getFirstName().substring(0, 1) +
                                    customer.getLastName().substring(0, 1)).toUpperCase();
 
-                String customCustomerId = "U" + year + "-" + seq + "-" + initials;
-                customer.setCustomerId(customCustomerId);
+                String customId = "U" + year + "-" + seq + "-" + initials;
+                customer.setCustomerId(customId);
 
-                // custom id updation on specified na value " ? "
-                String updateSql = "UPDATE customers SET customer_id = ? WHERE id = ?";
+                // update row iwth custom id
+                String updateSql = "UPDATE customers SET customer_id = ? WHERE c_id = ?";
                 try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-                    updateStmt.setString(1, customCustomerId);
+                    updateStmt.setString(1, customId);
                     updateStmt.setInt(2, generatedId);
                     updateStmt.executeUpdate();
                 }

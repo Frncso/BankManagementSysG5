@@ -1,6 +1,5 @@
 package BankManage;
 
-import BankManage.AppService.IdGenerator;
 import java.security.NoSuchAlgorithmException;
 
 public class Main{
@@ -9,7 +8,7 @@ public class Main{
 
         // initialize idgen check for increments
         
-        IdGenerator.initialize();
+        //IdGenerator.initialize();
         
         // open login
         

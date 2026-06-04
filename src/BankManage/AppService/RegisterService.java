@@ -13,8 +13,6 @@ public class RegisterService {
 
     public boolean registerCustomer(CustomerModel customer) {
         try {
-            String id = IdGenerator.generateCustomerId(customer.getFirstName(), customer.getLastName());
-            customer.setCustomerId(id);
 
             customer.setFirstName(en.encrypt(customer.getFirstName()));
             customer.setLastName(en.encrypt(customer.getLastName()));
@@ -31,8 +29,6 @@ public class RegisterService {
 
     public boolean registerEmployee(EmployeeModel employee) {
         try {
-            String id = IdGenerator.generateStaffId(employee.getEmployeeFName(), employee.getEmployeeLName());
-            employee.setEmployeeId(id);
 
             employee.setEmployeeFName(en.encrypt(employee.getEmployeeFName()));
             employee.setEmployeeLName(en.encrypt(employee.getEmployeeLName()));

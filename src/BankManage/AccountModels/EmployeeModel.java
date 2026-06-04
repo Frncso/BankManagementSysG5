@@ -1,6 +1,7 @@
 package BankManage.AccountModels;
 
 public class EmployeeModel {
+    private int eId;
     private String employeeId;
     private String employeeFName;
     private String employeeLName;       
@@ -11,19 +12,19 @@ public class EmployeeModel {
 
     public EmployeeModel() {}
 
-    public EmployeeModel(String employeeId, String employeeFName, String employeeLName, String employeeSecPin,
+    public EmployeeModel(String employeeFName, String employeeLName, String employeeSecPin,
                          String employeeDOfBirth, String employeePosition, String accessCode) {
-        this.employeeId = employeeId;
         this.employeeFName = employeeFName;
         this.employeeLName = employeeLName;
         this.employeeSecPin = employeeSecPin;
         this.employeeDOfBirth = employeeDOfBirth;
         this.employeePosition = employeePosition;
         this.accessCode = accessCode;
-
     }
 
     // get set
+    public int getEId() { return eId; }
+    
     public String getEmployeeId() { return employeeId; }
     public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
 

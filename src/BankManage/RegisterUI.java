@@ -590,7 +590,7 @@ public class RegisterUI extends JFrame implements ActionListener{
             return;
         }
 
-        CustomerModel customer = new CustomerModel(null, fname, lname, pass, dob, occupation, income, idtype, idno);
+        CustomerModel customer = new CustomerModel(fname, lname, pass, dob, occupation, income, idtype, idno);
         boolean success = rs.registerCustomer(customer);
 
         if (success) {
@@ -616,7 +616,7 @@ public class RegisterUI extends JFrame implements ActionListener{
             return;
         }
 
-        EmployeeModel employee = new EmployeeModel(null, fname, lname, pass, dob , position, accessCode);
+        EmployeeModel employee = new EmployeeModel(fname, lname, pass, dob , position, accessCode);
 
         boolean success = rs.registerEmployee(employee);
 
