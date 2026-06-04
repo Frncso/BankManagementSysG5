@@ -1,4 +1,9 @@
 package BankManage;
+
+import BankManage.AccountModels.RequestModel;
+import BankManage.AppService.SessionManage;
+import BankManage.DataService.BankAccountDataService;
+import BankManage.DataService.RequestDataService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -6,153 +11,185 @@ import java.awt.event.*;
 public class AccountRequestsSummaryUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
-    
-    private JPanel mainContentPanel, linePanel, summaryPanel;
-    private final JLabel pageTitle;
-    private final JLabel summaryTitlelbl;
-    private final JPanel divider;
-    private final JLabel requestIDlbl, fullNamelbl, emailAddresslbl, accountTypelbl, dateAppliedlbl;
-    private final JLabel requestIDval, fullNameval, emailAddressval, accountTypeval, dateAppliedval;
-    private final JButton acceptBtn, declineBtn, returnBtn;
-    
-    public AccountRequestsSummaryUI() {
-        setTitle("Account Requests Summary");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    private JPanel mainContentPanel, linePanel, formPanel;
+
+    private JLabel headerLbl, forAccountlbl, accountIDlbl, accountTypelbl, accountTypeActuallbl;
+    private JLabel requestlbl, requestActionlbl, datelbl, dateActuallbl, purposelbl;
+    private JTextArea purposetxa;
+    private JButton acceptBtn, rejectBtn, returnBtn;
+
+    private String currentRequestId;
+    private RequestModel currentRequest;
+
+    public AccountRequestsSummaryUI(String requestID) {
+        this.currentRequestId = requestID;
+
+        setTitle("Account Request Details");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(null);
-        setSize(800, 600);
-        setLocationRelativeTo(null); 
+        setSize(960, 670);
+        setLocationRelativeTo(null);
         setResizable(false);
-        
+
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
-        mainContentPanel.setBounds(0, 0, 800, 600);
-        
-        pageTitle = new JLabel("Account Requests Summary");
-        pageTitle.setBounds(30, 15, 300, 20);
-        pageTitle.setFont(new Font("", Font.BOLD, 16));
-        mainContentPanel.add(pageTitle);
-        
+
+        headerLbl = new JLabel("Request Account Closure");
+        headerLbl.setBounds(30, 20, 450, 30);
+        headerLbl.setFont(new Font("", Font.BOLD, 24));
+        headerLbl.setForeground(cs.darkerPurple);
+        mainContentPanel.add(headerLbl);
+
         linePanel = new JPanel();
-        linePanel.setBounds(30, 50, 740, 3);
+        linePanel.setBounds(30, 65, 885, 3);
         linePanel.setBackground(cs.darkPurple);
         mainContentPanel.add(linePanel);
-        
-        summaryPanel = new JPanel();
-        summaryPanel.setLayout(null);
-        summaryPanel.setBounds(50, 80, 700, 380);
-        summaryPanel.setBackground(cs.white);
-        summaryPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-        
-        summaryTitlelbl = new JLabel("Applicant Details"); 
-        summaryTitlelbl.setBounds(35, 20, 300, 30);
-        summaryTitlelbl.setFont(new Font("Arial", Font.BOLD, 20));
-        summaryTitlelbl.setForeground(cs.darkerPurple);
-        summaryPanel.add(summaryTitlelbl);
-        
-        divider = new JPanel();
-        divider.setBounds(35, 60, 630, 2);
-        divider.setBackground(cs.darkPurple);
-        summaryPanel.add(divider);
-        
-        requestIDlbl = new JLabel("Request ID:");
-        requestIDlbl.setBounds(45, 85, 200, 35);
-        requestIDlbl.setFont(new Font("Arial", Font.BOLD, 15));
-        summaryPanel.add(requestIDlbl);
-        
-        requestIDval = new JLabel("REQ-001");
-        requestIDval.setBounds(250, 85, 400, 35);
-        requestIDval.setFont(new Font("Arial", Font.PLAIN, 15));
-        summaryPanel.add(requestIDval);
-        
-        fullNamelbl = new JLabel("Full Name:");
-        fullNamelbl.setBounds(45, 140, 200, 35);
-        fullNamelbl.setFont(new Font("Arial", Font.BOLD, 15));
-        summaryPanel.add(fullNamelbl);
-        
-        fullNameval = new JLabel("Ezekiel Francisco");
-        fullNameval.setBounds(250, 140, 400, 35);
-        fullNameval.setFont(new Font("Arial", Font.PLAIN, 15));
-        summaryPanel.add(fullNameval);
-        
-        emailAddresslbl = new JLabel("Email Address:");
-        emailAddresslbl.setBounds(45, 195, 200, 35);
-        emailAddresslbl.setFont(new Font("Arial", Font.BOLD, 15));
-        summaryPanel.add(emailAddresslbl);
-        
-        emailAddressval = new JLabel("ezekiel@email.com");
-        emailAddressval.setBounds(250, 195, 400, 35);
-        emailAddressval.setFont(new Font("Arial", Font.PLAIN, 15));
-        summaryPanel.add(emailAddressval);
-        
-        accountTypelbl = new JLabel("Account Type:");
-        accountTypelbl.setBounds(45, 250, 200, 35);
-        accountTypelbl.setFont(new Font("Arial", Font.BOLD, 15));
-        summaryPanel.add(accountTypelbl);
-        
-        accountTypeval = new JLabel("Savings");
-        accountTypeval.setBounds(250, 250, 400, 35);
-        accountTypeval.setFont(new Font("Arial", Font.PLAIN, 15));
-        summaryPanel.add(accountTypeval);
-        
-        dateAppliedlbl = new JLabel("Date Applied:");
-        dateAppliedlbl.setBounds(45, 305, 200, 35);
-        dateAppliedlbl.setFont(new Font("Arial", Font.BOLD, 15));
-        summaryPanel.add(dateAppliedlbl);
-        
-        dateAppliedval = new JLabel("May 18, 2026");
-        dateAppliedval.setBounds(250, 305, 400, 35);
-        dateAppliedval.setFont(new Font("Arial", Font.PLAIN, 15));
-        summaryPanel.add(dateAppliedval);
-        mainContentPanel.add(summaryPanel);
-        
+
+        formPanel = new JPanel();
+        formPanel.setLayout(null);
+        formPanel.setBounds(30, 100, 885, 495);
+        formPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        formPanel.setBackground(cs.white);
+        mainContentPanel.add(formPanel);
+
+        loadRequestDetails();
+
+        forAccountlbl = new JLabel("For Account: ");
+        forAccountlbl.setBounds(15, 20, 150, 30);
+        forAccountlbl.setFont(new Font("", Font.BOLD, 16));
+        forAccountlbl.setForeground(cs.gray);
+        formPanel.add(forAccountlbl);
+
+        accountIDlbl = new JLabel(currentRequest != null ? currentRequest.getAccountNumber() : "N/A");
+        accountIDlbl.setBounds(155, 20, 300, 30);
+        accountIDlbl.setFont(new Font("", Font.BOLD, 16));
+        accountIDlbl.setForeground(cs.darkerPurple);
+        formPanel.add(accountIDlbl);
+
+        accountTypelbl = new JLabel("Account Type: ");
+        accountTypelbl.setBounds(15, 50, 150, 30);
+        accountTypelbl.setFont(new Font("", Font.BOLD, 16));
+        accountTypelbl.setForeground(cs.gray);
+        formPanel.add(accountTypelbl);
+
+        accountTypeActuallbl = new JLabel(currentRequest != null ? currentRequest.getAccountType() : "N/A");
+        accountTypeActuallbl.setBounds(155, 50, 150, 30);
+        accountTypeActuallbl.setFont(new Font("", Font.BOLD, 16));
+        accountTypeActuallbl.setForeground(cs.darkerPurple);
+        formPanel.add(accountTypeActuallbl);
+
+        requestlbl = new JLabel("Request Type: ");
+        requestlbl.setBounds(15, 80, 150, 30);
+        requestlbl.setFont(new Font("", Font.BOLD, 16));
+        requestlbl.setForeground(cs.gray);
+        formPanel.add(requestlbl);
+
+        requestActionlbl = new JLabel(currentRequest != null ? currentRequest.getRequestType() : "N/A");
+        requestActionlbl.setBounds(155, 80, 200, 30);
+        requestActionlbl.setFont(new Font("", Font.BOLD, 16));
+        requestActionlbl.setForeground(cs.darkerPurple);
+        formPanel.add(requestActionlbl);
+
+        datelbl = new JLabel("Date Applied: ");
+        datelbl.setBounds(15, 110, 150, 30);
+        datelbl.setFont(new Font("", Font.BOLD, 16));
+        datelbl.setForeground(cs.gray);
+        formPanel.add(datelbl);
+
+        dateActuallbl = new JLabel(currentRequest != null ? currentRequest.getTimestamp() : "N/A");
+        dateActuallbl.setBounds(155, 110, 350, 30);
+        dateActuallbl.setFont(new Font("", Font.BOLD, 16));
+        dateActuallbl.setForeground(cs.darkerPurple);
+        formPanel.add(dateActuallbl);
+
+        purposelbl = new JLabel("Purpose: ");
+        purposelbl.setBounds(15, 140, 150, 30);
+        purposelbl.setFont(new Font("", Font.BOLD, 16));
+        purposelbl.setForeground(cs.gray);
+        formPanel.add(purposelbl);
+
+        purposetxa = new JTextArea();
+        purposetxa.setBounds(15, 180, 855, 180);
+        purposetxa.setFont(new Font("", Font.PLAIN, 16));
+        purposetxa.setLineWrap(true);
+        purposetxa.setWrapStyleWord(true);
+        purposetxa.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        purposetxa.setBackground(cs.lightgray);
+        purposetxa.setFocusable(false);
+        purposetxa.setEditable(false); // display only nlng ung textarea
+        if (currentRequest != null) {
+            purposetxa.setText(currentRequest.getPurpose());
+        }
+        formPanel.add(purposetxa);
+
+        // buttons
         acceptBtn = new JButton("Accept");
-        acceptBtn.setBounds(50, 480, 150, 40);
-        acceptBtn.setBackground(new Color(34, 139, 34));
+        acceptBtn.setBounds(360, 430, 160, 45);
+        acceptBtn.setBackground(cs.lime);
         acceptBtn.setForeground(cs.white);
         acceptBtn.setFocusPainted(false);
         acceptBtn.setBorderPainted(false);
         acceptBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        mainContentPanel.add(acceptBtn);
-        
-        declineBtn = new JButton("Decline");
-        declineBtn.setBounds(220, 480, 150, 40);
-        declineBtn.setBackground(new Color(178, 34, 34));
-        declineBtn.setForeground(cs.white);
-        declineBtn.setFocusPainted(false);
-        declineBtn.setBorderPainted(false);
-        declineBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        mainContentPanel.add(declineBtn);
-        
+        formPanel.add(acceptBtn);
+
+        rejectBtn = new JButton("Reject");
+        rejectBtn.setBounds(535, 430, 160, 45);
+        rejectBtn.setBackground(cs.red);
+        rejectBtn.setForeground(cs.white);
+        rejectBtn.setFocusPainted(false);
+        rejectBtn.setBorderPainted(false);
+        rejectBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        formPanel.add(rejectBtn);
+
         returnBtn = new JButton("Return");
-        returnBtn.setBounds(600, 480, 150, 40);
+        returnBtn.setBounds(710, 430, 160, 45);
         returnBtn.setBackground(cs.darkPurple);
         returnBtn.setForeground(cs.white);
         returnBtn.setFocusPainted(false);
         returnBtn.setBorderPainted(false);
         returnBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        mainContentPanel.add(returnBtn);
+        formPanel.add(returnBtn);
+
+        mainContentPanel.setBounds(0, 0, 960, 670);
         add(mainContentPanel);
-        
+
         acceptBtn.addActionListener(this);
-        declineBtn.addActionListener(this);
+        rejectBtn.addActionListener(this);
         returnBtn.addActionListener(this);
+    }
+
+    private void loadRequestDetails() {
+        RequestDataService requestDataService = new RequestDataService();
+        currentRequest = requestDataService.findByReqID(currentRequestId);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        RequestDataService requestDataService = new RequestDataService();
+
         if (e.getSource() == acceptBtn) {
-            JOptionPane.showMessageDialog(this, "Account Registration Approved!");
-            AccountRequestsUI acc = new AccountRequestsUI();
-            acc.setVisible(true);
+            // accept request
+            boolean updated = requestDataService.updateRequestStatus(currentRequestId, "Accepted");
+
+            if (updated && currentRequest.getAccountNumber() != null) {
+                BankAccountDataService accountDataService = new BankAccountDataService();
+                accountDataService.updateStatus(currentRequest.getAccountNumber(), "Closed");
+            }
+
+            JOptionPane.showMessageDialog(this, "Request Accepted. Account has been closed.");
+            new AccountRequestsUI().setVisible(true);
             dispose();
-        } else if (e.getSource() == declineBtn) {
-            JOptionPane.showMessageDialog(this, "Account Registration Declined.");
-            AccountRequestsUI dec = new AccountRequestsUI();
-            dec.setVisible(true);
+
+        } else if (e.getSource() == rejectBtn) {
+            // reject
+            requestDataService.updateRequestStatus(currentRequestId, "Rejected");
+            JOptionPane.showMessageDialog(this, "Request Rejected.");
+            new AccountRequestsUI().setVisible(true);
             dispose();
+
         } else if (e.getSource() == returnBtn) {
-            AccountRequestsUI ret = new AccountRequestsUI();
-            ret.setVisible(true);
+            new AccountRequestsUI().setVisible(true);
             dispose();
         }
     }

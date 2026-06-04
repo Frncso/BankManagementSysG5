@@ -53,31 +53,19 @@ public class SavingsUI extends JFrame implements ActionListener {
     private Image logoutScale = logoutRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon logoutIcon = new ImageIcon(logoutScale);
     
-    java.net.URL targetImgURL = CustomerDashboard.class.getResource("resources/logout.png");
+    java.net.URL targetImgURL = CustomerDashboard.class.getResource("resources/target.png");
     
     private ImageIcon targetRaw = new ImageIcon(targetImgURL);
     private Image targetScale = targetRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon targetIcon = new ImageIcon(targetScale);
     
-    java.net.URL completeImgURL = CustomerDashboard.class.getResource("resources/logout.png");
-    
-    private ImageIcon completeRaw = new ImageIcon(completeImgURL);
-    private Image completeScale = completeRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon completeIcon = new ImageIcon(completeScale);
-    
-    java.net.URL checkImgURL = CustomerDashboard.class.getResource("resources/logout.png");
+    java.net.URL checkImgURL = CustomerDashboard.class.getResource("resources/list.png");
     
     private ImageIcon checkRaw = new ImageIcon(checkImgURL);
     private Image checkScale = checkRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon checkIcon = new ImageIcon(checkScale);
     
-    java.net.URL calcImgURL = CustomerDashboard.class.getResource("resources/logout.png");
-    
-    private ImageIcon calcRaw = new ImageIcon(calcImgURL);
-    private Image calcScale = calcRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon calcIcon = new ImageIcon(calcScale);
-    
-    java.net.URL eyeImgURL = CustomerDashboard.class.getResource("resources/logout.png");
+    java.net.URL eyeImgURL = CustomerDashboard.class.getResource("resources/eye.png");
     
     private ImageIcon eyeRaw = new ImageIcon(eyeImgURL);
     private Image eyeScale = eyeRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
@@ -99,33 +87,24 @@ public class SavingsUI extends JFrame implements ActionListener {
     private JButton calculateBtn;
     private final JLabel logoName;
     
-    private JLabel savingsAccountLabel, savingsGoalLabel, goalLabel, targetLabel, currentLabel, completeLabel, interestCalcLabel, 
-    monthlyGrowthLabel, enterMonthsLabel, resultLabel, savingsHistoryLabel, historyListLabel;
-    private JLabel historyListTitleLabel, history1Label, history2Label;
+    private JLabel resultLabel, actionlbl;
     private JTextField monthsInputText;
     
     private double savingsBal = 30242.55;
     
     private JLabel dashboardTitle;
     private JLabel lTitle, lLabel, lcurLabel;
-    private JLabel rTitle, rLabel, rAccrLabel;
     private JLabel achievedTitle, achievedCountLabel, achievedSubLabel;
    
     private JPanel lPanel, rPanel;
     private JPanel achievedPanel;
     
-    private JButton targetBtn, completedBtn, viewGoalBtn;
+    private JButton targetBtn, viewGoalBtn;
     private JButton viewAchievedBtn;
 
     public SavingsUI() {
         
-        if (SessionManage.isCustomerLoggedIn()){
-            CustomerModel customer = SessionManage.getCurrentCustomer();
-            
-            System.out.println("Logged in as: " + en.decrypt(customer.getFirstName())); // debug
-        }
-        
-        setTitle("Dashboard - Home");
+        setTitle("Dashboard - Savings");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setSize(1440, 960);
@@ -250,10 +229,10 @@ public class SavingsUI extends JFrame implements ActionListener {
         lPanel.setLayout(null);
         lPanel.setBackground(Color.WHITE);
         lPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        lPanel.setBounds(30, 80, 580, 200); 
+        lPanel.setBounds(30, 80, 1185, 200); 
         mainContentPanel.add(lPanel);
         
-        lTitle = new JLabel("VaultBank Savings Account");
+        lTitle = new JLabel("VaultBank Total Savings");
         lTitle.setFont(new Font("Arial", Font.BOLD, 18));
         lTitle.setBounds(20, 15, 300, 25);
         lPanel.add(lTitle); 
@@ -270,7 +249,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         lPanel.add(lcurLabel); 
         
         targetBtn = new JButton("Target", targetIcon);
-        targetBtn.setBounds(20, 130, 160, 45); 
+        targetBtn.setBounds(545, 130, 300, 45); 
         targetBtn.setBackground(cs.darkPurple); 
         targetBtn.setForeground(Color.WHITE);
         targetBtn.setFont(new Font("Arial", Font.BOLD, 15));
@@ -282,21 +261,8 @@ public class SavingsUI extends JFrame implements ActionListener {
         targetBtn.addActionListener(this);
         lPanel.add(targetBtn);
         
-        completedBtn = new JButton("Completed", checkIcon);
-        completedBtn.setBounds(200, 130, 160, 45);
-        completedBtn.setBackground(cs.darkPurple);
-        completedBtn.setForeground(Color.WHITE);
-        completedBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        completedBtn.setBorderPainted(false);
-        completedBtn.setFocusable(false);
-        completedBtn.setHorizontalAlignment(SwingConstants.CENTER);
-        completedBtn.setMargin(new Insets(0, 0, 0, 10));
-        completedBtn.setIconTextGap(10);
-        completedBtn.addActionListener(this);
-        lPanel.add(completedBtn);
-        
-        viewGoalBtn = new JButton("View GOAL", completeIcon);
-        viewGoalBtn.setBounds(380, 130, 180, 45);
+        viewGoalBtn = new JButton("View Goals", checkIcon);
+        viewGoalBtn.setBounds(865, 130, 300, 45);
         viewGoalBtn.setBackground(cs.darkPurple);
         viewGoalBtn.setForeground(Color.WHITE);
         viewGoalBtn.setFont(new Font("Arial", Font.BOLD, 15));
@@ -308,57 +274,16 @@ public class SavingsUI extends JFrame implements ActionListener {
         viewGoalBtn.addActionListener(this);
         lPanel.add(viewGoalBtn);
         
-        rPanel = new JPanel();
-        rPanel.setLayout(null);
-        rPanel.setBackground(Color.WHITE);
-        rPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        rPanel.setBounds(635, 80, 580, 200); 
-        mainContentPanel.add(rPanel);
-        
-        rTitle = new JLabel("VaultBank Interest Account");
-        rTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        rTitle.setBounds(20, 15, 300, 25);
-        rPanel.add(rTitle);
-        
-        rLabel = new JLabel("PHP 4% Annual");
-        rLabel.setFont(new Font("Arial", Font.BOLD, 22));
-        rLabel.setBounds(20, 52, 300, 35); 
-        rPanel.add(rLabel);
-        
-        rAccrLabel = new JLabel("Months to Forecast:");
-        rAccrLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        rAccrLabel.setForeground(Color.GRAY);
-        rAccrLabel.setBounds(20, 90, 130, 25);
-        rPanel.add(rAccrLabel); 
-        
-        monthsInputText = new JTextField("12");
-        monthsInputText.setFont(new Font("Arial", Font.PLAIN, 14));
-        monthsInputText.setBounds(155, 90, 50, 25);
-        rPanel.add(monthsInputText); 
-        
-        resultLabel = new JLabel("Result: ₱18,500.00");
-        resultLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        resultLabel.setBounds(215, 90, 240, 25); 
-        rPanel.add(resultLabel);
-        
-        calculateBtn = new JButton("Calculate", calcIcon);
-        calculateBtn.setBounds(20, 130, 540, 45); 
-        calculateBtn.setBackground(cs.darkPurple);
-        calculateBtn.setForeground(Color.WHITE);
-        calculateBtn.setFont(new Font("Arial", Font.BOLD, 15));
-        calculateBtn.setBorderPainted(false);
-        calculateBtn.setFocusable(false);
-        calculateBtn.setHorizontalAlignment(SwingConstants.CENTER);
-        calculateBtn.setMargin(new Insets(0, 0, 0, 10));
-        calculateBtn.setIconTextGap(10);
-        calculateBtn.addActionListener(this);
-        rPanel.add(calculateBtn);
+        actionlbl = new JLabel("Choose Action");
+        actionlbl.setBounds(545, 100, 250, 20);
+        actionlbl.setForeground(cs.darkerPurple);
+        lPanel.add(actionlbl);
         
         achievedPanel = new JPanel();
         achievedPanel.setLayout(null);
         achievedPanel.setBackground(Color.WHITE);
         achievedPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        achievedPanel.setBounds(335, 310, 540, 200); 
+        achievedPanel.setBounds(30, 310, 1185, 200); 
         mainContentPanel.add(achievedPanel);
         
         achievedTitle = new JLabel("VaultBank Achieved Goals");
@@ -395,6 +320,14 @@ public class SavingsUI extends JFrame implements ActionListener {
         homeBtn.addActionListener(this);
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
+        
+        if (SessionManage.isCustomerLoggedIn()){
+            CustomerModel customer = SessionManage.getCurrentCustomer();
+            
+            loadCustomerAccounts();
+            
+            System.out.println("Logged in as: " + customer.getFirstName()); // debug
+        }
     }
 
     @Override
@@ -437,5 +370,9 @@ public class SavingsUI extends JFrame implements ActionListener {
                 dispose();
             }
         }
+    }
+
+    private void loadCustomerAccounts() {
+        
     }
 }

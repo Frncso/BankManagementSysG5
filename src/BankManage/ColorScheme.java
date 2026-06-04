@@ -11,5 +11,8 @@ public class ColorScheme {
     protected final Color lightPurple = new Color(167, 139, 251); // light purple universal
     protected final Color darkPurple = new Color(91, 33, 183); // dark purple universal
     protected final Color darkerPurple = new Color(25, 1, 61); // very dark purple
+    protected final Color lightgray = new Color(238, 238, 238); // standard gray
+    protected final Color lime = new Color(125, 183, 33); // lime green -> confirm
+    protected final Color red = new Color(183, 46, 33); // red -> cancel, reject or smth
     
 }

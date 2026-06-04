@@ -72,4 +72,17 @@ public class BankAccountDataService {
         }
         return list;
     }
+    
+    public boolean updateStatus(String accountId, String newStatus) {
+        String sql = "UPDATE bank_accounts SET status = ? WHERE account_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, newStatus);
+            stmt.setString(2, accountId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

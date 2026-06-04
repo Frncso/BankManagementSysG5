@@ -1,7 +1,10 @@
 package BankManage; 
 import BankManage.AccountModels.EmployeeModel;
+import BankManage.AccountModels.RequestModel;
 import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
+import BankManage.DataService.RequestDataService;
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -60,23 +63,11 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
     private JButton searchBtn;
     
     protected String[] columnHeaders = {
-        "Request ID", "Full Name", "Email Address", "Account Type", "Date Applied"
-    };
-    
-    protected String[][] sampleData = {
-        {"REQ-001", "Ezekiel Francisco", "ezekiel@email.com", "Savings", "May 18, 2026"},
-        {"REQ-002", "Inigo Baseleres", "inigo@email.com", "Checking", "May 17, 2026"},
-        {"REQ-003", "Athea Rodriguez", "athea@email.com", "Savings", "May 16, 2026"},
+        "Request ID", "Account No", "Request Type", "Account Type", "Status", "Date Applied"
     };
     
     public AccountRequestsUI() {
-        
-        if (SessionManage.isStaffLoggedIn()){
-            EmployeeModel staff = SessionManage.getCurrentStaff();
-            
-            System.out.println("Logged in as: " + en.decrypt(staff.getEmployeeFName())); // debug
-        }
-        
+         
         setTitle("Admin Dashboard - Account Requests");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -178,21 +169,6 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         pendinglbl.setForeground(cs.darkerPurple);
         requestsTablePanel.add(pendinglbl);
         
-        requestsTable = new JTable(sampleData, columnHeaders);
-        requestsTable.setRowHeight(40);
-        requestsTable.setFont(new Font("Arial", Font.PLAIN, 14));
-        requestsTable.setFocusable(false);
-        requestsTable.getTableHeader().setReorderingAllowed(false);
-        requestsTable.getTableHeader().setBackground(cs.darkPurple);
-        requestsTable.getTableHeader().setForeground(cs.white);
-        requestsTable.setSelectionBackground(cs.lightPurple);
-        requestsTable.setSelectionForeground(cs.white);
-        requestsTable.setShowGrid(false);
-        requestsTable.setDefaultEditor(Object.class, null);
-        
-        requestsTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        requestsTable.getTableHeader().setPreferredSize(new Dimension(0, 45));
-        
         tableScrollPane = new JScrollPane(requestsTable);
         tableScrollPane.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         tableScrollPane.setBounds(20, 60, 1145, 710);
@@ -228,6 +204,15 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         logoutBtn.addActionListener(this);
         transTrackerBtn.addActionListener(this);
         searchBtn.addActionListener(this);
+        
+        if (SessionManage.isStaffLoggedIn()){
+            EmployeeModel staff = SessionManage.getCurrentStaff();
+            
+            loadRequestData();
+            
+            System.out.println("Logged in as: " + en.decrypt(staff.getEmployeeFName())); // debug
+        }
+        
     }
 
     @Override
@@ -241,9 +226,8 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
             roleUI.setVisible(true);
             dispose();
         } else if (e.getSource() == searchBtn) {
-            AccountRequestsSummaryUI ars = new AccountRequestsSummaryUI();    
-            ars.setVisible(true);
-            dispose();
+            String requestId = searchField.getText().trim();
+            search(requestId);
         } else if (e.getSource() == logoutBtn) {
             int confirm = JOptionPane.showConfirmDialog(this, 
             "Are you sure you want to logout?", 
@@ -259,6 +243,66 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         } else if (e.getSource() == transTrackerBtn) {
         new TransactionTrackerUI().setVisible(true);
         dispose();
+        }
     }
-}
+    
+    private void loadRequestData() {
+        RequestDataService requestDataService = new RequestDataService();
+        List<RequestModel> requests = requestDataService.getAllRequestsForTable();
+
+        String[][] data = new String[requests.size()][6];
+
+        for (int i = 0; i < requests.size(); i++) {
+            RequestModel r = requests.get(i);
+
+            data[i][0] = r.getRequestId();
+            data[i][1] = r.getAccountNumber() != null ? r.getAccountNumber() : r.getCustomerId();
+            data[i][2] = r.getRequestType();
+            data[i][3] = r.getAccountType();
+            data[i][4] = r.getStatus();
+            data[i][5] = r.getTimestamp();
+        }
+
+        requestsTable = new JTable(data, columnHeaders);
+        requestsTable.setRowHeight(40);
+        requestsTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        requestsTable.setFocusable(false);
+        requestsTable.getTableHeader().setReorderingAllowed(false);
+        requestsTable.getTableHeader().setBackground(cs.darkPurple);
+        requestsTable.getTableHeader().setForeground(cs.white);
+        requestsTable.setSelectionBackground(cs.lightPurple);
+        requestsTable.setSelectionForeground(cs.white);
+        requestsTable.setShowGrid(false);
+        requestsTable.setDefaultEditor(Object.class, null);
+
+        requestsTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        requestsTable.getTableHeader().setPreferredSize(new Dimension(0, 45));
+
+        requestsTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int selectedRow = requestsTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String requestId = (String) requestsTable.getValueAt(selectedRow, 0);
+                    searchField.setText(requestId); // Paste Request ID into search field
+                }
+            }
+        });
+
+        tableScrollPane.setViewportView(requestsTable);
+    }
+    
+    private void search(String requestId){
+    
+        if (requestId.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter or select a Request ID.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // summaryUI to pass the requestID
+        AccountRequestsSummaryUI summaryUI = new AccountRequestsSummaryUI(requestId);
+        summaryUI.setVisible(true);
+        dispose();
+        
+    }
 }

@@ -284,7 +284,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         mainContentPanel.add(usrFName);
         
         datelbl = new JLabel(date);
-        datelbl.setBounds(30, 103, 100, 20);
+        datelbl.setBounds(30, 103, 200, 20);
         datelbl.setForeground(cs.gray);
         mainContentPanel.add(datelbl);
         
@@ -584,7 +584,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         
     }
     
-    private List<BankAccount> customerAccounts = new ArrayList<>(); // Add this as a class field
+    private List<BankAccount> customerAccounts = new ArrayList<>();
 
     private void loadCustomerAccounts() { // loading customers' accounts
         if (!SessionManage.isCustomerLoggedIn()) {
@@ -598,7 +598,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
 
         System.out.println("=== Accounts for " + SessionManage.getCurrentUserDisplayName() + " ===");
         
-        // Group accounts by type (supports multiple Checking or Savings)
+        // grouping accs by type for future use
         Map<String, List<BankAccount>> accountsByType = new HashMap<>();
 
         for (BankAccount acc : customerAccounts) {
@@ -607,7 +607,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
                 .add(acc);
         }
 
-        // Display all accounts
+        // displaying all accs for debug tests
         for (Map.Entry<String, List<BankAccount>> entry : accountsByType.entrySet()) {
             String type = entry.getKey();
             List<BankAccount> accountsOfType = entry.getValue();

@@ -1,10 +1,14 @@
 package BankManage; 
+import BankManage.AccountModels.BankAccount;
 import BankManage.AccountModels.CustomerModel;
+import BankManage.AppService.BankAccountService;
 import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountMenuUI extends JFrame implements ActionListener {
 
@@ -137,23 +141,15 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         "Account No.", "Type", "Status", "Balance"
     };
     
-    protected String[][] sampleData = {
-        {"ACC-1001", "Checking", "Active", "₱121,502.60"},
-        {"ACC-1001", "Savings", "Active", "₱30,242.55"}
-    };
+    // SQL Data (FINALLY!)
     
+    private List<BankAccount> customerAccounts = new ArrayList<>();
     
     //
     
     public AccountMenuUI() {
-        
-        if (SessionManage.isCustomerLoggedIn()){
-            CustomerModel customer = SessionManage.getCurrentCustomer();
-            
-            System.out.println("Logged in as: " + en.decrypt(customer.getFirstName())); // debug
-        }
-        
-        setTitle("Dashboard - Home");
+       
+        setTitle("Dashboard - Accounts");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setSize(1440, 960);
@@ -291,12 +287,12 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         welcomelbl.setFont(new Font("", Font.BOLD, 24));
         mainContentPanel.add(welcomelbl);
         
-        accCount = new JLabel("2 accounts");
-        accCount.setBounds(30, 85, 200, 30);
+        accCount = new JLabel("0 account");
+        accCount.setBounds(30, 90, 200, 30);
         accCount.setFont(new Font("", Font.BOLD, 12));
         mainContentPanel.add(accCount);
         
-        changeAcc = new JButton("Request Info Update", changeIcon);
+        changeAcc = new JButton("Request Account Closure", changeIcon);
         changeAcc.setBounds(695, 65, 250, 45);
         changeAcc.setBackground(cs.darkPurple);
         changeAcc.setForeground(cs.white);
@@ -335,7 +331,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         totalbankBalbl.setForeground(cs.darkerPurple);
         balancePanel.add(totalbankBalbl);
         
-        availBalancelbl = new JLabel("₱151,745.15");
+        availBalancelbl = new JLabel("₱0.00");
         availBalancelbl.setBounds(80, 50, 300, 30);
         availBalancelbl.setFont(new Font("Arial", Font.BOLD, 36));
         availBalancelbl.setForeground(cs.darkerPurple);
@@ -356,7 +352,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         checkingAmnt.setForeground(cs.darkerPurple);
         savingsPanel.add(checkingAmnt);
         
-        savingsAmnt = new JLabel("₱121,502.60");
+        savingsAmnt = new JLabel("₱0.00");
         savingsAmnt.setBounds(80, 50, 300, 30);
         savingsAmnt.setFont(new Font("Arial", Font.BOLD, 36));
         savingsAmnt.setForeground(cs.darkerPurple);
@@ -383,61 +379,29 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         totalSavings.setForeground(cs.darkerPurple);
         checkingPanel.add(totalSavings);
         
+        // acc table
         historyPanel = new JPanel();
         historyPanel.setLayout(null);
         historyPanel.setBounds(30, 280, 1185, 600);
         historyPanel.setBackground(cs.white);
         historyPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-        
-        // Transaction
-        
-        listlbl = new JLabel("Your Accounts"); 
+        mainContentPanel.add(historyPanel);
+
+        listlbl = new JLabel("Your Accounts");
         listlbl.setBounds(20, 20, 250, 20);
         listlbl.setFont(new Font("", Font.BOLD, 18));
         listlbl.setForeground(cs.darkerPurple);
         historyPanel.add(listlbl);
-        
-        // table (objects papasok dito)
-        
-        listacctbl = new JTable(sampleData, listColumns);
-        listacctbl.setRowHeight(40);
-        listacctbl.setFont(new Font("Arial", Font.PLAIN, 14));
-        listacctbl.setFocusable(false);
-        listacctbl.getTableHeader().setReorderingAllowed(false);
-        listacctbl.getTableHeader().setBackground(cs.darkPurple);
-        listacctbl.getTableHeader().setForeground(cs.white);
-        listacctbl.setSelectionBackground(cs.lightPurple);
-        listacctbl.setSelectionForeground(cs.white);
-        listacctbl.setShowGrid(false);
-        listacctbl.setDefaultEditor(Object.class, null);
-        
-        listacctbl.getTableHeader().setFont(
-            new Font("Arial", Font.BOLD, 14)
-        );
-        listacctbl.getTableHeader().setPreferredSize(
-            new Dimension(0, 45)
-        );
-        
-        // no scroll
-        
-        listnoScroll = new JScrollPane(listacctbl);
-        
-        listnoScroll.setVerticalScrollBarPolicy(
-            JScrollPane.VERTICAL_SCROLLBAR_NEVER
-        );
 
-        listnoScroll.setHorizontalScrollBarPolicy(
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-        );
-        
-        listnoScroll.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        // table creation sa loadAccountData()
+        listnoScroll = new JScrollPane();
         listnoScroll.setBounds(20, 60, 1145, 520);
         historyPanel.add(listnoScroll);
 
-          mainContentPanel.add(historyPanel);
-          mainContentPanel.add(checkingPanel);
-          mainContentPanel.add(savingsPanel);
-          mainContentPanel.add(balancePanel);
+        mainContentPanel.add(historyPanel);
+        mainContentPanel.add(checkingPanel);
+        mainContentPanel.add(savingsPanel);
+        mainContentPanel.add(balancePanel);
         
         // end content panel
         
@@ -447,8 +411,16 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         homeBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
         
+        if (SessionManage.isCustomerLoggedIn()){
+            CustomerModel customer = SessionManage.getCurrentCustomer();
+            
+            loadAccountData();
+            
+            System.out.println("Logged in as: " + customer.getFirstName()); // debug
+        }
+        
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         
@@ -509,11 +481,113 @@ public class AccountMenuUI extends JFrame implements ActionListener {
             }
         }
         else if(e.getSource() == changeAcc){
-            RequestChangeInfoUI reqUI = new RequestChangeInfoUI();
-            reqUI.setVisible(true);
-            dispose();
+            closeAccountRequest();
         }
         
     }
     
+    private void loadAccountData() {
+        CustomerModel customer = SessionManage.getCurrentCustomer();
+        BankAccountService accountService = new BankAccountService();
+        customerAccounts = accountService.getCustomerAccounts(customer.getCustomerId());
+
+        // update account count
+        int totalAcc = customerAccounts.size();
+        if(totalAcc > 1){
+            accCount.setText(totalAcc + " accounts");
+        }
+        else{
+            accCount.setText(totalAcc + " account"); // WAW GRAMMAR
+        }
+
+        // calculate totals
+        double totalBalance = 0;
+        double totalChecking = 0;
+        double totalSaving = 0;
+
+        for (BankAccount acc : customerAccounts) {
+            totalBalance += acc.getBalance();
+            if (acc.getAccountType().equalsIgnoreCase("Checking")) {
+                totalChecking += acc.getBalance();
+            } else if (acc.getAccountType().equalsIgnoreCase("Savings")) {
+                totalSaving += acc.getBalance();
+            }
+        }
+
+        // update summary labels
+        availBalancelbl.setText("₱" + totalBalance);
+        savingsAmnt.setText("₱" + totalChecking);
+        totalSavings.setText("₱" + totalSaving);
+
+        // build table data
+        String[][] data = new String[customerAccounts.size()][4];
+        for (int i = 0; i < customerAccounts.size(); i++) {
+            BankAccount acc = customerAccounts.get(i);
+            data[i][0] = acc.getAccountId();
+            data[i][1] = acc.getAccountType();
+            data[i][2] = acc.getStatus();
+            data[i][3] = "₱" + acc.getBalance();
+        }
+
+        // create / update JTable
+        listacctbl = new JTable(data, listColumns);
+        listacctbl.setRowHeight(40);
+        listacctbl.setFont(new Font("Arial", Font.PLAIN, 14));
+        listacctbl.setFocusable(false);
+        listacctbl.getTableHeader().setReorderingAllowed(false);
+        listacctbl.getTableHeader().setBackground(cs.darkPurple);
+        listacctbl.getTableHeader().setForeground(cs.white);
+        listacctbl.setSelectionBackground(cs.lightPurple);
+        listacctbl.setSelectionForeground(cs.white);
+        listacctbl.setShowGrid(false);
+        listacctbl.setDefaultEditor(Object.class, null);
+        listacctbl.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        listacctbl.getTableHeader().setPreferredSize(new Dimension(0, 45));
+
+        // replace old scroll pane content
+        listnoScroll.setViewportView(listacctbl);
+    }
+    
+    public void closeAccountRequest(){
+        if (customerAccounts.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "You have no accounts to close.", "No Accounts", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        // gather data from sql
+        String[] accountOptions = new String[customerAccounts.size()];
+        for (int i = 0; i < customerAccounts.size(); i++) {
+            BankAccount acc = customerAccounts.get(i);
+            accountOptions[i] = acc.getAccountId() + " - " + acc.getAccountType() + " (" + acc.getStatus() + ")";
+        }
+
+        JComboBox<String> accountCombo = new JComboBox<>(accountOptions);
+        accountCombo.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        int result = JOptionPane.showConfirmDialog(
+            this,
+            accountCombo,
+            "Select Account to Close",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION) {
+            String selectedValue = (String) accountCombo.getSelectedItem();
+
+            if(selectedValue.contains("(Active)")){ // only active accounts for this operation
+                // getting account ID only
+                String selectedAccountId = selectedValue.split(" - ")[0];
+                String accountType = selectedValue.split(" - ")[1].replace( " (Active)", "");
+
+                // pass to close acc ui
+                RequestCloseAccountUI closeUI = new RequestCloseAccountUI(selectedAccountId, accountType);
+                closeUI.setVisible(true);
+                dispose();
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "This account is not active. Please Check the Status.", "Operation Cancelled", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 }
