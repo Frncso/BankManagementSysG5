@@ -63,7 +63,7 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
     private JButton searchBtn;
     
     protected String[] columnHeaders = {
-        "Request ID", "Account No", "Request Type", "Account Type", "Status", "Date Applied"
+        "Request ID", "Customer ID", "Account ID", "Request Type", "Account Type", "Status", "Date Applied"
     };
     
     public AccountRequestsUI() {
@@ -250,17 +250,18 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         RequestDataService requestDataService = new RequestDataService();
         List<RequestModel> requests = requestDataService.getAllRequestsForTable();
 
-        String[][] data = new String[requests.size()][6];
+        String[][] data = new String[requests.size()][7];
 
         for (int i = 0; i < requests.size(); i++) {
             RequestModel r = requests.get(i);
 
             data[i][0] = r.getRequestId();
-            data[i][1] = r.getAccountNumber() != null ? r.getAccountNumber() : r.getCustomerId();
-            data[i][2] = r.getRequestType();
-            data[i][3] = r.getAccountType();
-            data[i][4] = r.getStatus();
-            data[i][5] = r.getTimestamp();
+            data[i][1] = r.getCustomerId();
+            data[i][2] = r.getAccountNumber() != null ? r.getAccountNumber() : "N/A";
+            data[i][3] = r.getRequestType();
+            data[i][4] = r.getAccountType();
+            data[i][5] = r.getStatus();
+            data[i][6] = r.getTimestamp();
         }
 
         requestsTable = new JTable(data, columnHeaders);
@@ -284,7 +285,7 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
                 int selectedRow = requestsTable.getSelectedRow();
                 if (selectedRow != -1) {
                     String requestId = (String) requestsTable.getValueAt(selectedRow, 0);
-                    searchField.setText(requestId); // Paste Request ID into search field
+                    searchField.setText(requestId); // pasting to search field
                 }
             }
         });
@@ -295,13 +296,29 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
     private void search(String requestId){
     
         if (requestId.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter or select a Request ID.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please enter a Request ID.");
             return;
         }
 
-        // summaryUI to pass the requestID
-        AccountRequestsSummaryUI summaryUI = new AccountRequestsSummaryUI(requestId);
-        summaryUI.setVisible(true);
+        RequestDataService requestDataService = new RequestDataService();
+        RequestModel request = requestDataService.findByReqID(requestId);
+
+        if (request == null) {
+            JOptionPane.showMessageDialog(this, "Request not found.");
+            return;
+        }
+
+        // depende kung ano oopen sa request type :D
+        if (request.getRequestType().equalsIgnoreCase("Close Account")) {
+            new AccountRequestsSummaryUI(requestId).setVisible(true);
+        } 
+        else if (request.getRequestType().equalsIgnoreCase("Open Account")) {
+            new RequestOpenAccountSummaryUI(requestId).setVisible(true);
+        } 
+        else {
+            JOptionPane.showMessageDialog(this, "Unknown request type.");
+        }
+
         dispose();
         
     }

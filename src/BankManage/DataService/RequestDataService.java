@@ -33,7 +33,7 @@ public class RequestDataService {
     public List<RequestModel> getAllRequestsForTable() {
     List<RequestModel> list = new ArrayList<>();
     
-    String sql = "SELECT request_id, account_number, request_type, account_type, status, created_at " +
+    String sql = "SELECT request_id, customer_id, account_number, request_type, account_type, status, created_at " +
                  "FROM requests " +
                  "ORDER BY created_at DESC";
 
@@ -44,6 +44,7 @@ public class RequestDataService {
         while (rs.next()) {
             RequestModel r = new RequestModel();
             r.setRequestId(rs.getString("request_id"));
+            r.setCustomerId(rs.getString("customer_id"));
             r.setAccountNumber(rs.getString("account_number"));
             r.setRequestType(rs.getString("request_type"));
             r.setAccountType(rs.getString("account_type"));
