@@ -1,4 +1,7 @@
 package BankManage;
+import BankManage.AccountModels.EmployeeModel;
+import BankManage.AppService.Encryption;
+import BankManage.AppService.SessionManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -6,6 +9,7 @@ import java.awt.event.*;
 public class TransactionTrackerUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
+    Encryption en = new Encryption();
 
     // panels
     
@@ -92,6 +96,13 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
     };
     
     public TransactionTrackerUI() {
+        
+        if (SessionManage.isStaffLoggedIn()){
+            EmployeeModel staff = SessionManage.getCurrentStaff();
+            
+            System.out.println("Logged in as: " + en.decrypt(staff.getEmployeeFName())); // debug
+        }
+        
         setTitle("Admin Dashboard - Transaction Tracker");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -312,9 +323,17 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == logoutBtn){
-            LoginUI lu = new LoginUI();
-            lu.setVisible(true);
-            dispose();
+            int confirm = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout", 
+            JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                SessionManage.logout();
+                LoginUI logUI = new LoginUI();
+                logUI.setVisible(true);
+                dispose();
+            }
         }
         
         else if(e.getSource() == searchBtn){

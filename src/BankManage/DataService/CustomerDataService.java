@@ -10,8 +10,8 @@ public class CustomerDataService {
     
     public boolean save(CustomerModel customer) {
     String sql = "INSERT INTO customers " +
-                 "(first_name, last_name, password, date_of_birth, occupation, income_range, id_type, id_number, is_active, is_frozen, is_suspended, customer_id)" +
-                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'TEMP')";
+                 "(first_name, last_name, password, date_of_birth, occupation, income_range, id_type, id_number, is_active, customer_id)" +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'TEMP')";
 
     try (Connection conn = DatabaseConnection.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -25,8 +25,6 @@ public class CustomerDataService {
         stmt.setString(7, customer.getIdType());
         stmt.setString(8, customer.getIdNumber());
         stmt.setBoolean(9, customer.isActive());
-        stmt.setBoolean(10, customer.isFrozen());
-        stmt.setBoolean(11, customer.isSuspended());
 
         int affectedRows = stmt.executeUpdate();
 

@@ -13,8 +13,6 @@ public class CustomerModel {
     private String idType;
     private String idNumber;
     private boolean isActive = true;
-    private boolean isFrozen = false;
-    private boolean isSuspended = false;
 
     public CustomerModel() {}
 
@@ -64,10 +62,5 @@ public class CustomerModel {
 
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
-    
-    public boolean isFrozen() { return isFrozen; }
-    public void setFrozen(boolean frozen) { isFrozen = frozen; }
-    
-    public boolean isSuspended() { return isSuspended; }
-    public void setSuspended(boolean suspended) { isSuspended = suspended; }
+
 }

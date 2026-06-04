@@ -1,4 +1,7 @@
 package BankManage; 
+import BankManage.AccountModels.CustomerModel;
+import BankManage.AppService.Encryption;
+import BankManage.AppService.SessionManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -6,6 +9,7 @@ import java.awt.event.*;
 public class BalanceUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
+    Encryption en = new Encryption();
     
     // panels
     
@@ -127,6 +131,13 @@ public class BalanceUI extends JFrame implements ActionListener {
     //
     
     public BalanceUI() {
+        
+        if (SessionManage.isCustomerLoggedIn()){
+            CustomerModel customer = SessionManage.getCurrentCustomer();
+            
+            System.out.println("Logged in as: " + en.decrypt(customer.getFirstName())); // debug
+        }
+        
         setTitle("Dashboard - Balance");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -544,10 +555,17 @@ public class BalanceUI extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == logoutBtn){
-            // logout code
-            LoginUI logUI = new LoginUI();
-            logUI.setVisible(true);
-            dispose();
+            int confirm = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout", 
+            JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                SessionManage.logout();
+                LoginUI logUI = new LoginUI();
+                logUI.setVisible(true);
+                dispose();
+            }
         }
         
         else if(e.getSource() == gotoTransactionbtn){

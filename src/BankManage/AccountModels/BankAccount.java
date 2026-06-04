@@ -2,23 +2,27 @@ package BankManage.AccountModels;
 
 public class BankAccount {
 
-    private String accountId;       // acc-00001 increments blah
-    private String customerId;
+    private int a_id;
+    private String accountId;       // acc-00001-AA
+    private String customerId;      // U2026-00001-AA <- customer id foreign key dito
     private String accountType;     // checking or saving
     private double balance;
-    private String status;          // active, frozen, suspended, closed
+    private String status;          // active frozen suspended closed
 
     public BankAccount() {}
 
-    public BankAccount(String accountId, String customerId, String accountType, double initialBalance) {
+    public BankAccount(String accountId, String customerId, String accountType, double balance, String status) {
         this.accountId = accountId;
         this.customerId = customerId;
         this.accountType = accountType;
-        this.balance = initialBalance;
-        this.status = "Active";
+        this.balance = balance;
+        this.status = status;
     }
 
-    // get set
+    // get set GOOOO
+    public int getA_id() { return a_id; }
+    public void setA_id(int a_id) { this.a_id = a_id; }
+
     public String getAccountId() { return accountId; }
     public void setAccountId(String accountId) { this.accountId = accountId; }
 
@@ -34,4 +38,8 @@ public class BankAccount {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
+    @Override
+    public String toString() {
+        return accountType + " (" + accountId + ") - ₱" + balance + " [" + status + "]";
+    }
 }

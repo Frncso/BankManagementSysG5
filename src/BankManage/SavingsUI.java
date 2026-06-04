@@ -1,12 +1,15 @@
 package BankManage; 
+import BankManage.AccountModels.CustomerModel;
+import BankManage.AppService.Encryption;
+import BankManage.AppService.SessionManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashSet;
 
 public class SavingsUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
+    Encryption en = new Encryption();
     
     // panels
     
@@ -115,6 +118,13 @@ public class SavingsUI extends JFrame implements ActionListener {
     private JButton viewAchievedBtn;
 
     public SavingsUI() {
+        
+        if (SessionManage.isCustomerLoggedIn()){
+            CustomerModel customer = SessionManage.getCurrentCustomer();
+            
+            System.out.println("Logged in as: " + en.decrypt(customer.getFirstName())); // debug
+        }
+        
         setTitle("Dashboard - Home");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -415,9 +425,17 @@ public class SavingsUI extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == logoutBtn){
-            LoginUI logUI = new LoginUI();
-            logUI.setVisible(true);
-            dispose();
+            int confirm = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout", 
+            JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                SessionManage.logout();
+                LoginUI logUI = new LoginUI();
+                logUI.setVisible(true);
+                dispose();
+            }
         }
     }
 }

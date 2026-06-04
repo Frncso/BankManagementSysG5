@@ -2,10 +2,15 @@ package BankManage;
 import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
 import BankManage.AppService.GetDateAndTime;
+import BankManage.AppService.BankAccountService;
 import BankManage.AccountModels.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomerDashboard extends JFrame implements ActionListener {
 
@@ -133,18 +138,10 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     
     private String fname = SessionManage.getCurrentUserDisplayName();
     private String date = dateTime.currentTime();
-    private double checkBal = 121502.60;
-    private double saveBal = 30242.55;
-    private double totalBal = checkBal + saveBal;
+    private double totalBal = getTotalBal();
     
     public CustomerDashboard() {
-        
-        if (SessionManage.isCustomerLoggedIn()){
-            CustomerModel customer = SessionManage.getCurrentCustomer();
-            
-            System.out.println("Logged in as: " + en.decrypt(customer.getFirstName())); // debug
-        }
-        
+
         setTitle("Dashboard - Home");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -378,7 +375,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         savingslbl.setForeground(cs.darkerPurple);
         savingsPanel.add(savingslbl);
         
-        savingBalancelbl = new JLabel("₱"+String.valueOf(saveBal));
+        savingBalancelbl = new JLabel("₱ 0.00");
         savingBalancelbl.setBounds(20, 65, 300, 30);
         savingBalancelbl.setFont(new Font("Arial", Font.BOLD, 36));
         savingBalancelbl.setForeground(cs.darkerPurple);
@@ -492,6 +489,14 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
         
+        if (SessionManage.isCustomerLoggedIn()){
+            CustomerModel customer = SessionManage.getCurrentCustomer();
+            
+            loadCustomerAccounts();
+            
+            System.out.println("Logged in as: " + customer.getFirstName()); // debug
+        }
+        
     }
 
     @Override
@@ -577,6 +582,83 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         
         //
         
+    }
+    
+    private List<BankAccount> customerAccounts = new ArrayList<>(); // Add this as a class field
+
+    private void loadCustomerAccounts() { // loading customers' accounts
+        if (!SessionManage.isCustomerLoggedIn()) {
+            return;
+        }
+
+        CustomerModel customer = SessionManage.getCurrentCustomer();
+
+        BankAccountService accountService = new BankAccountService();
+        customerAccounts = accountService.getCustomerAccounts(customer.getCustomerId());
+
+        System.out.println("=== Accounts for " + SessionManage.getCurrentUserDisplayName() + " ===");
+        
+        // Group accounts by type (supports multiple Checking or Savings)
+        Map<String, List<BankAccount>> accountsByType = new HashMap<>();
+
+        for (BankAccount acc : customerAccounts) {
+            accountsByType
+                .computeIfAbsent(acc.getAccountType(), k -> new ArrayList<>())
+                .add(acc);
+        }
+
+        // Display all accounts
+        for (Map.Entry<String, List<BankAccount>> entry : accountsByType.entrySet()) {
+            String type = entry.getKey();
+            List<BankAccount> accountsOfType = entry.getValue();
+
+            System.out.println("\n--- " + type + " Accounts (" + accountsOfType.size() + ") ---");
+
+            for (BankAccount acc : accountsOfType) {
+                System.out.println("Account ID : " + acc.getAccountId());
+                System.out.println("Balance    : ₱" + acc.getBalance());
+                System.out.println("Status     : " + acc.getStatus());
+                System.out.println("---------------------------");
+            }
+        }
+        
+        Map<String, Double> totalsByType = calculateTotalsByType(customerAccounts);
+        
+        double totalChecking = totalsByType.getOrDefault("Checking", 0.0);
+        double totalSavings  = totalsByType.getOrDefault("Savings", 0.0);
+        
+        savingBalancelbl.setText("₱" + String.valueOf(totalSavings));
+    }
+    
+    private double getTotalBal(){
+        if (!SessionManage.isCustomerLoggedIn()) {
+            return 0;
+        }
+        
+        CustomerModel customer = SessionManage.getCurrentCustomer();
+
+        BankAccountService accountService = new BankAccountService();
+        customerAccounts = accountService.getCustomerAccounts(customer.getCustomerId());
+        
+        double total = 0;
+        
+        for (BankAccount acc : customerAccounts) {
+            total += acc.getBalance();
+        }
+        
+        return total;
+    }
+    
+    private Map<String, Double> calculateTotalsByType(List<BankAccount> accounts) {
+        Map<String, Double> totals = new HashMap<>();
+
+        for (BankAccount acc : accounts) {
+            String type = acc.getAccountType();
+            double currentTotal = totals.getOrDefault(type, 0.0);
+            totals.put(type, currentTotal + acc.getBalance());
+        }
+
+        return totals;
     }
     
 }

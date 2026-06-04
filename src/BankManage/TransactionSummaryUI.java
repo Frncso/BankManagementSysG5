@@ -28,8 +28,6 @@ public class TransactionSummaryUI extends JFrame implements ActionListener {
     
     private final JButton acceptBtn, declineBtn, returnBtn;
     
-    private TransactionTrackerUI parentFrame;
-    
     public TransactionSummaryUI() {
 
         setTitle("Transaction Summary");

@@ -1,5 +1,7 @@
 package BankManage;
-
+import BankManage.AppService.Encryption;
+import BankManage.AccountModels.EmployeeModel;
+import BankManage.AppService.SessionManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 public class AccountRoleUI extends JFrame implements ActionListener{
 
     ColorScheme cs = new ColorScheme();
+    Encryption en = new Encryption();
     
     java.net.URL homeImgURL = CustomerDashboard.class.getResource("resources/home.png");
     private ImageIcon homeRaw = new ImageIcon(homeImgURL);
@@ -61,6 +64,13 @@ public class AccountRoleUI extends JFrame implements ActionListener{
     private JButton[] freezeBtns, suspendBtns, closeBtns, activateBtns;
 
     public AccountRoleUI() {
+        
+        if (SessionManage.isStaffLoggedIn()){
+            EmployeeModel staff = SessionManage.getCurrentStaff();
+            
+            System.out.println("Logged in as: " + en.decrypt(staff.getEmployeeFName())); // debug
+        }
+        
         setTitle("Admin Dashboard - Account Management");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -467,9 +477,17 @@ public class AccountRoleUI extends JFrame implements ActionListener{
         }
         
         else if(e.getSource() == logoutBtn){
-            LoginUI logUI = new LoginUI();
-            logUI.setVisible(true);
-            dispose();
+            int confirm = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout", 
+            JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                SessionManage.logout();
+                LoginUI logUI = new LoginUI();
+                logUI.setVisible(true);
+                dispose();
+            }
         }
         
     }

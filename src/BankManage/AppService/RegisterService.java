@@ -20,7 +20,15 @@ public class RegisterService {
             customer.setDateOfBirth(en.encrypt(customer.getDateOfBirth()));
             customer.setIdNumber(en.encrypt(customer.getIdNumber()));
 
-            return customerDataService.save(customer);
+            boolean customerSaved = customerDataService.save(customer);
+            
+            if (customerSaved) {
+                BankAccountService accountService = new BankAccountService();
+                accountService.createDefaultAccounts(customer);
+            }
+            
+            return customerSaved;
+            
         } catch (Exception e) {
             e.printStackTrace();
             return false;
