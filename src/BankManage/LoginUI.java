@@ -3,10 +3,14 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
+import BankManage.AppService.LoginService;
+import BankManage.AccountModels.*;
 
 public class LoginUI extends JFrame  implements ActionListener {
    
     ColorScheme cs = new ColorScheme();
+    LoginService ls = new LoginService();
+    
 
     // logo
     
@@ -222,34 +226,36 @@ public class LoginUI extends JFrame  implements ActionListener {
         }
         //for CUS access
         else if (e.getSource() == btnSignIn) {
-            String accNo = txtAccNo.getText().trim();
-            String pin = new String(txtPin.getPassword()).trim();
-
-            //Pass ng CUS
-            if (accNo.equals("12345") && pin.equals("user123")) {
-                JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Customer.");
-                CustomerDashboard dash = new CustomerDashboard(); 
-                dash.setVisible(true);
-             dispose(); 
-            } else {
-                JOptionPane.showMessageDialog(this, "Invalid Customer Account or PIN.", "Login Error", JOptionPane.ERROR_MESSAGE);
-            }
+//            String accNo = txtAccNo.getText().trim();
+//            String pin = new String(txtPin.getPassword()).trim();
+//
+//            //Pass ng CUS
+//            if (accNo.equals("12345") && pin.equals("user123")) {
+//                JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Customer.");
+//                CustomerDashboard dash = new CustomerDashboard(); 
+//                dash.setVisible(true);
+//             dispose(); 
+//            } else {
+//                JOptionPane.showMessageDialog(this, "Invalid Customer Account or PIN.", "Login Error", JOptionPane.ERROR_MESSAGE);
+//            }
+            loginCustomer();
         } 
         //for STF
         else if (e.getSource() == btnSignInS) {
-            String accNo = txtAccNoS.getText().trim();
-            String pin = new String(txtPinS.getPassword()).trim();
-            System.out.println(accNo+" "+pin);
-            //Pass ng STF
-            if (accNo.equals("admin") && pin.equals("admin123")) {
-                JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Admin.");
-                AdminDashboard admin = new AdminDashboard(); 
-                admin.setVisible(true);
-                dispose(); 
-              //where/what? call for admin inter
-            } else {
-                JOptionPane.showMessageDialog(this, "Invalid Staff Credentials.", "Login Error", JOptionPane.ERROR_MESSAGE);
-            }
+//            String accNo = txtAccNoS.getText().trim();
+//            String pin = new String(txtPinS.getPassword()).trim();
+//            System.out.println(accNo+" "+pin);
+//            //Pass ng STF
+//            if (accNo.equals("admin") && pin.equals("admin123")) {
+//                JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Admin.");
+//                AdminDashboard admin = new AdminDashboard(); 
+//                admin.setVisible(true);
+//                dispose(); 
+//              //where/what? call for admin inter
+//            } else {
+//                JOptionPane.showMessageDialog(this, "Invalid Staff Credentials.", "Login Error", JOptionPane.ERROR_MESSAGE);
+//            }
+            loginStaff();
 
         } else if (e.getSource() == btnRegister || e.getSource() == btnRegisterS) {
             RegisterUI rg = new RegisterUI();
@@ -263,6 +269,37 @@ public class LoginUI extends JFrame  implements ActionListener {
             loginSwitch.show(loginContainer,"staff");
         }
     }
+    
+    private void loginCustomer(){
+        String customerID = txtAccNo.getText().trim();
+        String pass = new String(txtPin.getPassword()).trim();
+        
+        CustomerModel customer = ls.loginCustomer(customerID, pass);
+        if (customer != null) {
+            JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Customer.");
+            new CustomerDashboard().setVisible(true);
+            dispose();
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Invalid Customer Account or PIN.", "Login Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void loginStaff(){
+        String staffID = txtAccNoS.getText().trim();
+        String pass = new String(txtPinS.getPassword()).trim();
+        
+        EmployeeModel staff = ls.loginStaff(staffID, pass);
+        if (staff != null) {
+            JOptionPane.showMessageDialog(this, "Login Successful! Welcome, Admin.");
+            new AdminDashboard().setVisible(true);
+            dispose();
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Invalid Staff Credentials.", "Login Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     
 }
 

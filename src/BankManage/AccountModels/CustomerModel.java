@@ -1,28 +1,25 @@
 package BankManage.AccountModels;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CustomerModel {
 
-    private String customerId;        // customer-00001 ++
+    private String customerId;
     private String firstName;
     private String lastName;
     private String password;
-    private String dateOfBirth;       // broken down to separate
+    private String dateOfBirth;
     private String occupation;
     private String incomeRange;
     private String idType;
     private String idNumber;
     private boolean isActive = true;
+    private boolean isFrozen = false;
+    private boolean isSuspended = false;
 
-    private List<BankAccount> accounts = new ArrayList<>();
-
-    // construct
     public CustomerModel() {}
 
     public CustomerModel(String customerId, String firstName, String lastName, String password,
-                    String dateOfBirth, String occupation, String incomeRange,
-                    String idType, String idNumber) {
+                         String dateOfBirth, String occupation, String incomeRange,
+                         String idType, String idNumber) {
         this.customerId = customerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -34,7 +31,7 @@ public class CustomerModel {
         this.idNumber = idNumber;
     }
 
-    // get and set
+    // get set
     public String getCustomerId() { return customerId; }
     public void setCustomerId(String customerId) { this.customerId = customerId; }
 
@@ -48,7 +45,7 @@ public class CustomerModel {
     public void setPassword(String password) { this.password = password; }
 
     public String getDateOfBirth() { return dateOfBirth; }
-    public void setDateOfBirth(String dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+    public void setDateOfBirth(String dataOfBirth) { this.dateOfBirth = dataOfBirth; }
 
     public String getOccupation() { return occupation; }
     public void setOccupation(String occupation) { this.occupation = occupation; }
@@ -64,8 +61,10 @@ public class CustomerModel {
 
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
-
-    public List<BankAccount> getAccounts() { return accounts; }
-    public void addAccount(BankAccount account) { this.accounts.add(account); }
-
+    
+    public boolean isFrozen() { return isFrozen; }
+    public void setFrozen(boolean frozen) { isFrozen = frozen; }
+    
+    public boolean isSuspended() { return isSuspended; }
+    public void setSuspended(boolean suspended) { isSuspended = suspended; }
 }

@@ -59,8 +59,6 @@ public class RegisterUI extends JFrame implements ActionListener{
     private int accInt = 0;
     
     private final String[] staffType = {
-        "Select Position",
-        "Customer Service",
         "Administrator"
     };
     
@@ -593,7 +591,7 @@ public class RegisterUI extends JFrame implements ActionListener{
         }
 
         CustomerModel customer = new CustomerModel(null, fname, lname, pass, dob, occupation, income, idtype, idno);
-        boolean success = rs.addCustomer(customer);
+        boolean success = rs.registerCustomer(customer);
 
         if (success) {
             JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
@@ -618,9 +616,9 @@ public class RegisterUI extends JFrame implements ActionListener{
             return;
         }
 
-        EmployeeModel employee = new EmployeeModel(null, fname, lname, accessCode, dob, pass, position, "", "");
+        EmployeeModel employee = new EmployeeModel(null, fname, lname, pass, dob , position, accessCode);
 
-        boolean success = rs.addEmployee(employee);
+        boolean success = rs.registerEmployee(employee);
 
         if (success) {
             JOptionPane.showMessageDialog(this, "Successfully Created Account.", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);

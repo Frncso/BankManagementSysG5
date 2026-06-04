@@ -3,31 +3,27 @@ package BankManage.AccountModels;
 public class EmployeeModel {
     private String employeeId;
     private String employeeFName;
-    private String employeeLName;
-    private String employeeAdd;        // address
-    private String employeeDOfBirth; // siguro concat lang dito mm/dd/yyyy
+    private String employeeLName;       
     private String employeeSecPin;     // pass
+    private String employeeDOfBirth; // siguro concat lang dito mm/dd/yyyy
     private String employeePosition;
-    private String IDType;
-    private String IDNo;
+    private String accessCode;
 
     public EmployeeModel() {}
 
-    public EmployeeModel(String employeeId, String employeeFName, String employeeLName,
-                         String employeeAdd, String employeeDOfBirth, String employeeSecPin,
-                         String employeePosition, String IDType, String IDNo) {
+    public EmployeeModel(String employeeId, String employeeFName, String employeeLName, String employeeSecPin,
+                         String employeeDOfBirth, String employeePosition, String accessCode) {
         this.employeeId = employeeId;
         this.employeeFName = employeeFName;
         this.employeeLName = employeeLName;
-        this.employeeAdd = employeeAdd;
-        this.employeeDOfBirth = employeeDOfBirth;
         this.employeeSecPin = employeeSecPin;
+        this.employeeDOfBirth = employeeDOfBirth;
         this.employeePosition = employeePosition;
-        this.IDType = IDType;
-        this.IDNo = IDNo;
+        this.accessCode = accessCode;
+
     }
 
-    // ==================== GETTERS & SETTERS ====================
+    // get set
     public String getEmployeeId() { return employeeId; }
     public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
 
@@ -37,21 +33,16 @@ public class EmployeeModel {
     public String getEmployeeLName() { return employeeLName; }
     public void setEmployeeLName(String employeeLName) { this.employeeLName = employeeLName; }
 
-    public String getEmployeeAdd() { return employeeAdd; }
-    public void setEmployeeAdd(String employeeAdd) { this.employeeAdd = employeeAdd; }
-
+    public String getEmployeeSecPin() { return employeeSecPin; }
+    public void setEmployeeSecPin(String employeeSecPin) { this.employeeSecPin = employeeSecPin; }
+    
     public String getEmployeeDOfBirth() { return employeeDOfBirth; }
     public void setEmployeeDOfBirth(String employeeDOfBirth) { this.employeeDOfBirth = employeeDOfBirth; }
 
-    public String getEmployeeSecPin() { return employeeSecPin; }
-    public void setEmployeeSecPin(String employeeSecPin) { this.employeeSecPin = employeeSecPin; }
-
     public String getEmployeePosition() { return employeePosition; }
     public void setEmployeePosition(String employeePosition) { this.employeePosition = employeePosition; }
+    
+    public String getAccessCode() { return accessCode; }
+    public void setAccessCode(String accessCode) { this.accessCode = accessCode; }
 
-    public String getIDType() { return IDType; }
-    public void setIDType(String IDType) { this.IDType = IDType; }
-
-    public String getIDNo() { return IDNo; }
-    public void setIDNo(String IDNo) { this.IDNo = IDNo; }
 }

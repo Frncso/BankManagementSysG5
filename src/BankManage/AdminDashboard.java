@@ -428,7 +428,7 @@ public class AdminDashboard extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == testBtn){
-            rs.printAllRegisteredUsers();
+            //rs.printAllRegisteredUsers();
         }
         
         // side bar end
