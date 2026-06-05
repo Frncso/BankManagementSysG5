@@ -47,6 +47,11 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
     private Image logoutScale = logoutRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon logoutIcon = new ImageIcon(logoutScale);
     
+    java.net.URL reqImgURL = AdminDashboard.class.getResource("resources/requests.png");
+    private ImageIcon reqRaw = new ImageIcon(reqImgURL);
+    private Image reqScale = reqRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon reqIcon = new ImageIcon(reqScale);
+    
     java.net.URL logoImgURL = TransactionTrackerUI.class.getResource("resources/bluewhiteLogo.png");
     
     private final ImageIcon logoRaw = new ImageIcon(logoImgURL);
@@ -150,7 +155,7 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
         
         // account requests
         
-        accRequestBtn = new JButton("Account Requests", accountsIcon);
+        accRequestBtn = new JButton("Account Requests", reqIcon);
         accRequestBtn.setBounds(0, 140, 180, 40);
         accRequestBtn.setBackground(cs.darkPurple);
         accRequestBtn.setForeground(cs.white);
@@ -216,13 +221,13 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
         mainContentPanel.add(searchLbl);
 
         searchField = new JTextField();
-        searchField.setBounds(235, 65, 280, 30);
+        searchField.setBounds(165, 65, 280, 30);
         searchField.setFont(new Font("Arial", Font.PLAIN, 13));
         searchField.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         mainContentPanel.add(searchField);
 
         searchBtn = new JButton("Search");
-        searchBtn.setBounds(525, 65, 100, 30);
+        searchBtn.setBounds(455, 65, 100, 30);
         searchBtn.setBackground(cs.darkPurple);
         searchBtn.setForeground(cs.white);
         searchBtn.setFocusPainted(false);

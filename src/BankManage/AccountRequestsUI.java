@@ -206,13 +206,13 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         mainContentPanel.add(searchLbl);
 
         searchField = new JTextField();
-        searchField.setBounds(235, 65, 280, 30);
+        searchField.setBounds(155, 65, 280, 30);
         searchField.setFont(new Font("Arial", Font.PLAIN, 13));
         searchField.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         mainContentPanel.add(searchField);
 
         searchBtn = new JButton("Search");
-        searchBtn.setBounds(525, 65, 100, 30);
+        searchBtn.setBounds(445, 65, 100, 30);
         searchBtn.setBackground(cs.darkPurple);
         searchBtn.setForeground(cs.white);
         searchBtn.setFocusPainted(false);

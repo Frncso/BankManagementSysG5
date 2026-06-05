@@ -2,7 +2,6 @@ package BankManage;
 import BankManage.AccountModels.BankAccount;
 import BankManage.AccountModels.CustomerModel;
 import BankManage.AppService.BankAccountService;
-import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
 import javax.swing.*;
 import java.awt.*;
@@ -14,8 +13,6 @@ import java.util.Map;
 public class BalanceUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
-    Encryption en = new Encryption();
-    
     // panels
     
     private JPanel sidebarPanel, mainContentPanel, linePanel, accountsColumnPanel, actionsColumnPanel, quickActionsPanel, insightsPanel;
@@ -273,7 +270,6 @@ public class BalanceUI extends JFrame implements ActionListener {
         // Create dynamic accounts list
         accountsListPanel = new JPanel();
         accountsListPanel.setLayout(new BoxLayout(accountsListPanel, BoxLayout.Y_AXIS));
-        accountsListPanel.setBackground(cs.white);
 
         accountsScrollPane = new JScrollPane(accountsListPanel);
         accountsScrollPane.setBorder(null);
@@ -544,7 +540,7 @@ public class BalanceUI extends JFrame implements ActionListener {
             // creation ng account
             JPanel accountCard = createAccountCard(account);
             accountsListPanel.add(accountCard);
-            accountsListPanel.add(Box.createRigidArea(new Dimension(0, 12))); // spacing
+            accountsListPanel.add(Box.createRigidArea(new Dimension(0, 25))); // spacing
         }
 
         // refreshing yung scroll pane
@@ -707,6 +703,16 @@ public class BalanceUI extends JFrame implements ActionListener {
             JLabel quick = new JLabel("Quick Actions");
             quick.setBounds(20, 150, 150, 20);
             quick.setForeground(cs.darkerPurple);
+            
+            switch(status){
+                case "Closed":
+                    quick.setVisible(false);
+                    break;
+                case "Frozen":
+                    quick.setVisible(false);
+                    break;
+            }
+            
             card.add(quick);
 
             JButton goToSavings = new JButton("Go To Savings", savingsIcon);

@@ -73,6 +73,10 @@ public class BankAccountService {
             return false;
         }
     }
+    
+    public boolean updateAccountStatus(String accountId, String newStatus) {
+        return accountDataService.updateStatus(accountId, newStatus);
+    }
 
     public List<BankAccount> getAllAccountsWithCustomerName() {
         return accountDataService.getAllAccountsWithCustomerName();

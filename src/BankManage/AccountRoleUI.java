@@ -7,7 +7,6 @@ import BankManage.AppService.BankAccountService;
 import BankManage.AppService.OneTimeCodeService;
 import BankManage.AppService.SessionManage;
 import BankManage.DataService.CustomerDataService;
-import BankManage.DataService.RequestDataService;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
@@ -230,30 +229,12 @@ public class AccountRoleUI extends JFrame implements ActionListener{
     }
 
     private void initStatsPanel() {
-        BankAccountService ba = new BankAccountService();
-        int totalAcc = ba.getTotalCnt(), 
-                activeAcc = ba.getActiveCnt("Active"), 
-                frozenAcc = ba.getFrozenCnt("Frozen"), 
-                suspendAcc = ba.getSuspendedCnt("Suspended");
-        
         statsPanel = new JPanel();
         statsPanel.setLayout(null);
         statsPanel.setBounds(30, 120, 1190, 100);
         statsPanel.setOpaque(false);
 
-        int cardWidth = 270;
-        int spacing = 35;
-        
-        totalAccountsCard = createStatCard("Total Accounts", String.valueOf(totalAcc), new Color(67, 97, 238), 0, cardWidth);
-        activeAccountsCard = createStatCard("Active Accounts", String.valueOf(activeAcc), cs.lime, cardWidth + spacing, cardWidth);
-        frozenAccountsCard = createStatCard("Frozen Accounts", String.valueOf(frozenAcc), cs.darkPurple, 2 * (cardWidth + spacing), cardWidth);
-        suspendedAccountsCard = createStatCard("Suspended Accounts", String.valueOf(suspendAcc), cs.red, 3 * (cardWidth + spacing), cardWidth);
-
-        statsPanel.add(totalAccountsCard);
-        statsPanel.add(activeAccountsCard);
-        statsPanel.add(frozenAccountsCard);
-        statsPanel.add(suspendedAccountsCard);
-
+        refreshStatsPanel();
         mainContentPanel.add(statsPanel);
     }
 
@@ -503,6 +484,13 @@ public class AccountRoleUI extends JFrame implements ActionListener{
         closeBtns[index] = createCardButton("Close", new Color(100, 100, 100), 230, 65, 95, 30);
         activateBtns[index] = createCardButton("Activate", cs.lime, 335, 65, 95, 30);
 
+        String accountId = id; // from method parameter
+
+        freezeBtns[index].addActionListener(e -> updateStatus(accountId, "Frozen"));
+        suspendBtns[index].addActionListener(e -> updateStatus(accountId, "Suspended"));
+        closeBtns[index].addActionListener(e -> updateStatus(accountId, "Closed"));
+        activateBtns[index].addActionListener(e -> updateStatus(accountId, "Active"));
+        
         card.add(freezeBtns[index]);
         card.add(suspendBtns[index]);
         card.add(closeBtns[index]);
@@ -613,4 +601,51 @@ public class AccountRoleUI extends JFrame implements ActionListener{
         }
     }
     
+    private void updateStatus(String accountId, String newStatus) {
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to change this account's status to " + newStatus + "?",
+                "Confirm Status Change",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            BankAccountService accountService = new BankAccountService();
+            boolean success = accountService.updateAccountStatus(accountId, newStatus);
+
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Account status updated to " + newStatus);
+                
+                refreshStatsPanel();
+                loadAccountsDynamically();
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to update account status.");
+            }
+        }
+    }
+    
+    private void refreshStatsPanel() {
+        statsPanel.removeAll();
+
+        BankAccountService ba = new BankAccountService();
+        int totalAcc = ba.getTotalCnt();
+        int activeAcc = ba.getActiveCnt("Active");
+        int frozenAcc = ba.getFrozenCnt("Frozen");
+        int suspendAcc = ba.getSuspendedCnt("Suspended");
+
+        int cardWidth = 270;
+        int spacing = 35;
+
+        totalAccountsCard = createStatCard("Total Accounts", String.valueOf(totalAcc), new Color(67, 97, 238), 0, cardWidth);
+        activeAccountsCard = createStatCard("Active Accounts", String.valueOf(activeAcc), cs.lime, cardWidth + spacing, cardWidth);
+        frozenAccountsCard = createStatCard("Frozen Accounts", String.valueOf(frozenAcc), cs.darkPurple, 2 * (cardWidth + spacing), cardWidth);
+        suspendedAccountsCard = createStatCard("Suspended Accounts", String.valueOf(suspendAcc), cs.red, 3 * (cardWidth + spacing), cardWidth);
+
+        statsPanel.add(totalAccountsCard);
+        statsPanel.add(activeAccountsCard);
+        statsPanel.add(frozenAccountsCard);
+        statsPanel.add(suspendedAccountsCard);
+
+        statsPanel.revalidate();
+        statsPanel.repaint();
+    }
+
 }
