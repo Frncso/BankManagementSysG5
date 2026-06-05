@@ -18,7 +18,7 @@ public class BalanceUI extends JFrame implements ActionListener {
     
     // panels
     
-    private JPanel sidebarPanel, mainContentPanel, linePanel, accountsColumnPanel, balancePanel, savingsPanel, actionsColumnPanel, quickActionsPanel, insightsPanel;
+    private JPanel sidebarPanel, mainContentPanel, linePanel, accountsColumnPanel, actionsColumnPanel, quickActionsPanel, insightsPanel;
     
     // import images
     
@@ -512,32 +512,6 @@ public class BalanceUI extends JFrame implements ActionListener {
 
         BankAccountService accountService = new BankAccountService();
         customerAccounts = accountService.getCustomerAccounts(customer.getCustomerId());
-
-        System.out.println("=== Accounts for " + SessionManage.getCurrentUserDisplayName() + " ===");
-
-        // grouping accs by type for future use
-        Map<String, java.util.List<BankAccount>> accountsByType = new HashMap<>();
-
-        for (BankAccount acc : customerAccounts) {
-            accountsByType
-                .computeIfAbsent(acc.getAccountType(), k -> new ArrayList<>())
-                .add(acc);
-        }
-
-        // displaying all accs for debug tests
-        for (Map.Entry<String, java.util.List<BankAccount>> entry : accountsByType.entrySet()) {
-            String type = entry.getKey();
-            java.util.List<BankAccount> accountsOfType = entry.getValue();
-
-            System.out.println("\n--- " + type + " Accounts (" + accountsOfType.size() + ") ---");
-
-            for (BankAccount acc : accountsOfType) {
-                System.out.println("Account ID : " + acc.getAccountId());
-                System.out.println("Balance    : ₱" + acc.getBalance());
-                System.out.println("Status     : " + acc.getStatus());
-                System.out.println("---------------------------");
-            }
-        }   
         
         Map<String, Double> totalsByType = calculateTotalsByType(customerAccounts);
         
@@ -588,6 +562,7 @@ public class BalanceUI extends JFrame implements ActionListener {
 
         String accNo = account.getAccountId();
         String type = account.getAccountType();
+        String status = account.getStatus();
         double balance = account.getBalance();
 
         if (type.equalsIgnoreCase("Checking")) {
@@ -599,6 +574,25 @@ public class BalanceUI extends JFrame implements ActionListener {
             title.setFont(new Font("", Font.BOLD, 18));
             title.setForeground(cs.darkerPurple);
             card.add(title);
+            
+            JLabel statusAcc = new JLabel(status);
+            statusAcc.setBounds(480, 20, 300, 20);
+            statusAcc.setFont(new Font("", Font.BOLD, 18));
+            switch (status) {
+                case "Active":
+                    statusAcc.setForeground(cs.darkPurple);
+                    break;
+                case "Closed":
+                    statusAcc.setForeground(cs.gray);
+                    break;
+                case "Frozen":
+                    statusAcc.setForeground(cs.red);
+                    break;
+                case "Suspended":
+                    statusAcc.setForeground(cs.red);
+                    break;
+            }
+            card.add(statusAcc);
 
             JLabel balanceLbl = new JLabel("₱" + balance);
             balanceLbl.setBounds(20, 65, 400, 30);
@@ -609,10 +603,30 @@ public class BalanceUI extends JFrame implements ActionListener {
             JLabel avail = new JLabel("Available");
             avail.setBounds(20, 108, 150, 20);
             avail.setForeground(cs.gray);
+            
+            switch(status){
+                case "Closed":
+                    avail.setText("Unavailable");
+                    break;
+                case "Frozen":
+                    avail.setText("Unavailable");
+                    break;
+            }
+            
             card.add(avail);
 
             JLabel quick = new JLabel("Check History");
             quick.setBounds(20, 150, 150, 20);
+            
+            switch(status){
+                case "Closed":
+                    quick.setVisible(false);
+                    break;
+                case "Frozen":
+                    quick.setVisible(false);
+                    break;
+            }
+            
             quick.setForeground(cs.darkerPurple);
             card.add(quick);
 
@@ -625,6 +639,16 @@ public class BalanceUI extends JFrame implements ActionListener {
             goToTrans.setHorizontalAlignment(SwingConstants.CENTER);
             goToTrans.setMargin(new Insets(0, 0, 0, 10));
             goToTrans.setIconTextGap(10);
+            
+            switch(status){
+                case "Closed":
+                    goToTrans.setVisible(false);
+                    break;
+                case "Frozen":
+                    goToTrans.setVisible(false);
+                    break;
+            }
+            
             goToTrans.addActionListener(e -> {
                 TransactUI trUI = new TransactUI();
                 trUI.setVisible(true);
@@ -645,10 +669,39 @@ public class BalanceUI extends JFrame implements ActionListener {
             balanceLbl.setFont(new Font("Arial", Font.BOLD, 36));
             balanceLbl.setForeground(cs.darkerPurple);
             card.add(balanceLbl);
+            
+            JLabel statusAcc = new JLabel(status);
+            statusAcc.setBounds(480, 20, 300, 20);
+            statusAcc.setFont(new Font("", Font.BOLD, 18));
+            switch (status) {
+                case "Active":
+                    statusAcc.setForeground(cs.darkPurple);
+                    break;
+                case "Closed":
+                    statusAcc.setForeground(cs.gray);
+                    break;
+                case "Frozen":
+                    statusAcc.setForeground(cs.red);
+                    break;
+                case "Suspended":
+                    statusAcc.setForeground(cs.red);
+                    break;
+            }
+            card.add(statusAcc);
 
             JLabel avail = new JLabel("Available");
             avail.setBounds(20, 108, 150, 20);
             avail.setForeground(cs.gray);
+            
+            switch(status){
+                case "Closed":
+                    avail.setText("Unavailable");
+                    break;
+                case "Frozen":
+                    avail.setText("Unavailable");
+                    break;
+            }
+            
             card.add(avail);
 
             JLabel quick = new JLabel("Quick Actions");
@@ -665,6 +718,16 @@ public class BalanceUI extends JFrame implements ActionListener {
             goToSavings.setHorizontalAlignment(SwingConstants.CENTER);
             goToSavings.setMargin(new Insets(0, 0, 0, 10));
             goToSavings.setIconTextGap(10);
+            
+            switch(status){
+                case "Closed":
+                    goToSavings.setVisible(false);
+                    break;
+                case "Frozen":
+                    goToSavings.setVisible(false);
+                    break;
+            }
+            
             goToSavings.addActionListener(e -> {
                 SavingsUI saveUI = new SavingsUI();
                 saveUI.setVisible(true);
@@ -681,6 +744,16 @@ public class BalanceUI extends JFrame implements ActionListener {
             goalHistory.setHorizontalAlignment(SwingConstants.CENTER);
             goalHistory.setMargin(new Insets(0, 0, 0, 10));
             goalHistory.setIconTextGap(10);
+            
+            switch(status){
+                case "Closed":
+                    goalHistory.setVisible(false);
+                    break;
+                case "Frozen":
+                    goalHistory.setVisible(false);
+                    break;
+            }
+            
             goalHistory.addActionListener(e -> {
                 SavingsUI saveUI = new SavingsUI();
                 saveUI.setVisible(true);

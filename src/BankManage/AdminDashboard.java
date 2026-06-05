@@ -1,5 +1,4 @@
 package BankManage; 
-import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
 import BankManage.AppService.GetDateAndTime;
 import BankManage.AppService.RequestService;
@@ -17,7 +16,6 @@ public class AdminDashboard extends JFrame implements ActionListener {
     GetDateAndTime dateTime = new GetDateAndTime();
     RequestService rs = new RequestService();
     BankAccountService bs = new BankAccountService();
-    Encryption en = new Encryption();
     
     // panels
     
@@ -88,7 +86,7 @@ public class AdminDashboard extends JFrame implements ActionListener {
     private Timer timeTick;
     
     protected String[] recentActivityColumns = {
-        "Request ID", "User ID", "Account ID", "Action", "Date Processed", "Performed By"
+        "Activity", "User ID", "Account", "Action", "Date Processed", "Performed By"
     };
     
     //

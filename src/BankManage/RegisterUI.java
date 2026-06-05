@@ -1,7 +1,7 @@
 package BankManage;
 
+import BankManage.AppService.OneTimeCodeService;
 import BankManage.AppService.RegisterService;
-import BankManage.AppService.Encryption;
 import BankManage.AccountModels.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -12,7 +12,7 @@ public class RegisterUI extends JFrame implements ActionListener{
     
     ColorScheme cs = new ColorScheme();
     RegisterService rs = new RegisterService();
-    Encryption en = new Encryption();
+    OneTimeCodeService otc = new OneTimeCodeService();
     // Account Models
     
     private final String[] occuList = {
@@ -619,20 +619,42 @@ public class RegisterUI extends JFrame implements ActionListener{
             return;
         }
 
-        EmployeeModel employee = new EmployeeModel(fname, lname, pass, dob , position, accessCode);
+        //useAccessCode(String code, String employeeId)
+        
+        boolean verification = otc.validateAccessCode(accessCode);
+        
+        if(verification){
+            EmployeeModel employee = new EmployeeModel(fname, lname, pass, dob , position, accessCode);
+            
+            boolean success = rs.registerEmployee(employee);
 
-        boolean success = rs.registerEmployee(employee);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Successfully Created Account. \n"
+                        + "Your ID is: " + employee.getEmployeeId() + ".", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
+                
+                boolean insertE = otc.useAccessCode(employee.getEmployeeId(), accessCode);
+                
+                if(insertE){
+                    System.out.println(insertE);
+                }
+                else{
+                    System.out.println(insertE);
+                }
+                
+                LoginUI ln = new LoginUI();
+                ln.setVisible(true);
+                ln.staffRegister(true);
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Registration failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
 
-        if (success) {
-            JOptionPane.showMessageDialog(this, "Successfully Created Account. \n"
-                    + "Your ID is: " + employee.getEmployeeId() + ".", "Registration Complete", JOptionPane.INFORMATION_MESSAGE);
-            LoginUI ln = new LoginUI();
-            ln.setVisible(true);
-            ln.staffRegister(true);
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Registration failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        else{
+            JOptionPane.showMessageDialog(this, "Invalid Access Code. Please contact your Administrators.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        
     }
     
     public final boolean FebruaryCheck(String month){

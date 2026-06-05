@@ -73,6 +73,10 @@ public class BankAccountService {
             return false;
         }
     }
+
+    public List<BankAccount> getAllAccountsWithCustomerName() {
+        return accountDataService.getAllAccountsWithCustomerName();
+    }
     
     public int getTotalCnt(){
         return accountDataService.getTotalAccountsCnt();

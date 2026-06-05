@@ -37,8 +37,8 @@ public class OneTimeCodeDataService {
             return false;
         }
     }
-
-    public boolean markCodeAsUsed(String accessCode, String employeeId) {
+    
+    public boolean useAccessCode(String employeeId, String accessCode){
         String sql = "UPDATE one_time_codes SET status = 'Used', employee_id = ? WHERE access_code = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -46,6 +46,7 @@ public class OneTimeCodeDataService {
             
             stmt.setString(1, employeeId);
             stmt.setString(2, accessCode);
+            System.out.println("Employee: "+employeeId + "\nAccess Code:" + accessCode);
             return stmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
@@ -54,9 +55,9 @@ public class OneTimeCodeDataService {
         }
     }
 
-    public List<OneTimeCode> getAllUnusedCodes() {
+    public List<OneTimeCode> getAllCodes() {
         List<OneTimeCode> codes = new ArrayList<>();
-        String sql = "SELECT * FROM one_time_codes WHERE status = 'Unused' ORDER BY created_at DESC";
+        String sql = "SELECT * FROM one_time_codes ORDER BY created_at DESC";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -64,7 +65,7 @@ public class OneTimeCodeDataService {
             
             while (rs.next()) {
                 OneTimeCode code = new OneTimeCode();
-                code.setOtcId(rs.getInt("otc_id"));
+                code.setEmployeeId(rs.getString("employee_id"));
                 code.setAccessCode(rs.getString("access_code"));
                 code.setStatus(rs.getString("status"));
                 code.setCreatedAt(rs.getString("created_at"));

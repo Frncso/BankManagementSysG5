@@ -1,13 +1,19 @@
 package BankManage;
 import BankManage.AppService.Encryption;
 import BankManage.AccountModels.EmployeeModel;
+import BankManage.AccountModels.BankAccount;
+import BankManage.AppService.ActivityLogService;
+import BankManage.AppService.BankAccountService;
+import BankManage.AppService.OneTimeCodeService;
 import BankManage.AppService.SessionManage;
+import BankManage.DataService.CustomerDataService;
+import BankManage.DataService.RequestDataService;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class AccountRoleUI extends JFrame implements ActionListener{
 
@@ -50,8 +56,8 @@ public class AccountRoleUI extends JFrame implements ActionListener{
     private JLabel logoName;
 
     // Main content components
-    private JPanel mainContentPanel, headerPanel, statsPanel, accountsListPanel;
-    private JLabel welcomeLabel, dateLabel, pageTitleLabel;
+    private JPanel mainContentPanel, linePanel, statsPanel, accountsListPanel;
+    private JLabel dashboardTitle;
     private JPanel totalAccountsCard, activeAccountsCard, frozenAccountsCard, suspendedAccountsCard;
 
     // Search components
@@ -63,15 +69,17 @@ public class AccountRoleUI extends JFrame implements ActionListener{
     private JLabel[] accountIds, accountNames, accountBalances, accountStatuses;
     private JButton[] freezeBtns, suspendBtns, closeBtns, activateBtns;
 
+    private JButton generateCodeBtn, viewCodesBtn;
+    
     public AccountRoleUI() {
-        
+         
         if (SessionManage.isStaffLoggedIn()){
             EmployeeModel staff = SessionManage.getCurrentStaff();
             
-            System.out.println("Logged in as: " + en.decrypt(staff.getEmployeeFName())); // debug
+            System.out.println("Logged in as: " + staff.getEmployeeFName()); // debug
         }
         
-        setTitle("Admin Dashboard - Account Management");
+        setTitle("Admin Dashboard - Account Controls");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setSize(1440, 960);
@@ -170,34 +178,44 @@ public class AccountRoleUI extends JFrame implements ActionListener{
         mainContentPanel.setLayout(null);
         mainContentPanel.setBackground(new Color(245, 245, 245));
         mainContentPanel.setBounds(180, 0, 1260, 960);
+        
+        dashboardTitle = new JLabel("Accounts Controls");
+        dashboardTitle.setBounds(30, 15, 200, 20);
+        dashboardTitle.setFont(new Font("", Font.BOLD, 16));
+        mainContentPanel.add(dashboardTitle);
+        
+        linePanel = new JPanel();
+        
+        linePanel.setBounds(30, 50, 1185, 3);
+        linePanel.setBackground(cs.darkPurple);
+        mainContentPanel.add(linePanel);
+        
+        JLabel actionlbl = new JLabel("For Staff Creation:");
+        actionlbl.setBounds(30, 67, 250, 40);
+        actionlbl.setForeground(cs.darkerPurple);
+        actionlbl.setFont(new Font("Arial", Font.BOLD, 16));
+        mainContentPanel.add(actionlbl);
+        
+        generateCodeBtn = new JButton("Generate Access Code");
+        generateCodeBtn.setBounds(185, 72, 200, 30);
+        generateCodeBtn.setBackground(cs.darkPurple);
+        generateCodeBtn.setForeground(cs.white);
+        generateCodeBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        generateCodeBtn.setFocusPainted(false);
+        generateCodeBtn.setBorderPainted(false);
+        mainContentPanel.add(generateCodeBtn);
 
-        headerPanel = new JPanel();
-        headerPanel.setLayout(null);
-        headerPanel.setBackground(cs.white);
-        headerPanel.setBounds(20, 20, 1220, 80);
-        headerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)));
+        viewCodesBtn = new JButton("View Available Codes");
+        viewCodesBtn.setBounds(405, 72, 200, 30);
+        viewCodesBtn.setBackground(cs.darkPurple);
+        viewCodesBtn.setForeground(cs.white);
+        viewCodesBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        viewCodesBtn.setFocusPainted(false);
+        viewCodesBtn.setBorderPainted(false);
+        mainContentPanel.add(viewCodesBtn);
 
-        pageTitleLabel = new JLabel("Account Management");
-        pageTitleLabel.setBounds(20, 20, 300, 30);
-        pageTitleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        pageTitleLabel.setForeground(cs.darkPurple);
-        headerPanel.add(pageTitleLabel);
-
-        welcomeLabel = new JLabel("Welcome Back, Admin Juan");
-        welcomeLabel.setBounds(20, 50, 250, 20);
-        welcomeLabel.setFont(new Font("Arial", Font.PLAIN, 13));
-        welcomeLabel.setForeground(new Color(120, 120, 120));
-        headerPanel.add(welcomeLabel);
-
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
-        dateLabel = new JLabel(today.format(formatter));
-        dateLabel.setBounds(1080, 25, 120, 20);
-        dateLabel.setFont(new Font("Arial", Font.PLAIN, 13));
-        dateLabel.setForeground(new Color(120, 120, 120));
-        headerPanel.add(dateLabel);
-
-        mainContentPanel.add(headerPanel);
+        generateCodeBtn.addActionListener(this);
+        viewCodesBtn.addActionListener(this);
 
         // Stats Cards Panel
         initStatsPanel();
@@ -212,18 +230,24 @@ public class AccountRoleUI extends JFrame implements ActionListener{
     }
 
     private void initStatsPanel() {
+        BankAccountService ba = new BankAccountService();
+        int totalAcc = ba.getTotalCnt(), 
+                activeAcc = ba.getActiveCnt("Active"), 
+                frozenAcc = ba.getFrozenCnt("Frozen"), 
+                suspendAcc = ba.getSuspendedCnt("Suspended");
+        
         statsPanel = new JPanel();
         statsPanel.setLayout(null);
-        statsPanel.setBounds(20, 120, 1220, 100);
+        statsPanel.setBounds(30, 120, 1190, 100);
         statsPanel.setOpaque(false);
 
-        int cardWidth = 290;
-        int spacing = 20;
+        int cardWidth = 270;
+        int spacing = 35;
         
-        totalAccountsCard = createStatCard("Total Accounts", "8", new Color(67, 97, 238), 0, cardWidth);
-        activeAccountsCard = createStatCard("Active Accounts", "4", new Color(16, 185, 129), cardWidth + spacing, cardWidth);
-        frozenAccountsCard = createStatCard("Frozen Accounts", "2", new Color(29, 198, 251), 2 * (cardWidth + spacing), cardWidth);
-        suspendedAccountsCard = createStatCard("Suspended Accounts", "1", new Color(239, 68, 68), 3 * (cardWidth + spacing), cardWidth);
+        totalAccountsCard = createStatCard("Total Accounts", String.valueOf(totalAcc), new Color(67, 97, 238), 0, cardWidth);
+        activeAccountsCard = createStatCard("Active Accounts", String.valueOf(activeAcc), cs.lime, cardWidth + spacing, cardWidth);
+        frozenAccountsCard = createStatCard("Frozen Accounts", String.valueOf(frozenAcc), cs.darkPurple, 2 * (cardWidth + spacing), cardWidth);
+        suspendedAccountsCard = createStatCard("Suspended Accounts", String.valueOf(suspendAcc), cs.red, 3 * (cardWidth + spacing), cardWidth);
 
         statsPanel.add(totalAccountsCard);
         statsPanel.add(activeAccountsCard);
@@ -267,42 +291,47 @@ public class AccountRoleUI extends JFrame implements ActionListener{
     private void initSearchPanel() {
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(null);
-        searchPanel.setBounds(20, 240, 1220, 40);
+        searchPanel.setBounds(30, 240, 1185, 40);
         searchPanel.setBackground(cs.white);
         searchPanel.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230)));
 
-        JLabel searchLabel = new JLabel("Search by ID:");
-        searchLabel.setBounds(15, 8, 100, 25);
+        JLabel searchLabel = new JLabel("Search by Acc ID:");
+        searchLabel.setBounds(15, 8, 120, 25);
         searchLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         searchLabel.setForeground(new Color(80, 80, 80));
         searchPanel.add(searchLabel);
 
         searchField = new JTextField();
-        searchField.setBounds(120, 8, 200, 25);
+        searchField.setBounds(140, 8, 200, 25);
         searchField.setFont(new Font("Arial", Font.PLAIN, 13));
         searchField.setBorder(BorderFactory.createEmptyBorder());
+        searchField.setBackground(cs.lightgray);
         searchPanel.add(searchField);
 
         searchBtn = new JButton("Search");
-        searchBtn.setBounds(330, 5, 80, 30);
-        searchBtn.setBackground(new Color(67, 97, 238));
+        searchBtn.setBounds(350, 5, 90, 30);
+        searchBtn.setBackground(cs.darkPurple);
         searchBtn.setForeground(cs.white);
         searchBtn.setFont(new Font("Arial", Font.BOLD, 12));
         searchBtn.setFocusPainted(false);
         searchBtn.setBorderPainted(false);
         searchBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        searchBtn.addActionListener(this);
         searchPanel.add(searchBtn);
 
         refreshBtn = new JButton("Refresh");
-        refreshBtn.setBounds(420, 5, 90, 30);
-        refreshBtn.setBackground(new Color(100, 100, 100));
+        refreshBtn.setBounds(450, 5, 90, 30);
+        refreshBtn.setBackground(new Color(100,100,100));
         refreshBtn.setForeground(cs.white);
         refreshBtn.setFont(new Font("Arial", Font.BOLD, 12));
         refreshBtn.setFocusPainted(false);
         refreshBtn.setBorderPainted(false);
         refreshBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        searchPanel.add(refreshBtn);
-
+        refreshBtn.addActionListener(e -> {
+            searchField.setText("");
+            loadAccountsDynamically();
+        });
+        searchPanel.add(refreshBtn);   
         mainContentPanel.add(searchPanel);
     }
 
@@ -310,36 +339,89 @@ public class AccountRoleUI extends JFrame implements ActionListener{
         accountsListPanel = new JPanel();
         accountsListPanel.setLayout(null);
         accountsListPanel.setBackground(new Color(245, 245, 245));
-        accountsListPanel.setBounds(20, 300, 1220, 610);
 
-        String[][] accounts = {
-            {"ACC-1001", "Inigo Dela Cruz", "Inigodelacruz@email.com", "₱151,745.15", "Active"},
-            {"ACC-1002", "Inigo Santos", "Inigosantos@email.com", "₱89,250.00", "Active"},
-            {"ACC-1003", "Inigo Rizal", "Inigorizal@email.com", "₱35,000.00", "Frozen"},
-            {"ACC-1004", "Ingi Bonifacio", "Ingibonifacio@email.com", "₱12,750.50", "Suspended"},
-            {"ACC-1005", "Melvin Malon Silang", "MelvinMalonsilang@email.com", "₱0.00", "Closed"}
-        };
+        JScrollPane accountsScrollPane = new JScrollPane(accountsListPanel);
+        accountsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        accountsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        accountsScrollPane.setBorder(null);
+        accountsScrollPane.setBounds(20, 300, 1200, 610);
 
-        accountCards = new JPanel[accounts.length];
-        accountIds = new JLabel[accounts.length];
-        accountNames = new JLabel[accounts.length];
-        accountBalances = new JLabel[accounts.length];
-        accountStatuses = new JLabel[accounts.length];
-        freezeBtns = new JButton[accounts.length];
-        suspendBtns = new JButton[accounts.length];
-        closeBtns = new JButton[accounts.length];
-        activateBtns = new JButton[accounts.length];
+        mainContentPanel.add(accountsScrollPane);
 
-        for (int i = 0; i < accounts.length; i++) {
-            int yPos = i * 120 + 10;
-            createAccountCard(accounts[i][0], accounts[i][1], accounts[i][2], accounts[i][3], accounts[i][4], i, yPos);
-        }
-
-        mainContentPanel.add(accountsListPanel);
+        loadAccountsDynamically();
     }
 
+        // for refresh and /or viewing everything
+    private void loadAccountsDynamically() {
+        loadFilteredAccounts(""); // show all
+    }
+
+    // loading accounts gamit yung acc id nila
+    private void loadFilteredAccounts(String keyword) {
+        accountsListPanel.removeAll();
+
+        BankAccountService accountService = new BankAccountService();
+        CustomerDataService customerService = new CustomerDataService();
+
+        List<BankAccount> allAccounts = accountService.getAllAccountsWithCustomerName();
+
+        // filtering accounts
+        List<BankAccount> filteredAccounts = new ArrayList<>();
+        String lowerKeyword = keyword.toLowerCase().trim();
+
+        if (lowerKeyword.isEmpty()) {
+            filteredAccounts = allAccounts;
+        } else {
+            for (BankAccount acc : allAccounts) {
+                String fullName = customerService.getFullNameByCustomerId(acc.getCustomerId()).toLowerCase();
+                if (acc.getAccountId().toLowerCase().contains(lowerKeyword) ||
+                    fullName.contains(lowerKeyword)) {
+                    filteredAccounts.add(acc);
+                }
+            }
+        }
+
+        // array of buttons
+        int size = filteredAccounts.size();
+        accountCards = new JPanel[size];
+        accountIds = new JLabel[size];
+        accountNames = new JLabel[size];
+        accountBalances = new JLabel[size];
+        accountStatuses = new JLabel[size];
+        freezeBtns = new JButton[size];
+        suspendBtns = new JButton[size];
+        closeBtns = new JButton[size];
+        activateBtns = new JButton[size];
+
+        int totalHeight = 10;
+
+        for (int i = 0; i < filteredAccounts.size(); i++) {
+            BankAccount acc = filteredAccounts.get(i);
+            int yPos = i * 120 + 10;
+            totalHeight = yPos + 120;
+
+            String fullName = customerService.getFullNameByCustomerId(acc.getCustomerId());
+
+            createAccountCard(
+                acc.getAccountId(),
+                acc.getCustomerId(),
+                fullName,                           
+                "₱" + acc.getBalance(),
+                acc.getStatus(),
+                i,
+                yPos
+            );
+        }
+
+        accountsListPanel.setPreferredSize(new Dimension(1200, Math.max(totalHeight, 610)));
+
+        accountsListPanel.revalidate();
+        accountsListPanel.repaint();
+    }
+    
+    
     //Card per account 
-    private void createAccountCard(String id, String name, String email, String balance, String status, int index, int yPos) {
+    private void createAccountCard(String id, String cid, String fullName, String balance, String status, int index, int yPos) {
         JPanel card = new JPanel();
         card.setLayout(null);
         card.setBackground(cs.white);
@@ -368,25 +450,25 @@ public class AccountRoleUI extends JFrame implements ActionListener{
         accountIds[index].setForeground(new Color(50, 50, 50));
         card.add(accountIds[index]);
 
-        JLabel nameLabel = new JLabel("Account Holder:");
+        JLabel nameLabel = new JLabel("User ID:");
         nameLabel.setBounds(180, 10, 100, 20);
         nameLabel.setFont(new Font("Arial", Font.PLAIN, 11));
         nameLabel.setForeground(new Color(120, 120, 120));
         card.add(nameLabel);
 
-        accountNames[index] = new JLabel(name);
+        accountNames[index] = new JLabel(cid);
         accountNames[index].setBounds(180, 30, 200, 20);
         accountNames[index].setFont(new Font("Arial", Font.BOLD, 13));
         accountNames[index].setForeground(new Color(50, 50, 50));
         card.add(accountNames[index]);
 
-        JLabel emailLabel = new JLabel("Email:");
+        JLabel emailLabel = new JLabel("Account Holder");
         emailLabel.setBounds(400, 10, 80, 20);
         emailLabel.setFont(new Font("Arial", Font.PLAIN, 11));
         emailLabel.setForeground(new Color(120, 120, 120));
         card.add(emailLabel);
 
-        JLabel emailValue = new JLabel(email);
+        JLabel emailValue = new JLabel(fullName);
         emailValue.setBounds(400, 30, 250, 20);
         emailValue.setFont(new Font("Arial", Font.PLAIN, 12));
         emailValue.setForeground(new Color(100, 100, 100));
@@ -416,10 +498,10 @@ public class AccountRoleUI extends JFrame implements ActionListener{
         accountStatuses[index].setForeground(statusColor);
         card.add(accountStatuses[index]);
 
-        freezeBtns[index] = createCardButton("Freeze", new Color(29, 198, 251), 20, 65, 95, 30);
-        suspendBtns[index] = createCardButton("Suspend", new Color(239, 68, 68), 125, 65, 95, 30);
-        closeBtns[index] = createCardButton("Close", new Color(139, 69, 19), 230, 65, 95, 30);
-        activateBtns[index] = createCardButton("Activate", new Color(16, 185, 129), 335, 65, 95, 30);
+        freezeBtns[index] = createCardButton("Freeze", cs.darkPurple, 20, 65, 95, 30);
+        suspendBtns[index] = createCardButton("Suspend", cs.red, 125, 65, 95, 30);
+        closeBtns[index] = createCardButton("Close", new Color(100, 100, 100), 230, 65, 95, 30);
+        activateBtns[index] = createCardButton("Activate", cs.lime, 335, 65, 95, 30);
 
         card.add(freezeBtns[index]);
         card.add(suspendBtns[index]);
@@ -446,11 +528,11 @@ public class AccountRoleUI extends JFrame implements ActionListener{
     private Color getStatusColor(String status) {
         switch (status) {
             case "Active":
-                return new Color(16, 185, 129);
+                return cs.lime;
             case "Frozen":
-                return new Color(29, 198, 251);
+                return cs.darkPurple;
             case "Suspended":
-                return new Color(239, 68, 68);
+                return cs.red;
             case "Closed":
                 return new Color(100, 100, 100);
             default:
@@ -489,8 +571,46 @@ public class AccountRoleUI extends JFrame implements ActionListener{
                 dispose();
             }
         }
+        else if(e.getSource() == generateCodeBtn){
+            ActivityLogService ls = new ActivityLogService();
+            EmployeeModel staff = SessionManage.getCurrentStaff();
+
+            generateNewAccessCode();
+            
+            ls.logActivity(
+                "CODE GENERATION",
+                staff.getEmployeeId(),
+                staff.getEmployeePosition(),
+                "Account Creation Code",
+                staff.getEmployeeFName()
+            );
+            
+        }
+        
+        else if(e.getSource() == searchBtn){
+            String keyword = searchField.getText().trim();
+            loadFilteredAccounts(keyword);
+        }
+        else if(e.getSource() == viewCodesBtn){
+            ViewAccessCodesUI va = new ViewAccessCodesUI();
+            va.setVisible(true);
+            dispose();
+        }
         
     }
     
+    private void generateNewAccessCode() {
+        OneTimeCodeService otcService = new OneTimeCodeService();
+        String code = otcService.createNewAccessCode();
 
+        if (code != null) {
+            JOptionPane.showMessageDialog(this,
+                "New Access Code Generated:\n\n" + code +
+                "\n\nShare this with the new staff member.",
+                "Access Code Generated", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to generate code.");
+        }
+    }
+    
 }

@@ -178,4 +178,32 @@ public class BankAccountDataService {
         return 0;
     }
 
+    public List<BankAccount> getAllAccountsWithCustomerName() {
+        List<BankAccount> accounts = new ArrayList<>();
+
+        String sql = "SELECT ba.*, c.first_name, c.last_name " +
+                     "FROM bank_accounts ba " +
+                     "JOIN customers c ON ba.customer_id = c.customer_id " +
+                     "ORDER BY ba.created_at DESC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                BankAccount acc = new BankAccount();
+                acc.setAccountId(rs.getString("account_id"));
+                acc.setCustomerId(rs.getString("customer_id"));
+                acc.setAccountType(rs.getString("account_type"));
+                acc.setBalance(rs.getDouble("balance"));
+                acc.setStatus(rs.getString("status"));
+
+                accounts.add(acc);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return accounts;
+    }
+    
 }

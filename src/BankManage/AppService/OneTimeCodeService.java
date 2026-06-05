@@ -3,6 +3,7 @@ package BankManage.AppService;
 import BankManage.AccountModels.OneTimeCode;
 import BankManage.DataService.OneTimeCodeDataService;
 import java.security.SecureRandom;
+import java.util.List;
 
 public class OneTimeCodeService {
 
@@ -34,9 +35,13 @@ public class OneTimeCodeService {
     public boolean validateAccessCode(String code) {
         return otcDataService.isValidAccessCode(code);
     }
-
-    // mark code as used pag register
-    public boolean useAccessCode(String code, String employeeId) {
-        return otcDataService.markCodeAsUsed(code, employeeId);
+    
+    // add claimant on access code
+    public boolean useAccessCode(String employeeId, String code) {
+        return otcDataService.useAccessCode(employeeId, code);
+    }
+    
+    public List<OneTimeCode> getAllCodes(){
+        return otcDataService.getAllCodes();
     }
 }
