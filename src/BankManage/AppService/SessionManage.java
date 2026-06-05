@@ -52,6 +52,7 @@ public class SessionManage {
     public static void logout() {
         currentCustomer = null;
         currentStaff = null;
+        resetProcessedCount();
         System.out.println("User logged out. Session cleared."); /// debug
     }
 
@@ -64,4 +65,20 @@ public class SessionManage {
         }
         return "Guest";
     }
+    
+    // processed counter ni staff
+    private static int processedCount = 0;
+
+    public static void incrementProcessedCount() {
+        processedCount++;
+    }
+
+    public static int getProcessedCount() {
+        return processedCount;
+    }
+
+    public static void resetProcessedCount() {
+        processedCount = 0;
+    }
+    
 }

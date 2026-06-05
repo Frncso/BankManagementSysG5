@@ -1,6 +1,8 @@
 package BankManage;
 
+import BankManage.AccountModels.EmployeeModel;
 import BankManage.AccountModels.RequestModel;
+import BankManage.AppService.ActivityLogService;
 import BankManage.AppService.SessionManage;
 import BankManage.DataService.BankAccountDataService;
 import BankManage.DataService.RequestDataService;
@@ -157,6 +159,14 @@ public class AccountRequestsSummaryUI extends JFrame implements ActionListener {
         acceptBtn.addActionListener(this);
         rejectBtn.addActionListener(this);
         returnBtn.addActionListener(this);
+        
+        if (SessionManage.isStaffLoggedIn()){
+            EmployeeModel staff = SessionManage.getCurrentStaff();
+            
+            System.out.println("Logged in as: " + staff.getEmployeeFName()); // debug
+            
+        }
+        
     }
 
     private void loadRequestDetails() {
@@ -167,29 +177,58 @@ public class AccountRequestsSummaryUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         RequestDataService requestDataService = new RequestDataService();
+        ActivityLogService ls = new ActivityLogService();
+        EmployeeModel staff = SessionManage.getCurrentStaff();
 
         if (e.getSource() == acceptBtn) {
             // accept request
             boolean updated = requestDataService.updateRequestStatus(currentRequestId, "Accepted");
+            SessionManage.incrementProcessedCount();
 
+            // pasok saactivity as accept
+            ls.logActivity(
+                currentRequestId,
+                currentRequest.getCustomerId(),
+                currentRequest.getAccountNumber(),
+                "Accepted - Account Closing",
+                staff.getEmployeeFName()
+            );
+            
             if (updated && currentRequest.getAccountNumber() != null) {
                 BankAccountDataService accountDataService = new BankAccountDataService();
-                accountDataService.updateStatus(currentRequest.getAccountNumber(), "Closed");
+                accountDataService.closeStatus(currentRequest.getAccountNumber(), "Closed", 0.00);
             }
 
             JOptionPane.showMessageDialog(this, "Request Accepted. Account has been closed.");
-            new AccountRequestsUI().setVisible(true);
+            
+            AccountRequestsUI ar = new AccountRequestsUI();
+            ar.setVisible(true);
             dispose();
 
         } else if (e.getSource() == rejectBtn) {
             // reject
+            
+            SessionManage.incrementProcessedCount();
+            
+            // pasok saactivity as rejected
+            ls.logActivity(
+                currentRequestId,
+                currentRequest.getCustomerId(),
+                currentRequest.getAccountNumber(),
+                "Rejected - Account Closing",
+                staff.getEmployeeFName()
+            );
+            
             requestDataService.updateRequestStatus(currentRequestId, "Rejected");
             JOptionPane.showMessageDialog(this, "Request Rejected.");
-            new AccountRequestsUI().setVisible(true);
+            
+            AccountRequestsUI ar = new AccountRequestsUI();
+            ar.setVisible(true);
             dispose();
 
         } else if (e.getSource() == returnBtn) {
-            new AccountRequestsUI().setVisible(true);
+            AccountRequestsUI ar = new AccountRequestsUI();
+            ar.setVisible(true);
             dispose();
         }
     }

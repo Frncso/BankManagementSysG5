@@ -8,12 +8,17 @@ public class RequestService {
     GetDateAndTime time = new GetDateAndTime();
     private final String timestamp = time.requestTime();
     
-    private final RequestDataService requestDAO = new RequestDataService();
+    private final RequestDataService requestDataService = new RequestDataService();
 
     public boolean createRequest(RequestModel request) {
         String requestId = "REQ-" + timestamp;
         request.setRequestId(requestId);
 
-        return requestDAO.save(request);
+        return requestDataService.save(request);
+    }
+    
+    public int getPenReqCnt(String status){
+        String setStatus = status;
+        return requestDataService.getPendingRequestCount(setStatus);
     }
 }

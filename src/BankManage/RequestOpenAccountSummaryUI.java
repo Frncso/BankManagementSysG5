@@ -1,7 +1,10 @@
 package BankManage;
 
+import BankManage.AccountModels.EmployeeModel;
 import BankManage.AccountModels.RequestModel;
+import BankManage.AppService.ActivityLogService;
 import BankManage.AppService.BankAccountService;
+import BankManage.AppService.SessionManage;
 import BankManage.DataService.RequestDataService;
 import javax.swing.*;
 import java.awt.*;
@@ -169,21 +172,45 @@ public class RequestOpenAccountSummaryUI extends JFrame implements ActionListene
         acceptBtn.addActionListener(this);
         rejectBtn.addActionListener(this);
         returnBtn.addActionListener(this);
+        
+        if (SessionManage.isStaffLoggedIn()){
+
+            loadRequestDetails();
+
+        }
+        
     }
 
+    private void loadRequestDetails() {
+        RequestDataService requestDataService = new RequestDataService();
+        request = requestDataService.findByReqID(requestId);
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         RequestDataService requestDataService = new RequestDataService();
-
+        ActivityLogService ls = new ActivityLogService();
+        EmployeeModel staff = SessionManage.getCurrentStaff();
+        
         if (e.getSource() == acceptBtn) {
         // update to accepted
         boolean requestUpdated = requestDataService.updateRequestStatus(requestId, "Accepted");
+        SessionManage.incrementProcessedCount();
 
         if (requestUpdated && request != null) {
             // pag true, create acc
             BankAccountService accountService = new BankAccountService();
             boolean accountCreated = accountService.createNewAccount(request.getCustomerId(), request.getAccountType());
 
+            // pasok saactivity as accept
+            ls.logActivity(
+                requestId,
+                request.getCustomerId(),
+                request.getAccountNumber(),
+                "Accepted - Account Opening",
+                staff.getEmployeeFName()
+            );
+            
             if (accountCreated) {
                 JOptionPane.showMessageDialog(this, 
                     "Request Accepted! New " + request.getAccountType() + " account has been created.", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -193,19 +220,34 @@ public class RequestOpenAccountSummaryUI extends JFrame implements ActionListene
             }
         }
 
-        new AccountRequestsUI().setVisible(true);
+        AccountRequestsUI ar = new AccountRequestsUI();
+        ar.setVisible(true);
         dispose();
 
         } else if (e.getSource() == rejectBtn) {
             // reject
+            
+            SessionManage.incrementProcessedCount();
+            
+            // pasok saactivity as accept
+            ls.logActivity(
+                requestId,
+                request.getCustomerId(),
+                request.getAccountNumber(),
+                "Rejected - Account Opening",
+                staff.getEmployeeFName()
+            );
+            
             requestDataService.updateRequestStatus(requestId, "Rejected");
             JOptionPane.showMessageDialog(this, "Request has been rejected.", "Rejected", JOptionPane.INFORMATION_MESSAGE);
 
-            new AccountRequestsUI().setVisible(true);
+            AccountRequestsUI ar = new AccountRequestsUI();
+            ar.setVisible(true);
             dispose();
 
         } else if (e.getSource() == returnBtn) {
-            new AccountRequestsUI().setVisible(true);
+            AccountRequestsUI ar = new AccountRequestsUI();
+            ar.setVisible(true);
             dispose();
         }
     }

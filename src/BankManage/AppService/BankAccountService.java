@@ -46,31 +46,51 @@ public class BankAccountService {
     }
     
     public boolean createNewAccount(String customerId, String accountType) {
-    try {
+        try {
 
-        CustomerDataService customerDataService = new CustomerDataService();
-        CustomerModel customer = customerDataService.findByCredentials(customerId);
+            CustomerDataService customerDataService = new CustomerDataService();
+            CustomerModel customer = customerDataService.findByCredentials(customerId);
 
-        String initials = "XX";
-        if (customer != null) {
-            String first = en.decrypt(customer.getFirstName()) != null ? en.decrypt(customer.getFirstName()) : "";
-            String last = en.decrypt(customer.getLastName()) != null ? en.decrypt(customer.getLastName()) : "";
-            initials = (first.length() > 0 ? first.substring(0, 1) : "X") +
-                       (last.length() > 0 ? last.substring(0, 1) : "X");
-            initials = initials.toUpperCase();
+            String initials = "XX";
+            if (customer != null) {
+                String first = en.decrypt(customer.getFirstName()) != null ? en.decrypt(customer.getFirstName()) : "";
+                String last = en.decrypt(customer.getLastName()) != null ? en.decrypt(customer.getLastName()) : "";
+                initials = (first.length() > 0 ? first.substring(0, 1) : "X") +
+                           (last.length() > 0 ? last.substring(0, 1) : "X");
+                initials = initials.toUpperCase();
+            }
+
+            BankAccount newAccount = new BankAccount();
+            newAccount.setCustomerId(customerId);
+            newAccount.setAccountType(accountType);
+            newAccount.setBalance(0.00);
+            newAccount.setStatus("Active");
+
+            return accountDataService.save(newAccount, initials);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-
-        BankAccount newAccount = new BankAccount();
-        newAccount.setCustomerId(customerId);
-        newAccount.setAccountType(accountType);
-        newAccount.setBalance(0.00);
-        newAccount.setStatus("Active");
-
-        return accountDataService.save(newAccount, initials);
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
     }
-}
+    
+    public int getTotalCnt(){
+        return accountDataService.getTotalAccountsCnt();
+    }
+    
+    public int getActiveCnt(String status){
+        String setStatus = status;
+        return accountDataService.getActiveAccountsCnt(setStatus);
+    }
+    
+    public int getFrozenCnt(String status){
+        String setStatus = status;
+        return accountDataService.getFrozenAccountsCnt(setStatus);
+    }
+    
+    public int getSuspendedCnt(String status){
+        String setStatus = status;
+        return accountDataService.getSuspendedAccountsCnt(setStatus);
+    }
+    
 }

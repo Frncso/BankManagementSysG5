@@ -2,7 +2,11 @@ package BankManage;
 import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
 import BankManage.AppService.GetDateAndTime;
+import BankManage.AppService.RequestService;
+import BankManage.AppService.ActivityLogService;
+import BankManage.AppService.BankAccountService;
 import BankManage.AccountModels.*;
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,6 +15,8 @@ public class AdminDashboard extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
     GetDateAndTime dateTime = new GetDateAndTime();
+    RequestService rs = new RequestService();
+    BankAccountService bs = new BankAccountService();
     Encryption en = new Encryption();
     
     // panels
@@ -79,34 +85,21 @@ public class AdminDashboard extends JFrame implements ActionListener {
     private JTable recentActivitytbl;
     private JScrollPane recentActivityScroll;
     
-    protected String[] recentActivityColumns = {
-        "User", "Acc ID", "Action", "Date", "Status"
-    };
+    private Timer timeTick;
     
-    protected String[][] recentActivityData = {
-        {"Juan", "ACC-1001", "Account Activated", "May 18, 2026", "Completed"},
-        {"Inigo", "ACC-1002", "Account Suspended", "May 17, 2026", "Completed"},
-        {"Francisco", "ACC-1003", "New Account Request", "May 16, 2026", "Pending"},
-        {"Matthew", "ACC-1004", "Suspicious Transaction", "May 15, 2026", "Reviewed"},
-        {"Pogi", "ACC-1005", "Account Closed", "May 14, 2026", "Success"}
+    protected String[] recentActivityColumns = {
+        "Request ID", "User ID", "Account ID", "Action", "Date Processed", "Performed By"
     };
     
     //
     
     private String adminName = SessionManage.getCurrentUserDisplayName();
-    private String currentDate = dateTime.currentTime();
-    private int totalAccountsCount = 8;
-    private int activeUsersCount = 4;
-    private int pendingRequestsCount = 3;
-    private int approvedTodayCount = 2;
+    private int totalAccountsCount = bs.getTotalCnt();
+    private int activeUsersCount = bs.getActiveCnt("Active");
+    private int pendingRequestsCount = rs.getPenReqCnt("Pending");
+    private int approvedTodayCount = SessionManage.getProcessedCount();
     
-    public AdminDashboard() {
-        
-        if (SessionManage.isStaffLoggedIn()){
-            EmployeeModel staff = SessionManage.getCurrentStaff();
-            
-            System.out.println("Logged in as: " + en.decrypt(staff.getEmployeeFName())); // debug
-        }
+    public AdminDashboard(){
         
         setTitle("Admin Dashboard - Home");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -224,7 +217,7 @@ public class AdminDashboard extends JFrame implements ActionListener {
         adminNamelbl.setForeground(cs.btnColorSelect);
         mainContentPanel.add(adminNamelbl);
         
-        datelbl = new JLabel(currentDate);
+        datelbl = new JLabel("");
         datelbl.setBounds(30, 103, 200, 20);
         datelbl.setForeground(cs.gray);
         mainContentPanel.add(datelbl);
@@ -260,12 +253,12 @@ public class AdminDashboard extends JFrame implements ActionListener {
         activeUserslbl.setForeground(cs.darkerPurple);
         accountOverviewPanel.add(activeUserslbl);
         
-        activeUsersDesclbl = new JLabel("Currently active users");
+        activeUsersDesclbl = new JLabel("Currently active accounts");
         activeUsersDesclbl.setBounds(20, 153, 300, 20);
         activeUsersDesclbl.setForeground(cs.gray);
         accountOverviewPanel.add(activeUsersDesclbl);
         
-        manageRolesBtn = new JButton("Manage Account Roles", accountsIcon);
+        manageRolesBtn = new JButton("Go To Account Controls", accountsIcon);
         manageRolesBtn.setBounds(20, 180, 250, 45);
         manageRolesBtn.setBackground(cs.darkPurple);
         manageRolesBtn.setForeground(cs.white);
@@ -275,6 +268,7 @@ public class AdminDashboard extends JFrame implements ActionListener {
         manageRolesBtn.setHorizontalAlignment(SwingConstants.CENTER);
         manageRolesBtn.setMargin(new Insets(0, 0, 0, 10));
         manageRolesBtn.setIconTextGap(10);
+        manageRolesBtn.addActionListener(this);
         accountOverviewPanel.add(manageRolesBtn);
            
         mainContentPanel.add(accountOverviewPanel);
@@ -306,18 +300,18 @@ public class AdminDashboard extends JFrame implements ActionListener {
         pendingRequestsDesclbl.setForeground(cs.gray);
         requestOverviewPanel.add(pendingRequestsDesclbl);
         
-        approvedTodaylbl = new JLabel(String.valueOf(approvedTodayCount) + " Approved Today");
+        approvedTodaylbl = new JLabel(String.valueOf(approvedTodayCount) + " Processed");
         approvedTodaylbl.setBounds(20, 130, 300, 25);
         approvedTodaylbl.setFont(new Font("Arial", Font.BOLD, 22));
         approvedTodaylbl.setForeground(cs.darkerPurple);
         requestOverviewPanel.add(approvedTodaylbl);
         
-        approvedTodayDesclbl = new JLabel("Quick approval summary");
+        approvedTodayDesclbl = new JLabel("Since You Logged in");
         approvedTodayDesclbl.setBounds(20, 153, 300, 20);
         approvedTodayDesclbl.setForeground(cs.gray);
         requestOverviewPanel.add(approvedTodayDesclbl);
         
-        viewRequestsBtn = new JButton("View All Requests", reqIcon);
+        viewRequestsBtn = new JButton("View Requests", reqIcon);
         viewRequestsBtn.setBounds(20, 180, 250, 45);
         viewRequestsBtn.setBackground(cs.darkPurple);
         viewRequestsBtn.setForeground(cs.white);
@@ -327,6 +321,7 @@ public class AdminDashboard extends JFrame implements ActionListener {
         viewRequestsBtn.setHorizontalAlignment(SwingConstants.CENTER);
         viewRequestsBtn.setMargin(new Insets(0, 0, 0, 10));
         viewRequestsBtn.setIconTextGap(10);
+        viewRequestsBtn.addActionListener(this);
         requestOverviewPanel.add(viewRequestsBtn);
   
         mainContentPanel.add(requestOverviewPanel);
@@ -347,29 +342,6 @@ public class AdminDashboard extends JFrame implements ActionListener {
         recentActivitylbl.setForeground(cs.darkerPurple);
         recentActivityPanel.add(recentActivitylbl);
         
-        // table (objects papasok dito)
-        
-        recentActivitytbl = new JTable(recentActivityData, recentActivityColumns);
-        recentActivitytbl.setRowHeight(40);
-        recentActivitytbl.setFont(new Font("Arial", Font.PLAIN, 14));
-        recentActivitytbl.setFocusable(false);
-        recentActivitytbl.getTableHeader().setReorderingAllowed(false);
-        recentActivitytbl.getTableHeader().setBackground(cs.darkPurple);
-        recentActivitytbl.getTableHeader().setForeground(cs.white);
-        recentActivitytbl.setSelectionBackground(cs.lightPurple);
-        recentActivitytbl.setSelectionForeground(cs.white);
-        recentActivitytbl.setShowGrid(false);
-        recentActivitytbl.setDefaultEditor(Object.class, null);
-        
-        recentActivitytbl.getTableHeader().setFont(
-            new Font("Arial", Font.BOLD, 14)
-        );
-        recentActivitytbl.getTableHeader().setPreferredSize(
-            new Dimension(0, 45)
-        );
-        
-        // no scroll
-        
         recentActivityScroll = new JScrollPane(recentActivitytbl);
         
         recentActivityScroll.setVerticalScrollBarPolicy(
@@ -379,6 +351,8 @@ public class AdminDashboard extends JFrame implements ActionListener {
         recentActivityScroll.setHorizontalScrollBarPolicy(
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
         );
+        
+        loadRecentActivity();
         
         recentActivityScroll.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         recentActivityScroll.setBounds(20, 60, 1145, 380);
@@ -400,6 +374,29 @@ public class AdminDashboard extends JFrame implements ActionListener {
         logoutBtn.addActionListener(this);
         transTrackerBtn.addActionListener(this);
         
+        if (SessionManage.isStaffLoggedIn()){
+            EmployeeModel staff = SessionManage.getCurrentStaff();
+            
+            System.out.println("Logged in as: " + staff.getEmployeeFName()); // debug
+            
+            int sesh = SessionManage.getProcessedCount();
+            System.out.println("Requests Done: "+sesh); // debug
+            
+            int count = pendingRequestsCount;
+            pendingChecker(count);
+            
+        }
+        
+        timeTick = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String timeGet = dateTime.currentTime();
+                datelbl.setText(timeGet);
+            }
+        });
+        
+        timeTick.start();
+        
     }
 
     @Override
@@ -420,7 +417,8 @@ public class AdminDashboard extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == transTrackerBtn){
-            new TransactionTrackerUI().setVisible(true);
+            TransactionTrackerUI tu = new TransactionTrackerUI();
+            tu.setVisible(true);
             dispose();
         }
         
@@ -440,12 +438,64 @@ public class AdminDashboard extends JFrame implements ActionListener {
             
         }
         
-        // side bar end
+        else if (e.getSource() == manageRolesBtn){
+            AccountRoleUI roleUI = new AccountRoleUI();
+            roleUI.setVisible(true);
+            dispose();
+        }
         
-        // main content
-        
+        else if (e.getSource() == viewRequestsBtn){
+            AccountRequestsUI reqUI = new AccountRequestsUI();
+            reqUI.setVisible(true);
+            dispose();
+        }
         
         //
         
     }
+    
+    private void loadRecentActivity() {
+        ActivityLogService logService = new ActivityLogService();
+        List<ActivityLog> logs = logService.getRecentActivities(8); // 8 lang since recent objects lng
+
+        String[][] data = new String[logs.size()][6];
+
+        for (int i = 0; i < logs.size(); i++) {
+            ActivityLog log = logs.get(i);
+
+            data[i][0] = log.getRequestId();
+            data[i][1] = log.getCustomerId() != null ? log.getCustomerId() : "N/A";
+            data[i][2] = log.getAccountId() != null ? log.getAccountId() : "N/A";
+            data[i][3] = log.getAction();
+            data[i][4] = log.getTimestamp();
+            data[i][5] = log.getPerformedBy();
+        }
+
+        recentActivitytbl = new JTable(data, recentActivityColumns);
+        recentActivitytbl.setRowHeight(40);
+        recentActivitytbl.setFont(new Font("Arial", Font.PLAIN, 14));
+        recentActivitytbl.setFocusable(false);
+        recentActivitytbl.getTableHeader().setReorderingAllowed(false);
+        recentActivitytbl.getTableHeader().setBackground(cs.darkPurple);
+        recentActivitytbl.getTableHeader().setForeground(cs.white);
+        recentActivitytbl.setSelectionBackground(cs.lightPurple);
+        recentActivitytbl.setSelectionForeground(cs.white);
+        recentActivitytbl.setShowGrid(false);
+        recentActivitytbl.setDefaultEditor(Object.class, null);
+
+        recentActivitytbl.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        recentActivitytbl.getTableHeader().setPreferredSize(new Dimension(0, 45));
+
+        recentActivityScroll.setViewportView(recentActivitytbl);
+    }
+    
+    private void pendingChecker(int count){
+        if(count > 0){
+            pendingRequestsDesclbl.setText("Pending Account Requests");
+        }
+        else{
+            pendingRequestsDesclbl.setText("No Pending Requests");
+        }
+    }
+    
 }

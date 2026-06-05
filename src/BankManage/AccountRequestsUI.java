@@ -3,6 +3,7 @@ import BankManage.AccountModels.EmployeeModel;
 import BankManage.AccountModels.RequestModel;
 import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
+import BankManage.AppService.RequestService;
 import BankManage.DataService.RequestDataService;
 import java.util.List;
 import javax.swing.*;
@@ -13,6 +14,7 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
     Encryption en = new Encryption();
+    RequestService rs = new RequestService();
     
     private JPanel sidebarPanel, mainContentPanel, linePanel, requestsTablePanel;
     
@@ -51,6 +53,11 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
     private Image reqScale = reqRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon reqIcon = new ImageIcon(reqScale);
     
+    java.net.URL eyeImgURL = CustomerDashboard.class.getResource("resources/eye.png");
+    private ImageIcon eyeRaw = new ImageIcon(eyeImgURL);
+    private Image eyeScale = eyeRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon eyeIcon = new ImageIcon(eyeScale);
+    
     private final JButton homeBtn, accRequestBtn, logoutBtn, transTrackerBtn, roleBtn;
     private final JLabel logoName;
     
@@ -58,9 +65,13 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
     private JTable requestsTable;
     private JScrollPane tableScrollPane;
     
+    private JButton viewAnsReqbtn;
+    
     private JLabel searchLbl;
     private JTextField searchField;
     private JButton searchBtn;
+    
+    private int count = rs.getPenReqCnt("Pending");
     
     protected String[] columnHeaders = {
         "Request ID", "Customer ID", "Account ID", "Request Type", "Account Type", "Status", "Date Applied"
@@ -163,7 +174,7 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         requestsTablePanel.setBackground(cs.white);
         requestsTablePanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         
-        pendinglbl = new JLabel("Pending Registration Approvals"); 
+        pendinglbl = new JLabel("Pending Request Approvals ("+ String.valueOf(count)+")"); 
         pendinglbl.setBounds(20, 20, 300, 30);
         pendinglbl.setFont(new Font("", Font.BOLD, 18));
         pendinglbl.setForeground(cs.darkerPurple);
@@ -178,6 +189,16 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
         
         mainContentPanel.setBounds(180, 0, 1260, 960);
         add(mainContentPanel);
+        
+        viewAnsReqbtn = new JButton("View Processed Requests", eyeIcon);
+        viewAnsReqbtn.setBounds(985, 65, 230, 30);
+        viewAnsReqbtn.setBackground(cs.darkPurple);
+        viewAnsReqbtn.setForeground(cs.white);
+        viewAnsReqbtn.setFocusPainted(false);
+        viewAnsReqbtn.setBorderPainted(false);
+        viewAnsReqbtn.setFont(new Font("Arial", Font.BOLD, 13));
+        viewAnsReqbtn.addActionListener(this);
+        mainContentPanel.add(viewAnsReqbtn);
         
         searchLbl = new JLabel("Search Requests ID:");
         searchLbl.setBounds(30, 65, 200, 30);
@@ -210,7 +231,7 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
             
             loadRequestData();
             
-            System.out.println("Logged in as: " + en.decrypt(staff.getEmployeeFName())); // debug
+            System.out.println("Logged in as: " + staff.getEmployeeFName()); // debug
         }
         
     }
@@ -221,14 +242,17 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
             AdminDashboard admUI = new AdminDashboard();
             admUI.setVisible(true);
             dispose();
-        } else if(e.getSource() == roleBtn){
+        } 
+        else if(e.getSource() == roleBtn){
             AccountRoleUI roleUI = new AccountRoleUI();
             roleUI.setVisible(true);
             dispose();
-        } else if (e.getSource() == searchBtn) {
+        } 
+        else if (e.getSource() == searchBtn) {
             String requestId = searchField.getText().trim();
             search(requestId);
-        } else if (e.getSource() == logoutBtn) {
+        } 
+        else if (e.getSource() == logoutBtn) {
             int confirm = JOptionPane.showConfirmDialog(this, 
             "Are you sure you want to logout?", 
             "Logout", 
@@ -240,15 +264,22 @@ public class AccountRequestsUI extends JFrame implements ActionListener {
                 logUI.setVisible(true);
                 dispose();
             }
-        } else if (e.getSource() == transTrackerBtn) {
-        new TransactionTrackerUI().setVisible(true);
-        dispose();
+        } 
+        else if (e.getSource() == transTrackerBtn) {
+            TransactionTrackerUI tu = new TransactionTrackerUI();
+            tu.setVisible(true);
+            dispose();
+        } 
+        else if (e.getSource() == viewAnsReqbtn){
+            ProcessedRequestsUI ru = new ProcessedRequestsUI();
+            ru.setVisible(true);
+            dispose();
         }
     }
     
     private void loadRequestData() {
         RequestDataService requestDataService = new RequestDataService();
-        List<RequestModel> requests = requestDataService.getAllRequestsForTable();
+        List<RequestModel> requests = requestDataService.getAllRequestsByStatus("Pending");
 
         String[][] data = new String[requests.size()][7];
 

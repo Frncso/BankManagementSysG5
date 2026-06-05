@@ -30,27 +30,52 @@ public class RequestDataService {
         }
     }
     
-    public List<RequestModel> getAllRequestsForTable() {
+    public List<RequestModel> getProcessedRequests() {
+    List<RequestModel> requests = new ArrayList<>();
+    
+    String sql = "SELECT r.*, c.first_name, c.last_name " +
+                 "FROM requests r " +
+                 "JOIN customers c ON r.customer_id = c.customer_id " +
+                 "WHERE r.status IN ('Accepted', 'Rejected') " +
+                 "ORDER BY r.created_at DESC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                RequestModel r = mapResultSetToRequest(rs);
+                requests.add(r);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return requests;
+    }
+
+    public List<RequestModel> getAllRequestsByStatus(String status) {
     List<RequestModel> list = new ArrayList<>();
     
-    String sql = "SELECT request_id, customer_id, account_number, request_type, account_type, status, created_at " +
-                 "FROM requests " +
+    String sql = "SELECT * FROM requests WHERE status = ? " +
                  "ORDER BY created_at DESC";
 
     try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql);
-         ResultSet rs = stmt.executeQuery()) {
-
-        while (rs.next()) {
-            RequestModel r = new RequestModel();
-            r.setRequestId(rs.getString("request_id"));
-            r.setCustomerId(rs.getString("customer_id"));
-            r.setAccountNumber(rs.getString("account_number"));
-            r.setRequestType(rs.getString("request_type"));
-            r.setAccountType(rs.getString("account_type"));
-            r.setStatus(rs.getString("status"));
-            r.setTimestamp(rs.getString("created_at"));
-            list.add(r);
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+         
+        stmt.setString(1, status);  
+        
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                RequestModel r = new RequestModel();
+                r.setRequestId(rs.getString("request_id"));
+                r.setCustomerId(rs.getString("customer_id"));
+                r.setAccountNumber(rs.getString("account_number"));
+                r.setRequestType(rs.getString("request_type"));
+                r.setAccountType(rs.getString("account_type"));
+                r.setStatus(rs.getString("status"));
+                r.setTimestamp(rs.getString("created_at"));
+                list.add(r);
+            }
         }
     } catch (SQLException e) {
         e.printStackTrace();
@@ -89,6 +114,20 @@ public class RequestDataService {
         return null;
     }
     
+    private RequestModel mapResultSetToRequest(ResultSet rs) throws SQLException {
+        RequestModel r = new RequestModel();
+        r.setRequestId(rs.getString("request_id"));
+        r.setAccountNumber(rs.getString("account_number"));
+        r.setCustomerId(rs.getString("customer_id"));
+        r.setAccountType(rs.getString("account_type"));
+        r.setRequestType(rs.getString("request_type"));
+        r.setPurpose(rs.getString("purpose"));
+        r.setStatus(rs.getString("status"));
+        r.setTimestamp(rs.getString("created_at"));
+
+        return r;
+    }
+    
     public boolean updateRequestStatus(String requestId, String newStatus) { // update yung request status lang
         String sql = "UPDATE requests SET status = ? WHERE request_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -100,6 +139,26 @@ public class RequestDataService {
             e.printStackTrace();
             return false;
         }
+    }
+    
+    public int getPendingRequestCount(String status){
+        String sql = "SELECT COUNT(*) AS total FROM requests WHERE status = ?";
+    
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, status);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
     
 }
