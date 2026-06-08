@@ -31,7 +31,7 @@ public class CustomerDataService {
         if (affectedRows == 0) {
             return false;
         }
-
+ 
         // gen id
         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
             if (generatedKeys.next()) {

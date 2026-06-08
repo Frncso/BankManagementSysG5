@@ -320,6 +320,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         homeBtn.addActionListener(this);
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
+
         
         if (SessionManage.isCustomerLoggedIn()){
             CustomerModel customer = SessionManage.getCurrentCustomer();
@@ -369,6 +370,24 @@ public class SavingsUI extends JFrame implements ActionListener {
                 logUI.setVisible(true);
                 dispose();
             }
+        } 
+         
+        else if(e.getSource() == targetBtn){
+            SavingsTargetUI savTget = new SavingsTargetUI();
+            savTget.setVisible(true);
+            dispose();
+        }
+         
+         else if(e.getSource() == viewGoalBtn){
+             SavingsViewGoalsUI savViewGoals = new SavingsViewGoalsUI();
+             savViewGoals.setVisible(true);
+             dispose();
+        }
+         
+         else if(e.getSource() == viewAchievedBtn){
+             SavingsViewAchievedGoalsUI savViewAchievedGoalsUI = new SavingsViewAchievedGoalsUI();
+             savViewAchievedGoalsUI.setVisible(true);
+             dispose();
         }
     }
 

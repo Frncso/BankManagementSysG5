@@ -1,15 +1,21 @@
 package BankManage; 
+ 
 import BankManage.AppService.Encryption;
-import BankManage.AccountModels.CustomerModel;
 import BankManage.AppService.SessionManage;
+import BankManage.AppService.TransactionService;
+import BankManage.AccountModels.CustomerModel;
+import BankManage.AccountModels.TransactionModel;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.List;
+ 
 public class TransactUI extends JFrame implements ActionListener {
     
     ColorScheme cs = new ColorScheme();
     Encryption en = new Encryption();
+    TransactionService transactSvc = new TransactionService();
     
     // panels
     
@@ -18,7 +24,7 @@ public class TransactUI extends JFrame implements ActionListener {
     // import images
     
     java.net.URL homeImgURL = CustomerDashboard.class.getResource("resources/home.png");
-
+ 
     private ImageIcon homeRaw = new ImageIcon(homeImgURL);
     private Image homeScale = homeRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon homeIcon = new ImageIcon(homeScale);
@@ -53,38 +59,20 @@ public class TransactUI extends JFrame implements ActionListener {
     private Image logoutScale = logoutRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon logoutIcon = new ImageIcon(logoutScale);
     
-    java.net.URL withdrawImgURL = CustomerDashboard.class.getResource("resources/withdraw.png");
-    
-    private ImageIcon withdrawRaw = new ImageIcon(withdrawImgURL);
-    private Image withdrawScale = withdrawRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon withdrawIcon = new ImageIcon(withdrawScale);
-    
-    java.net.URL depositImgURL = CustomerDashboard.class.getResource("resources/deposit.png");
-    
-    private ImageIcon depositRaw = new ImageIcon(depositImgURL);
-    private Image depositScale = depositRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon depositIcon = new ImageIcon(depositScale);
-    
-    java.net.URL transferImgURL = CustomerDashboard.class.getResource("resources/transfer.png");
-    
-    private ImageIcon transferRaw = new ImageIcon(transferImgURL);
-    private Image transferScale = transferRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon transferIcon = new ImageIcon(transferScale);
-    
     // logo
     
     java.net.URL logoImgURL = CustomerDashboard.class.getResource("resources/bluewhiteLogo.png");
     
     private final ImageIcon logoRaw = new ImageIcon(logoImgURL);
     private final Image logoScale = logoRaw.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-    private final JLabel logo = new JLabel(new ImageIcon(logoScale));;
+    private final JLabel logo = new JLabel(new ImageIcon(logoScale));
     
     // sidebar
     
     private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, accountsBtn, logoutBtn;
     private final JLabel logoName;
     
-    // main contnet
+    // main content
     
     private final JLabel dashboardTitle;
     
@@ -94,57 +82,53 @@ public class TransactUI extends JFrame implements ActionListener {
     private JPanel transactconPanel;
     
     private JLabel fTitle, fPhp, fSub;
-    private JLabel sTitle, sPhp, sSub; 
+    private JLabel sTitle, sPhp, sSub;
     private JLabel tTitle, tPhp, tSub;
-    private JLabel transactconTitleLabel;
     
-    private JButton innerDepositBtn, innerWithdrawBtn, innerTransferBtn;
-    private JButton depstfiBtn, withdrBtn, transFBtn;
-
     // transact tbl
     
     private JLabel transactlbl;
     private JTable recenttransacttbl;
     private JScrollPane recentnoScroll;
+    private DefaultTableModel tableModel;
+    
+    // filter combo
+    
+    private JComboBox<String> filterCombo;
+    private JLabel filterLabel;
+    
+    // loaded transactions from BL
+    
+    private List<TransactionModel> allTransactions;
     
     protected String[] recentColumns = {
-        "Name", "Date", "Status", "Amount"
+        "Transaction Info", "Name", "Date", "Status", "Amount", "Account Type"
     };
-    
-    protected String[][] sampleData = {
-        {"PayPal Transfer", "May 10, 2026", "Completed", "+₱25,120.50"},
-        {"Roblox 1000 ROBUX", "May 5, 2026", "Declined", "=₱0.00"},
-        {"Minecraft Cape", "January 7, 2026", "Completed", "-₱250.00"},
-        {"Minecraft Bundle", "January 6, 2026", "Completed", "-₱1,600.00"},
-        {"Robux 20USD Gift Card", "January 1, 2026", "Completed", "-₱1,200.00"},
-        {"Patreon Membership ", "January 1, 2026", "Completed", "-₱300.00"},
-        {"Minecraft Gift", "January 1, 2026", "Completed", "-₱1,600.00"},
-        {"YouTube Premium Yearly", "December 25, 2025", "Completed", "-₱2,000.00"},
-        {"PayPal Transfer", "December 24, 2025", "Completed", "₱+50,600.00"},
-        {"Robux 20USD Gift Card", "December 1, 2026", "Completed", "-₱1,200.00"},
-        {"Patreon Membership ", "December 1, 2026", "Completed", "-₱300.00"},
-        {"Minecraft Merch", "November 1, 2026", "Completed", "-₱1,600.00"},
-        {"Spotify Premium Yearly", "September 25, 2025", "Completed", "-₱2,000.00"},
-        {"PayPal Transfer", "September 24, 2025", "Completed", "+₱10,600.00"}
-    };
-    
-    private JLabel formHeaderTitle, labelAction, labelFrom, labelTo, labelAmount, labelDesc;
-    private JTextField txtFrom, txtTo, txtAmount, txtDesc;
     
     public TransactUI() {
         
-        if (SessionManage.isCustomerLoggedIn()){
+        // session check
+        
+        String currentAccountId = "";
+        
+        if (SessionManage.isCustomerLoggedIn()) {
             CustomerModel customer = SessionManage.getCurrentCustomer();
-            
+            currentAccountId = customer.getCustomerId();
             System.out.println("Logged in as: " + en.decrypt(customer.getFirstName())); // debug
         }
+        
+        // load transactions via BL
+        
+        allTransactions = transactSvc.getTransactions(currentAccountId);
         
         setTitle("Dashboard - Transactions");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setSize(1440, 960);
-        setLocationRelativeTo(null); 
+        setLocationRelativeTo(null);
         setResizable(false);
+        
+        // sidebar panel
         
         sidebarPanel = new JPanel();
         sidebarPanel.setLayout(null);
@@ -232,7 +216,7 @@ public class TransactUI extends JFrame implements ActionListener {
         accountsBtn.setHorizontalAlignment(SwingConstants.LEFT);
         accountsBtn.setIconTextGap(8);
         sidebarPanel.add(accountsBtn);
-
+        
         // logout
         
         logoutBtn = new JButton("Logout", logoutIcon);
@@ -249,11 +233,11 @@ public class TransactUI extends JFrame implements ActionListener {
         sidebarPanel.add(logoutBtn);
         
         sidebarPanel.setBackground(cs.purple);
-        
         sidebarPanel.setBounds(0, 0, 180, 960);
         add(sidebarPanel);
         
         // main content panel
+        
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
         mainContentPanel.setBackground(Color.WHITE);
@@ -261,30 +245,31 @@ public class TransactUI extends JFrame implements ActionListener {
         add(mainContentPanel);
         
         dashboardTitle = new JLabel("Transactions");
-        dashboardTitle.setBounds(30, 15, 100, 20);
+        dashboardTitle.setBounds(30, 15, 200, 20);
         dashboardTitle.setFont(new Font("", Font.BOLD, 16));
         mainContentPanel.add(dashboardTitle);
         
         linePanel = new JPanel();
-        
         linePanel.setBounds(30, 50, 1185, 3);
         linePanel.setBackground(cs.darkPurple);
         mainContentPanel.add(linePanel);
         
+        // deposit summary card
+        
         fPanel = new JPanel();
         fPanel.setLayout(null);
         fPanel.setBackground(Color.WHITE);
-        fPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        fPanel.setBounds(30, 80, 360, 200); 
+        fPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        fPanel.setBounds(30, 80, 360, 130);
         mainContentPanel.add(fPanel);
         
         fTitle = new JLabel("VaultBank Deposit");
         fTitle.setFont(new Font("Arial", Font.BOLD, 16));
         fTitle.setForeground(cs.darkerPurple);
         fTitle.setBounds(20, 15, 300, 25);
-        fPanel.add(fTitle); 
+        fPanel.add(fTitle);
         
-        fPhp = new JLabel("PHP ₱239,691.12"); 
+        fPhp = new JLabel(String.format("PHP +₱%,.2f", transactSvc.getTotalDeposits(allTransactions)));
         fPhp.setFont(new Font("Arial", Font.BOLD, 22));
         fPhp.setForeground(cs.darkerPurple);
         fPhp.setBounds(20, 50, 300, 35);
@@ -293,74 +278,50 @@ public class TransactUI extends JFrame implements ActionListener {
         fSub = new JLabel("Current");
         fSub.setForeground(Color.GRAY);
         fSub.setBounds(20, 90, 100, 20);
-        fPanel.add(fSub); 
+        fPanel.add(fSub);
         
-        innerDepositBtn = new JButton("Deposit", depositIcon);
-        innerDepositBtn.setBounds(20, 130, 320, 45);
-        innerDepositBtn.setBackground(cs.darkPurple);
-        innerDepositBtn.setForeground(Color.WHITE);
-        innerDepositBtn.setFocusPainted(false);
-        innerDepositBtn.setBorderPainted(false);
-        
-        innerDepositBtn.setHorizontalAlignment(SwingConstants.CENTER);
-        innerDepositBtn.setMargin(new Insets(0, 0, 0, 10));
-        innerDepositBtn.setIconTextGap(10);
-
-        innerDepositBtn.addActionListener(this);
-        fPanel.add(innerDepositBtn);
+        // withdrawals summary card
         
         sPanel = new JPanel();
         sPanel.setLayout(null);
         sPanel.setBackground(Color.WHITE);
-        sPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        sPanel.setBounds(440, 80, 360, 200); 
+        sPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        sPanel.setBounds(440, 80, 360, 130);
         mainContentPanel.add(sPanel);
         
         sTitle = new JLabel("VaultBank Withdrawals");
         sTitle.setFont(new Font("Arial", Font.BOLD, 16));
         sTitle.setForeground(cs.darkerPurple);
         sTitle.setBounds(20, 15, 300, 25);
-        sPanel.add(sTitle); 
+        sPanel.add(sTitle);
         
-        sPhp = new JLabel("PHP -₱68,823.67"); 
+        sPhp = new JLabel(String.format("PHP -₱%,.2f", Math.abs(transactSvc.getTotalWithdrawals(allTransactions))));
         sPhp.setFont(new Font("Arial", Font.BOLD, 22));
         sPhp.setForeground(cs.darkerPurple);
         sPhp.setBounds(20, 50, 300, 35);
-        sPanel.add(sPhp); 
+        sPanel.add(sPhp);
         
         sSub = new JLabel("Recorded");
         sSub.setForeground(Color.GRAY);
         sSub.setBounds(20, 90, 100, 20);
-        sPanel.add(sSub); 
-
-        innerWithdrawBtn = new JButton("Withdraw", withdrawIcon); 
-        innerWithdrawBtn.setBounds(20, 130, 320, 45);
-        innerWithdrawBtn.setBackground(cs.darkPurple);
-        innerWithdrawBtn.setForeground(Color.WHITE);
-        innerWithdrawBtn.setFocusPainted(false);
-        innerWithdrawBtn.setBorderPainted(false);
+        sPanel.add(sSub);
         
-        innerWithdrawBtn.setHorizontalAlignment(SwingConstants.CENTER);
-        innerWithdrawBtn.setMargin(new Insets(0, 0, 0, 10));
-        innerWithdrawBtn.setIconTextGap(10);
-        
-        innerWithdrawBtn.addActionListener(this);
-        sPanel.add(innerWithdrawBtn);
+        // recent activity card
         
         tPanel = new JPanel();
         tPanel.setLayout(null);
         tPanel.setBackground(Color.WHITE);
-        tPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1)); 
-        tPanel.setBounds(855, 80, 360, 200); 
+        tPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
+        tPanel.setBounds(855, 80, 360, 130);
         mainContentPanel.add(tPanel);
         
-        tTitle = new JLabel("VaultBank Recent activity");
+        tTitle = new JLabel("VaultBank Recent Activity");
         tTitle.setFont(new Font("Arial", Font.BOLD, 16));
         tTitle.setForeground(cs.darkerPurple);
         tTitle.setBounds(20, 15, 300, 25);
         tPanel.add(tTitle);
         
-        tPhp = new JLabel("PHP +₱25,120.50"); 
+        tPhp = new JLabel(transactSvc.formatAmount(transactSvc.getRecentActivity(allTransactions)));
         tPhp.setFont(new Font("Arial", Font.BOLD, 22));
         tPhp.setForeground(cs.darkerPurple);
         tPhp.setBounds(20, 50, 300, 35);
@@ -371,34 +332,65 @@ public class TransactUI extends JFrame implements ActionListener {
         tSub.setBounds(20, 90, 100, 20);
         tPanel.add(tSub);
         
-        innerTransferBtn = new JButton("Transfer", transferIcon);
-        innerTransferBtn.setBounds(20, 130, 320, 45);
-        innerTransferBtn.setBackground(cs.darkPurple);
-        innerTransferBtn.setForeground(Color.WHITE);
-        innerTransferBtn.setFocusPainted(false);
-        innerTransferBtn.setBorderPainted(false);
+        // transactions container panel
         
-        innerTransferBtn.setHorizontalAlignment(SwingConstants.CENTER);
-        innerTransferBtn.setMargin(new Insets(0, 0, 0, 10));
-        innerTransferBtn.setIconTextGap(10);
-        
-        innerTransferBtn.addActionListener(this);
-        tPanel.add(innerTransferBtn);
-      
         transactconPanel = new JPanel();
         transactconPanel.setLayout(null);
         transactconPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         transactconPanel.setBackground(Color.WHITE);
-        transactconPanel.setBounds(30, 310, 1185, 570); 
+        transactconPanel.setBounds(30, 230, 1185, 660);
         mainContentPanel.add(transactconPanel);
         
-        transactlbl = new JLabel("Transactions"); 
+        transactlbl = new JLabel("Transactions");
         transactlbl.setBounds(20, 20, 250, 20);
         transactlbl.setFont(new Font("", Font.BOLD, 18));
         transactlbl.setForeground(cs.darkerPurple);
         transactconPanel.add(transactlbl);
         
-        recenttransacttbl = new JTable(sampleData, recentColumns);
+        // filter label
+        
+        filterLabel = new JLabel("Filter:");
+        filterLabel.setBounds(875, 18, 40, 25);
+        filterLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        filterLabel.setForeground(cs.darkerPurple);
+        transactconPanel.add(filterLabel);
+        
+        // filter combo box
+        
+        String[] filterOptions = {
+            TransactionService.FILTER_ALL,
+            TransactionService.FILTER_COMPLETED,
+            TransactionService.FILTER_DECLINED,
+            TransactionService.FILTER_SUSPENDED,
+            TransactionService.FILTER_FROZEN,
+            TransactionService.FILTER_POSITIVE,
+            TransactionService.FILTER_NEGATIVE
+        };
+        
+        filterCombo = new JComboBox<>(filterOptions);
+        filterCombo.setBounds(920, 16, 200, 28);
+        filterCombo.setBackground(Color.WHITE);
+        filterCombo.setForeground(cs.darkerPurple);
+        filterCombo.setFont(new Font("Arial", Font.PLAIN, 13));
+        filterCombo.setFocusable(false);
+        transactconPanel.add(filterCombo);
+        
+        // table model (non-editable)
+        
+        tableModel = new DefaultTableModel(recentColumns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        // populate table with all transactions on load
+        
+        populateTable(allTransactions);
+        
+        // table setup
+        
+        recenttransacttbl = new JTable(tableModel);
         recenttransacttbl.setRowHeight(40);
         recenttransacttbl.setFont(new Font("Arial", Font.PLAIN, 14));
         recenttransacttbl.setFocusable(false);
@@ -421,46 +413,71 @@ public class TransactUI extends JFrame implements ActionListener {
         
         recentnoScroll = new JScrollPane(recenttransacttbl);
         recentnoScroll.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-        recentnoScroll.setBounds(20, 60, 1145, 490);
+        recentnoScroll.setBounds(20, 60, 1145, 570);
         transactconPanel.add(recentnoScroll);
-
-        // Sidebar Shortcuts
+        
+        // sidebar shortcuts
+        
         homeBtn.addActionListener(this);
         balanceBtn.addActionListener(this);
         savingsBtn.addActionListener(this);
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
+        
+        // filter combo listener
+        
+        filterCombo.addActionListener(this);
     }
-
+    
+    // populate table using BL-filtered data
+    
+    private void populateTable(List<TransactionModel> transactions) {
+        tableModel.setRowCount(0);
+        String[][] data = transactSvc.toTableData(transactions);
+        for (String[] row : data) {
+            tableModel.addRow(row);
+        }
+    }
+ 
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        if(e.getSource() == homeBtn){
+        // filter combo selection
+        
+        if (e.getSource() == filterCombo) {
+            String selectedFilter = (String) filterCombo.getSelectedItem();
+            List<TransactionModel> filtered = transactSvc.filterTransactions(allTransactions, selectedFilter);
+            populateTable(filtered);
+        }
+        
+        // sidebar navigation
+        
+        else if (e.getSource() == homeBtn) {
             CustomerDashboard cusUI = new CustomerDashboard();
             cusUI.setVisible(true);
             dispose();
         }
-        else if(e.getSource() == balanceBtn){
+        else if (e.getSource() == balanceBtn) {
             BalanceUI balUI = new BalanceUI();
             balUI.setVisible(true);
             dispose();
         }
-        else if(e.getSource() == savingsBtn){
+        else if (e.getSource() == savingsBtn) {
             SavingsUI saveUI = new SavingsUI();
             saveUI.setVisible(true);
             dispose();
         }
-        else if(e.getSource() == accountsBtn){
+        else if (e.getSource() == accountsBtn) {
             AccountMenuUI accMenUI = new AccountMenuUI();
             accMenUI.setVisible(true);
             dispose();
         }
-        else if(e.getSource() == logoutBtn){
-            int confirm = JOptionPane.showConfirmDialog(this, 
-            "Are you sure you want to logout?", 
-            "Logout", 
+        else if (e.getSource() == logoutBtn) {
+            int confirm = JOptionPane.showConfirmDialog(this,
+            "Are you sure you want to logout?",
+            "Logout",
             JOptionPane.YES_NO_OPTION);
-
+            
             if (confirm == JOptionPane.YES_OPTION) {
                 SessionManage.logout();
                 LoginUI logUI = new LoginUI();
@@ -468,5 +485,5 @@ public class TransactUI extends JFrame implements ActionListener {
                 dispose();
             }
         }
-        }
     }
+}
