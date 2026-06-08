@@ -14,8 +14,9 @@ public class SavingsTargetUI extends JFrame implements ActionListener {
     private final JLabel headerLbl, goalTitlelbl, goalAmountlbl;
     private final JTextField goalTitletf, goalAmounttf;
     private final JButton confirmBtn, cancelBtn;
+    private String userId;
  
-    public SavingsTargetUI() {
+    public SavingsTargetUI(String setUser) {
         setTitle("Set Savings Goal");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -98,6 +99,8 @@ public class SavingsTargetUI extends JFrame implements ActionListener {
  
         confirmBtn.addActionListener(this);
         cancelBtn.addActionListener(this);
+        
+        userId = setUser;
     }
  
     @Override
@@ -141,7 +144,7 @@ public class SavingsTargetUI extends JFrame implements ActionListener {
             return;
         }
  
-        boolean success = SavingsService.createSavingsGoal(title, amountText);
+        boolean success = SavingsService.createSavingsGoal(title, amountText, userId);
  
         if (success) {
             JOptionPane.showMessageDialog(this,

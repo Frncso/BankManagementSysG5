@@ -332,8 +332,8 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         balancePanel.add(totalbankBalbl);
         
         availBalancelbl = new JLabel("₱0.00");
-        availBalancelbl.setBounds(80, 50, 300, 30);
-        availBalancelbl.setFont(new Font("Arial", Font.BOLD, 36));
+        availBalancelbl.setBounds(80, 46, 300, 30);
+        availBalancelbl.setFont(new Font("Arial", Font.BOLD, 24));
         availBalancelbl.setForeground(cs.darkerPurple);
         balancePanel.add(availBalancelbl);
         
@@ -353,8 +353,8 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         savingsPanel.add(checkingAmnt);
         
         savingsAmnt = new JLabel("₱0.00");
-        savingsAmnt.setBounds(80, 50, 300, 30);
-        savingsAmnt.setFont(new Font("Arial", Font.BOLD, 36));
+        savingsAmnt.setBounds(80, 46, 300, 30);
+        savingsAmnt.setFont(new Font("Arial", Font.BOLD, 24));
         savingsAmnt.setForeground(cs.darkerPurple);
         savingsPanel.add(savingsAmnt);
         
@@ -373,9 +373,9 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         checkingLbl.setForeground(cs.darkerPurple);
         checkingPanel.add(checkingLbl);
         
-        totalSavings = new JLabel("₱30,242.55");
-        totalSavings.setBounds(80, 50, 300, 30);
-        totalSavings.setFont(new Font("Arial", Font.BOLD, 36));
+        totalSavings = new JLabel("₱0.00");
+        totalSavings.setBounds(80, 46, 300, 30);
+        totalSavings.setFont(new Font("Arial", Font.BOLD, 24));
         totalSavings.setForeground(cs.darkerPurple);
         checkingPanel.add(totalSavings);
         
@@ -515,9 +515,9 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         }
 
         // update summary labels
-        availBalancelbl.setText("₱" + totalBalance);
-        savingsAmnt.setText("₱" + totalChecking);
-        totalSavings.setText("₱" + totalSaving);
+        availBalancelbl.setText("₱" + String.format("%,.2f", totalBalance));
+        savingsAmnt.setText("₱" + String.format("%,.2f", totalChecking));
+        totalSavings.setText("₱" + String.format("%,.2f", totalSaving));
 
         // build table data
         String[][] data = new String[customerAccounts.size()][4];

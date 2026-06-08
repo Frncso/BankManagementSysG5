@@ -97,7 +97,6 @@ public class BalanceUI extends JFrame implements ActionListener {
     
     // balance panel
     
-    private JLabel vaultbankBalbl, availBalancelbl, availlbl, quicklbl;
     private JButton gotoTransactionbtn;
     protected String accNo = "ACC-1001";
     
@@ -105,7 +104,6 @@ public class BalanceUI extends JFrame implements ActionListener {
     
     // savings panel
     
-    private JLabel savingslbl, savingBalancelbl, savingavaillbl, savingquicklbl;
     private JButton gotoSavingsbtn, gotoHistorybtn;
     
     //
@@ -127,6 +125,7 @@ public class BalanceUI extends JFrame implements ActionListener {
     private JLabel insightlbl, totalBallbl, totallbl, breakdownlbl;
     private JLabel account1lbl, account2lbl;
     private double totalBal = getTotalBal();
+    private double currentTotalSavings;
     
     //
     
@@ -371,7 +370,7 @@ public class BalanceUI extends JFrame implements ActionListener {
         insightlbl.setForeground(cs.darkerPurple);
         insightsPanel.add(insightlbl);
         
-        totalBallbl = new JLabel("₱"+String.valueOf(totalBal));
+        totalBallbl = new JLabel("₱"+String.format("%,.2f", totalBal));
         totalBallbl.setBounds(20, 65, 300, 30);
         totalBallbl.setFont(new Font("Arial", Font.BOLD, 36));
         totalBallbl.setForeground(cs.darkerPurple);
@@ -514,9 +513,10 @@ public class BalanceUI extends JFrame implements ActionListener {
         double totalChecking = totalsByType.getOrDefault("Checking", 0.0);
         double totalSavings  = totalsByType.getOrDefault("Savings", 0.0);
         
-        account1lbl.setText("Total Checking Balance: ₱" + String.valueOf(totalChecking));
-        account2lbl.setText("Total Savings Balance: ₱" + String.valueOf(totalSavings));
+        account1lbl.setText("Total Checking Balance: ₱" + String.format("%,.2f", totalChecking));
+        account2lbl.setText("Total Savings Balance: ₱" + String.format("%,.2f", totalSavings));
         
+        currentTotalSavings = totalSavings;
         updateAccountComboBox();
     }
     
@@ -586,11 +586,12 @@ public class BalanceUI extends JFrame implements ActionListener {
                     break;
                 case "Suspended":
                     statusAcc.setForeground(cs.red);
+                    statusAcc.setBounds(440, 20, 300, 20);
                     break;
             }
             card.add(statusAcc);
 
-            JLabel balanceLbl = new JLabel("₱" + balance);
+            JLabel balanceLbl = new JLabel("₱" + String.format("%,.2f", balance));
             balanceLbl.setBounds(20, 65, 400, 30);
             balanceLbl.setFont(new Font("Arial", Font.BOLD, 36));
             balanceLbl.setForeground(cs.darkerPurple);
@@ -653,6 +654,9 @@ public class BalanceUI extends JFrame implements ActionListener {
             card.add(goToTrans);
 
         } else if (type.equalsIgnoreCase("Savings")) {
+            CustomerModel customer = SessionManage.getCurrentCustomer();
+            String userId = customer.getCustomerId();
+            
             // savings panels
             JLabel title = new JLabel(accNo + " Savings Balance");
             title.setBounds(20, 20, 450, 20);
@@ -660,7 +664,7 @@ public class BalanceUI extends JFrame implements ActionListener {
             title.setForeground(cs.darkerPurple);
             card.add(title);
 
-            JLabel balanceLbl = new JLabel("₱" + balance);
+            JLabel balanceLbl = new JLabel("₱" + String.format("%,.2f", balance));
             balanceLbl.setBounds(20, 65, 400, 30);
             balanceLbl.setFont(new Font("Arial", Font.BOLD, 36));
             balanceLbl.setForeground(cs.darkerPurple);
@@ -681,6 +685,7 @@ public class BalanceUI extends JFrame implements ActionListener {
                     break;
                 case "Suspended":
                     statusAcc.setForeground(cs.red);
+                    statusAcc.setBounds(440, 20, 300, 20);
                     break;
             }
             card.add(statusAcc);
@@ -761,7 +766,7 @@ public class BalanceUI extends JFrame implements ActionListener {
             }
             
             goalHistory.addActionListener(e -> {
-                SavingsUI saveUI = new SavingsUI();
+                SavingsViewGoalsUI saveUI = new SavingsViewGoalsUI(userId, currentTotalSavings, "BalUI");
                 saveUI.setVisible(true);
                 dispose();
             });
@@ -803,24 +808,24 @@ public class BalanceUI extends JFrame implements ActionListener {
     }
     
     private void updateAccountComboBox() {
-    if (accountComboModel == null) {
-        accountComboModel = new DefaultComboBoxModel<>();
-        accountcmb = new JComboBox<>(accountComboModel);
-        accountcmb.setBounds(295, 90, 255, 35);
-        accountcmb.setBackground(cs.white);
-        accountcmb.setForeground(cs.gray);
-        quickActionsPanel.add(accountcmb);
-    }
+        if (accountComboModel == null) {
+            accountComboModel = new DefaultComboBoxModel<>();
+            accountcmb = new JComboBox<>(accountComboModel);
+            accountcmb.setBounds(295, 90, 255, 35);
+            accountcmb.setBackground(cs.white);
+            accountcmb.setForeground(cs.gray);
+            quickActionsPanel.add(accountcmb);
+        }
 
-    // for updation sakes
-    accountComboModel.removeAllElements();
-    accountComboModel.addElement("Select Account");
+        // for updation sakes
+        accountComboModel.removeAllElements();
+        accountComboModel.addElement("Select Account");
 
-    // add accs sa combobox
-    for (BankAccount acc : customerAccounts) {
-        String display = acc.getAccountId() + " " + acc.getAccountType();
-        accountComboModel.addElement(display);
+        // add accs sa combobox
+        for (BankAccount acc : customerAccounts) {
+            String display = acc.getAccountId() + " " + acc.getAccountType();
+            accountComboModel.addElement(display);
+        }
     }
-}
     
 }

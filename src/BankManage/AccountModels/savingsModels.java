@@ -6,15 +6,16 @@ public class savingsModels {
     private String targetTitle;
     private double targetAmnt;
     private String goalStatus;
+    private String goalUserId;
     
     public savingsModels(){}
     
-    public savingsModels(int gsavingsId, String targetTitle, double targetAmnt, String goalStatus){
+    public savingsModels(int gsavingsId, String targetTitle, double targetAmnt, String goalStatus, String goalUserId){
         this.gsavingsId = gsavingsId;
         this.targetTitle = targetTitle;
         this.targetAmnt = targetAmnt;
         this.goalStatus = goalStatus;
-        
+        this.goalUserId = goalUserId;
     }
     
     public int getgsavingsId(){return gsavingsId;}
@@ -29,5 +30,7 @@ public class savingsModels {
     public double gettargetAmnt(){return targetAmnt;}
     public void settargetAmnt(double targetAmnt){this.targetAmnt = targetAmnt;}
     
+    public String getgoalUserId(){return goalUserId;}
+    public void setgoalUserId(String goalUserId){this.goalUserId = goalUserId;}
     
 }

@@ -10,7 +10,7 @@ public class SavingsService {
     private final SavingsDataService savingsDataService = new SavingsDataService();
  
     // validates inputs and delegates saving to the repository
-    public boolean createSavingsGoal(String title, String amountText) {
+    public boolean createSavingsGoal(String title, String amountText, String userId) {
         if (title == null || title.isBlank()) {
             return false;
         }
@@ -31,6 +31,7 @@ public class SavingsService {
         goal.setTargetTitle(title);
         goal.settargetAmnt(amount);
         goal.setgoalStatus("In Progress");
+        goal.setgoalUserId(userId);
  
         return savingsDataService.insertSavingsGoal(goal);
     }
@@ -51,18 +52,18 @@ public class SavingsService {
     
  
     // marks a savings goal as complete
-    public boolean completeGoal(int gsavingsId) {
-        return savingsDataService.updateGoalStatus(gsavingsId, "Completed");
+    public boolean completeGoal(int gsavingsId, String userId) {
+        return savingsDataService.updateGoalStatus(gsavingsId, "Completed", userId);
     }
  
     // removes a savings goal permanently
-    public boolean removeGoal(int gsavingsId) {
-        return savingsDataService.deleteGoal(gsavingsId);
+    public boolean removeGoal(int gsavingsId, String userId) {
+        return savingsDataService.deleteGoal(gsavingsId, userId);
     }
  
     // retrieves all goals and delegates to data layer
-    public List<savingsModels> getAllGoals() {
-        return savingsDataService.getAllGoals();
+    public List<savingsModels> getAllGoals(String userId) {
+        return savingsDataService.getAllGoals(userId);
     }
  
     // calculates percentage of target amount relative to current balance
@@ -90,7 +91,13 @@ public class SavingsService {
     }
     
     // get all completed goals para ipasa sa data layer
-    public List<savingsModels> getCompletedGoals() {
-        return savingsDataService.getCompletedGoals();
+    public List<savingsModels> getCompletedGoals(String userId) {
+        return savingsDataService.getCompletedGoals(userId);
     }
+    
+    // get count ng completed
+    public int getCompletedGoalsCount(String customerId) {
+        return savingsDataService.getCompletedGoalsCount(customerId);
+    }
+    
 }

@@ -16,8 +16,10 @@ public class SavingsViewAchievedGoalsUI extends JFrame implements ActionListener
     private final JLabel headerLbl;
     private final JButton returnBtn;
     private JScrollPane cardsScrollPane;
+    
+    String userId;
 
-    public SavingsViewAchievedGoalsUI() {
+    public SavingsViewAchievedGoalsUI(String setUser) {
         setTitle("Achieved Savings Goals");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(null);
@@ -69,13 +71,14 @@ public class SavingsViewAchievedGoalsUI extends JFrame implements ActionListener
         returnBtn.addActionListener(this);
 
         // i-load lahat ng completed goals pagbukas
-        loadAchievedCards();
+        userId = setUser;
+        loadAchievedCards(userId);
     }
 
     // get completed goals para makagawa ng cards for them
-    private void loadAchievedCards() {
+    private void loadAchievedCards(String userId) {
         SavingsService savingsService = new SavingsService();
-        List<savingsModels> goals = savingsService.getCompletedGoals();
+        List<savingsModels> goals = savingsService.getCompletedGoals(userId);
 
         cardsWrapperPanel.removeAll();
 
@@ -157,13 +160,13 @@ public class SavingsViewAchievedGoalsUI extends JFrame implements ActionListener
                     "Confirm Remove", JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
-                boolean success = savingsService.removeGoal(goal.getgsavingsId());
+                boolean success = savingsService.removeGoal(goal.getgsavingsId(), userId);
 
                 if (success) {
                     JOptionPane.showMessageDialog(this,
                             "Goal removed successfully!",
                             "Removed", JOptionPane.INFORMATION_MESSAGE);
-                    loadAchievedCards(); // i-refresh ang cards
+                    loadAchievedCards(userId); // i-refresh ang cards
                 } else {
                     JOptionPane.showMessageDialog(this,
                             "Failed to remove goal. Please try again.",

@@ -1,15 +1,21 @@
 package BankManage; 
+import BankManage.AccountModels.BankAccount;
 import BankManage.AccountModels.CustomerModel;
+import BankManage.AppService.BankAccountService;
 import BankManage.AppService.Encryption;
+import BankManage.AppService.SavingsService;
 import BankManage.AppService.SessionManage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SavingsUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
-    Encryption en = new Encryption();
     
     // panels
     
@@ -84,19 +90,17 @@ public class SavingsUI extends JFrame implements ActionListener {
     
     private final JButton homeBtn, transactBtn, balanceBtn, savingsBtn, accountsBtn, logoutBtn;
     
-    private JButton calculateBtn;
     private final JLabel logoName;
     
-    private JLabel resultLabel, actionlbl;
-    private JTextField monthsInputText;
+    private JLabel actionlbl, actionTwolbl;
     
-    private double savingsBal = 30242.55;
+    private double savingsBal;
     
     private JLabel dashboardTitle;
     private JLabel lTitle, lLabel, lcurLabel;
     private JLabel achievedTitle, achievedCountLabel, achievedSubLabel;
    
-    private JPanel lPanel, rPanel;
+    private JPanel lPanel;
     private JPanel achievedPanel;
     
     private JButton targetBtn, viewGoalBtn;
@@ -237,7 +241,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         lTitle.setBounds(20, 15, 300, 25);
         lPanel.add(lTitle); 
         
-        lLabel = new JLabel("₱"+String.valueOf(savingsBal)); 
+        lLabel = new JLabel("₱"+String.format("%,.2f", savingsBal)); 
         lLabel.setFont(new Font("Arial", Font.BOLD, 26));
         lLabel.setBounds(20, 50, 300, 35);
         lPanel.add(lLabel); 
@@ -291,7 +295,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         achievedTitle.setBounds(20, 15, 300, 25);
         achievedPanel.add(achievedTitle);
         
-        achievedCountLabel = new JLabel("2 Goals Done");
+        achievedCountLabel = new JLabel("0 Goals Done");
         achievedCountLabel.setFont(new Font("Arial", Font.BOLD, 26));
         achievedCountLabel.setBounds(20, 50, 300, 35);
         achievedPanel.add(achievedCountLabel);
@@ -302,8 +306,13 @@ public class SavingsUI extends JFrame implements ActionListener {
         achievedSubLabel.setBounds(20, 90, 150, 20);
         achievedPanel.add(achievedSubLabel);
         
+        actionTwolbl = new JLabel("Choose Action");
+        actionTwolbl.setBounds(545, 100, 250, 20);
+        actionTwolbl.setForeground(cs.darkerPurple);
+        achievedPanel.add(actionTwolbl);
+        
         viewAchievedBtn = new JButton("View Achieved", eyeIcon);
-        viewAchievedBtn.setBounds(20, 130, 500, 45); 
+        viewAchievedBtn.setBounds(545, 130, 620, 45); 
         viewAchievedBtn.setBackground(cs.darkPurple);
         viewAchievedBtn.setForeground(Color.WHITE);
         viewAchievedBtn.setFont(new Font("Arial", Font.BOLD, 15));
@@ -324,15 +333,15 @@ public class SavingsUI extends JFrame implements ActionListener {
         
         if (SessionManage.isCustomerLoggedIn()){
             CustomerModel customer = SessionManage.getCurrentCustomer();
-            
-            loadCustomerAccounts();
-            
             System.out.println("Logged in as: " + customer.getFirstName()); // debug
+            loadSavingTotal();
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        CustomerModel customer = SessionManage.getCurrentCustomer();
+        
         
          if(e.getSource() == transactBtn){
             TransactUI traUI = new TransactUI();
@@ -373,25 +382,72 @@ public class SavingsUI extends JFrame implements ActionListener {
         } 
          
         else if(e.getSource() == targetBtn){
-            SavingsTargetUI savTget = new SavingsTargetUI();
+            String getUser = customer.getCustomerId();
+            SavingsTargetUI savTget = new SavingsTargetUI(getUser);
             savTget.setVisible(true);
             dispose();
         }
          
          else if(e.getSource() == viewGoalBtn){
-             SavingsViewGoalsUI savViewGoals = new SavingsViewGoalsUI();
+             String getUser = customer.getCustomerId();
+             SavingsViewGoalsUI savViewGoals = new SavingsViewGoalsUI(getUser, savingsBal, "SaveUI");
              savViewGoals.setVisible(true);
              dispose();
         }
          
          else if(e.getSource() == viewAchievedBtn){
-             SavingsViewAchievedGoalsUI savViewAchievedGoalsUI = new SavingsViewAchievedGoalsUI();
+             String getUser = customer.getCustomerId();
+             SavingsViewAchievedGoalsUI savViewAchievedGoalsUI = new SavingsViewAchievedGoalsUI(getUser);
              savViewAchievedGoalsUI.setVisible(true);
              dispose();
         }
     }
+    
+    private List<BankAccount> customerAccounts = new ArrayList<>();
+    
+    private void loadSavingTotal(){
 
-    private void loadCustomerAccounts() {
+        CustomerModel customer = SessionManage.getCurrentCustomer();
+
+        BankAccountService accountService = new BankAccountService();
+        customerAccounts = accountService.getCustomerAccounts(customer.getCustomerId());
+
+        // grouping accs by type for future use
+        Map<String, List<BankAccount>> accountsByType = new HashMap<>();
+
+        for (BankAccount acc : customerAccounts) {
+            accountsByType
+                .computeIfAbsent(acc.getAccountType(), k -> new ArrayList<>())
+                .add(acc);
+        }
         
+        updateGoalsAchievedLabel();
+        
+        Map<String, Double> totalsByType = calculateTotalsByType(customerAccounts);
+        double totalSavings  = totalsByType.getOrDefault("Savings", 0.0);
+        
+        lLabel.setText("₱" + String.format("%,.2f", totalSavings));
+        savingsBal = totalSavings;
     }
+    
+    private Map<String, Double> calculateTotalsByType(List<BankAccount> accounts) {
+        Map<String, Double> totals = new HashMap<>();
+
+        for (BankAccount acc : accounts) {
+            String type = acc.getAccountType();
+            double currentTotal = totals.getOrDefault(type, 0.0);
+            totals.put(type, currentTotal + acc.getBalance());
+        }
+
+        return totals;
+    }
+    
+    private void updateGoalsAchievedLabel() {
+        SavingsService goalService = new SavingsService();
+        CustomerModel customer = SessionManage.getCurrentCustomer();
+
+        int completed = goalService.getCompletedGoalsCount(customer.getCustomerId());
+        achievedCountLabel.setText(completed + " Goals Achieved");
+    }
+    
 }

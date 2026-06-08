@@ -15,12 +15,13 @@ public class SavingsViewGoalsUI extends JFrame implements ActionListener {
  
     private final JLabel headerLbl;
     private final JButton returnBtn;
+    private String getReturnWindow;
     private JScrollPane cardsScrollPane;
- 
+    String userId;
     // current total savings balance - used for percentage calculation
-    private double currentBalance = 30242.55;
+    private double currentBalance = 0.0;
  
-    public SavingsViewGoalsUI() {
+    public SavingsViewGoalsUI(String setUser, double setSavings, String returnWindow) {
         setTitle("View Savings Goals");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(null);
@@ -72,13 +73,16 @@ public class SavingsViewGoalsUI extends JFrame implements ActionListener {
         returnBtn.addActionListener(this);
  
         // load goals on open
-        loadGoalCards();
+        userId = setUser;
+        currentBalance = setSavings;
+        getReturnWindow = returnWindow;
+        loadGoalCards(userId);
     }
  
     // builds and populates goal cards from database
-    private void loadGoalCards() {
+    private void loadGoalCards(String userId) {
         SavingsService savingsViewService = new SavingsService();
-        List<savingsModels> goals = savingsViewService.getAllGoals();
+        List<savingsModels> goals = savingsViewService.getAllGoals(userId);
  
         cardsWrapperPanel.removeAll();
  
@@ -154,17 +158,14 @@ public class SavingsViewGoalsUI extends JFrame implements ActionListener {
  
         // status badge
         JLabel statusLbl = new JLabel(goal.getgoalStatus());
-        statusLbl.setBounds(590, 10, 120, 25);
-        statusLbl.setFont(new Font("Arial", Font.BOLD, 11));
-        statusLbl.setForeground(cs.white);
-        statusLbl.setHorizontalAlignment(SwingConstants.CENTER);
-        statusLbl.setOpaque(true);
-        statusLbl.setBackground(goal.getgoalStatus().equalsIgnoreCase("In Progress") ? cs.darkPurple : new Color(34, 139, 34));
+        statusLbl.setBounds(30, 32, 240, 35);
+        statusLbl.setFont(new Font("Arial", Font.BOLD, 18));
+        statusLbl.setForeground(cs.darkPurple);
         card.add(statusLbl);
  
         // complete btn - hidden if already completed
         JButton completeBtn = new JButton("Mark Complete");
-        completeBtn.setBounds(590, 55, 120, 25);
+        completeBtn.setBounds(590, 35, 120, 25);
         completeBtn.setBackground(new Color(34, 139, 34));
         completeBtn.setForeground(cs.white);
         completeBtn.setFocusPainted(false);
@@ -190,13 +191,13 @@ public class SavingsViewGoalsUI extends JFrame implements ActionListener {
                     "Confirm Complete", JOptionPane.YES_NO_OPTION);
  
             if (confirm == JOptionPane.YES_OPTION) {
-                boolean success = savingsViewService.completeGoal(goal.getgsavingsId());
+                boolean success = savingsViewService.completeGoal(goal.getgsavingsId(), userId);
  
                 if (success) {
                     JOptionPane.showMessageDialog(this,
                             "Goal marked as completed!",
                             "Success", JOptionPane.INFORMATION_MESSAGE);
-                    loadGoalCards(); // refresh cards
+                    loadGoalCards(userId); // refresh cards
                 } else {
                     JOptionPane.showMessageDialog(this,
                             "Failed to update goal. Please try again.",
@@ -212,13 +213,13 @@ public class SavingsViewGoalsUI extends JFrame implements ActionListener {
                     "Confirm Remove", JOptionPane.YES_NO_OPTION);
  
             if (confirm == JOptionPane.YES_OPTION) {
-                boolean success = savingsViewService.removeGoal(goal.getgsavingsId());
+                boolean success = savingsViewService.removeGoal(goal.getgsavingsId(), userId);
  
                 if (success) {
                     JOptionPane.showMessageDialog(this,
                             "Goal removed successfully!",
                             "Removed", JOptionPane.INFORMATION_MESSAGE);
-                    loadGoalCards(); // refresh cards
+                    loadGoalCards(userId); // refresh cards
                 } else {
                     JOptionPane.showMessageDialog(this,
                             "Failed to remove goal. Please try again.",
@@ -233,8 +234,19 @@ public class SavingsViewGoalsUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == returnBtn) {
-            dispose();
-            new SavingsUI().setVisible(true);
+            String choice = getReturnWindow;
+            switch(choice){
+                case "SaveUI":
+                    SavingsUI su = new SavingsUI();
+                    su.setVisible(true);
+                    dispose();
+                    break;
+                case "BalUI":
+                    BalanceUI bu = new BalanceUI();
+                    bu.setVisible(true);
+                    dispose();
+                    break;
+            }
         }
     }
 }

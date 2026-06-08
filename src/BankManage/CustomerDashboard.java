@@ -16,7 +16,6 @@ public class CustomerDashboard extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();         
     GetDateAndTime dateTime = new GetDateAndTime();
-    Encryption en = new Encryption();
     
     // panels
     
@@ -302,7 +301,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         vaultbankBalbl.setForeground(cs.darkerPurple);
         balancePanel.add(vaultbankBalbl);
         
-        availBalancelbl = new JLabel("₱"+String.valueOf(totalBal));
+        availBalancelbl = new JLabel("₱"+String.format("%,.2f", totalBal));
         availBalancelbl.setBounds(20, 65, 300, 30);
         availBalancelbl.setFont(new Font("Arial", Font.BOLD, 36));
         availBalancelbl.setForeground(cs.darkerPurple);
@@ -624,10 +623,9 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         
         Map<String, Double> totalsByType = calculateTotalsByType(customerAccounts);
         
-        double totalChecking = totalsByType.getOrDefault("Checking", 0.0);
         double totalSavings  = totalsByType.getOrDefault("Savings", 0.0);
         
-        savingBalancelbl.setText("₱" + String.valueOf(totalSavings));
+        savingBalancelbl.setText("₱" + String.format("%,.2f", totalSavings));
     }
     
     private double getTotalBal(){

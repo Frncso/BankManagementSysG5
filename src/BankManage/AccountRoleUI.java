@@ -1,5 +1,4 @@
 package BankManage;
-import BankManage.AppService.Encryption;
 import BankManage.AccountModels.EmployeeModel;
 import BankManage.AccountModels.BankAccount;
 import BankManage.AppService.ActivityLogService;
@@ -17,7 +16,6 @@ import java.awt.event.ActionListener;
 public class AccountRoleUI extends JFrame implements ActionListener{
 
     ColorScheme cs = new ColorScheme();
-    Encryption en = new Encryption();
     
     java.net.URL homeImgURL = CustomerDashboard.class.getResource("resources/home.png");
     private ImageIcon homeRaw = new ImageIcon(homeImgURL);
