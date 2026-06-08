@@ -1,51 +1,63 @@
 package BankManage.AppService;
- 
+
 import BankManage.AccountModels.TransactionModel;
 import BankManage.DataService.TransactionDataService;
 import java.util.ArrayList;
 import java.util.List;
- 
+
 public class TransactionService {
-    
-    TransactionDataService tds = new TransactionDataService();
-    
-    // filter options
-    
-    public static final String FILTER_ALL       = "All";
+
+    private final TransactionDataService tds = new TransactionDataService();
+
+    public static final String FILTER_ALL = "All";
     public static final String FILTER_COMPLETED = "Completed";
-    public static final String FILTER_DECLINED  = "Declined";
+    public static final String FILTER_DECLINED = "Declined";
     public static final String FILTER_SUSPENDED = "Suspended";
-    public static final String FILTER_FROZEN    = "Frozen";
-    public static final String FILTER_POSITIVE  = "Positive (+)";
-    public static final String FILTER_NEGATIVE  = "Negative (-)";
-    
-    // get all transactions for a given account id
-    
+    public static final String FILTER_FROZEN = "Frozen";
+    public static final String FILTER_POSITIVE = "Positive (+)";
+    public static final String FILTER_NEGATIVE = "Negative (-)";
+    public static final String FILTER_FLAGGED = "Flagged";
+
+    // get methods (all and by accoundid)
     public List<TransactionModel> getTransactions(String accountId) {
         return tds.getTransactionsByAccountId(accountId);
     }
-    
-    // filter transactions by status or amount direction
-    
+
+    public List<TransactionModel> getAllTransactions() {
+        return tds.getAllTransactions();
+    }
+
+    public TransactionModel getTransactionById(String transactId) {
+        List<TransactionModel> all = tds.getAllTransactions();
+        for (TransactionModel t : all) {
+            if (t.getTransactionId() != null && t.getTransactionId().equalsIgnoreCase(transactId)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    // filtering functions
     public List<TransactionModel> filterTransactions(List<TransactionModel> transactions, String filter) {
         List<TransactionModel> filtered = new ArrayList<>();
-        
+        if (transactions == null) return filtered;
+
         for (TransactionModel t : transactions) {
             switch (filter) {
                 case FILTER_ALL:
                     filtered.add(t);
                     break;
                 case FILTER_COMPLETED:
-                    if (t.getStatus().equalsIgnoreCase("Completed")) filtered.add(t);
+                    if ("Completed".equalsIgnoreCase(t.getStatus())) filtered.add(t);
                     break;
                 case FILTER_DECLINED:
-                    if (t.getStatus().equalsIgnoreCase("Declined")) filtered.add(t);
+                    if ("Declined".equalsIgnoreCase(t.getStatus())) filtered.add(t);
                     break;
                 case FILTER_SUSPENDED:
-                    if (t.getStatus().equalsIgnoreCase("Suspended")) filtered.add(t);
+                    if ("Suspended".equalsIgnoreCase(t.getStatus())) filtered.add(t);
                     break;
                 case FILTER_FROZEN:
-                    if (t.getStatus().equalsIgnoreCase("Frozen")) filtered.add(t);
+                    if ("Frozen".equalsIgnoreCase(t.getStatus())) filtered.add(t);
                     break;
                 case FILTER_POSITIVE:
                     if (t.getAmount() > 0) filtered.add(t);
@@ -53,36 +65,56 @@ public class TransactionService {
                 case FILTER_NEGATIVE:
                     if (t.getAmount() < 0) filtered.add(t);
                     break;
+                case FILTER_FLAGGED:
+                    if (t.isFlagged()) filtered.add(t);
+                    break;
                 default:
                     filtered.add(t);
-                    break;
             }
         }
-        
         return filtered;
     }
-    
-    // convert transaction list to table-ready 2D array
-    
+
+    // formatting ng table for admin
     public String[][] toTableData(List<TransactionModel> transactions) {
-        String[][] data = new String[transactions.size()][6];
-        
+        if (transactions == null) return new String[0][9];
+        String[][] data = new String[transactions.size()][9];
+
         for (int i = 0; i < transactions.size(); i++) {
             TransactionModel t = transactions.get(i);
-            
-            data[i][0] = t.getTransactionId();                  // transaction info (transact_id)
-            data[i][1] = t.getPurchaseName();                   // name
-            data[i][2] = t.getDate();                           // date
-            data[i][3] = t.getStatus();                         // status
-            data[i][4] = formatAmount(t.getAmount());           // amount
-            data[i][5] = t.getAccountType();                    // account type
+            data[i][0] = t.getTransactionId();
+            data[i][1] = t.getAccountId();
+            data[i][2] = t.getAccountType();
+            data[i][3] = t.getCustomerName();
+            data[i][4] = t.getPurchaseName();
+            data[i][5] = t.getDate();
+            data[i][6] = formatAmount(t.getAmount());
+            data[i][7] = t.getStatus();
+            data[i][8] = t.isFlagged() ? "YES" : "NO";
         }
-        
         return data;
     }
     
-    // format amount with peso sign and +/- prefix
-    
+        // for customer UI
+    public String[][] toCustomerTableData(List<TransactionModel> transactions) {
+        if (transactions == null) return new String[0][6];
+
+        String[][] data = new String[transactions.size()][6];
+
+        for (int i = 0; i < transactions.size(); i++) {
+            TransactionModel t = transactions.get(i);
+
+            data[i][0] = t.getTransactionId();                    
+            data[i][1] = t.getPurchaseName();                     
+            data[i][2] = t.getDate();                             
+            data[i][3] = t.getStatus();                           
+            data[i][4] = formatAmount(t.getAmount());             
+            data[i][5] = t.getAccountType();                      
+        }
+
+        return data;
+    }
+
     public String formatAmount(double amount) {
         if (amount >= 0) {
             return String.format("+₱%,.2f", amount);
@@ -90,51 +122,102 @@ public class TransactionService {
             return String.format("-₱%,.2f", Math.abs(amount));
         }
     }
-    
-    // compute total deposits (positive amounts)
-    
+
+    // stats
     public double getTotalDeposits(List<TransactionModel> transactions) {
-        double total = 0;
-        for (TransactionModel t : transactions) {
-            if (t.getAmount() > 0) total += t.getAmount();
-        }
-        return total;
+        if (transactions == null) return 0;
+        return transactions.stream().filter(t -> t.getAmount() > 0).mapToDouble(TransactionModel::getAmount).sum();
     }
-    
-    // compute total withdrawals (negative amounts)
-    
+
     public double getTotalWithdrawals(List<TransactionModel> transactions) {
-        double total = 0;
-        for (TransactionModel t : transactions) {
-            if (t.getAmount() < 0) total += t.getAmount();
-        }
-        return total;
+        if (transactions == null) return 0;
+        return transactions.stream().filter(t -> t.getAmount() < 0).mapToDouble(TransactionModel::getAmount).sum();
     }
-    
-    // get most recent transaction amount for display
-    
+
     public double getRecentActivity(List<TransactionModel> transactions) {
-        if (transactions.isEmpty()) return 0;
+        if (transactions == null || transactions.isEmpty()) return 0;
         return transactions.get(0).getAmount();
     }
-    
-    // record a new transaction
-    
+
+    // post, get, update
     public boolean recordTransaction(TransactionModel t) {
-        if (t.getAmount() == 0) {
-            System.out.println("TransactionService Warning: Amount cannot be zero.");
-            return false;
-        }
-        if (t.getAccountId() == null || t.getAccountId().isEmpty()) {
-            System.out.println("TransactionService Warning: Account ID is missing.");
+        if (t == null || t.getAmount() == 0 || t.getAccountId() == null || t.getAccountId().isEmpty()) {
             return false;
         }
         return tds.insertTransaction(t);
     }
-    
-    // update a transaction status
-    
+
     public boolean updateStatus(String transactId, String newStatus) {
         return tds.updateTransactionStatus(transactId, newStatus);
     }
+
+    public boolean flagTransaction(String transactId, boolean isFlagged) {
+        return tds.updateTransactionFlagged(transactId, isFlagged);
+    }
+    
+    // getter ng from and to (sender receiver)
+    
+    public boolean recordDeposit(String accountId, String accountType, String customerName, double amount, String date) {
+        if (amount <= 0) {
+            System.out.println("Deposit amount must be greater than 0.");
+            return false;
+        }
+
+        TransactionModel t = new TransactionModel();
+        t.setAccountId(accountId);
+        t.setAccountType(accountType);
+        t.setCustomerName(customerName);
+        t.setPurchaseName("Deposit");
+        t.setDate(date);
+        t.setAmount(amount);
+        t.setStatus("Completed");
+        t.setFlagged(false);
+        t.setFromAccount("External Deposit");   
+        t.setToAccount(accountId);
+
+        return tds.insertTransaction(t);
+    }
+    
+    public boolean recordWithdraw(String accountId, String accountType, String customerName, double amount, String date) {
+        if (amount <= 0) {
+            System.out.println("Withdraw amount must be greater than 0.");
+            return false;
+        }
+
+        TransactionModel t = new TransactionModel();
+        t.setAccountId(accountId);
+        t.setAccountType(accountType);
+        t.setCustomerName(customerName);
+        t.setPurchaseName("Withdrawal");
+        t.setDate(date);
+        t.setAmount(-Math.abs(amount)); 
+        t.setStatus("Completed");
+        t.setFlagged(false);
+        t.setFromAccount(accountId);
+        t.setToAccount("External Withdrawal");
+
+        return tds.insertTransaction(t);
+    }
+    
+    public boolean recordTransfer(String fromAccountId, String toAccountId, String accountType, String customerName, double amount, String date, String description) {
+        if (amount <= 0) {
+            System.out.println("Transfer amount must be greater than 0.");
+            return false;
+        }
+
+        TransactionModel t = new TransactionModel();
+        t.setAccountId(fromAccountId);           
+        t.setAccountType(accountType);
+        t.setCustomerName(customerName);
+        t.setPurchaseName("Transfer");
+        t.setDate(date);
+        t.setAmount(-Math.abs(amount));          
+        t.setStatus("Completed");
+        t.setFlagged(false);
+        t.setFromAccount(fromAccountId);
+        t.setToAccount(toAccountId);
+
+        return tds.insertTransaction(t);
+    }
+    
 }

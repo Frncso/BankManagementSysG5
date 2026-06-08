@@ -1,183 +1,139 @@
 package BankManage.DataService;
- 
+
 import BankManage.AccountModels.TransactionModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
- 
+
 public class TransactionDataService {
- 
-    // fetch all transactions by account id
- 
+
+    // get all transactions
+
     public List<TransactionModel> getTransactionsByAccountId(String accountId) {
-        List<TransactionModel> transactionList = new ArrayList<>();
- 
-        String query = "SELECT t_id, transact_id, Account_ID, Account_Type, Firstname, " +
-                       "Purchase_Name, Date, Amount, Status " +
-                       "FROM transactinfo_tbl WHERE Account_ID = ? ORDER BY Date DESC";
- 
+        List<TransactionModel> list = new ArrayList<>();
+        String sql = "SELECT * FROM transactinfo_tbl WHERE Account_ID = ? ORDER BY Date DESC";
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
- 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, accountId);
             ResultSet rs = ps.executeQuery();
- 
+
             while (rs.next()) {
-                TransactionModel t = new TransactionModel();
- 
-                t.setT_ID(rs.getInt("t_id"));
-                t.setTransactionId(rs.getString("transact_id"));
-                t.setAccountId(rs.getString("Account_ID"));
-                t.setAccountType(rs.getString("Account_Type"));
-                t.setCustomerName(rs.getString("Firstname"));
-                t.setPurchaseName(rs.getString("Purchase_Name"));
-                t.setDate(rs.getString("Date"));
-                t.setAmount(rs.getDouble("Amount"));
-                t.setStatus(rs.getString("Status"));
- 
-                transactionList.add(t);
+                list.add(mapResultSetToTransaction(rs));
             }
- 
         } catch (SQLException e) {
             System.out.println("TransactionDataService Error [getTransactionsByAccountId]: " + e.getMessage());
         }
- 
-        return transactionList;
+        return list;
     }
- 
-    // fetch all transactions (admin use)
- 
+
     public List<TransactionModel> getAllTransactions() {
-        List<TransactionModel> transactionList = new ArrayList<>();
- 
-        String query = "SELECT t_id, transact_id, Account_ID, Account_Type, Firstname, " +
-                       "Purchase_Name, Date, Amount, Status " +
-                       "FROM transactinfo_tbl ORDER BY Date DESC";
- 
+        List<TransactionModel> list = new ArrayList<>();
+        String sql = "SELECT * FROM transactinfo_tbl ORDER BY Date DESC";
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
- 
-            ResultSet rs = ps.executeQuery();
- 
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
-                TransactionModel t = new TransactionModel();
- 
-                t.setT_ID(rs.getInt("t_id"));
-                t.setTransactionId(rs.getString("transact_id"));
-                t.setAccountId(rs.getString("Account_ID"));
-                t.setAccountType(rs.getString("Account_Type"));
-                t.setCustomerName(rs.getString("Firstname"));
-                t.setPurchaseName(rs.getString("Purchase_Name"));
-                t.setDate(rs.getString("Date"));
-                t.setAmount(rs.getDouble("Amount"));
-                t.setStatus(rs.getString("Status"));
- 
-                transactionList.add(t);
+                list.add(mapResultSetToTransaction(rs));
             }
- 
         } catch (SQLException e) {
             System.out.println("TransactionDataService Error [getAllTransactions]: " + e.getMessage());
         }
- 
-        return transactionList;
+        return list;
     }
- 
-    // insert a new transaction record
-    // auto-generates transact_id based on the new t_id from auto_increment
- 
+
+    // insert transactions
+
     public boolean insertTransaction(TransactionModel t) {
-        String query = "INSERT INTO transactinfo_tbl " +
-                       "(transact_id, Account_ID, Account_Type, Firstname, Purchase_Name, Date, Amount, Status) " +
-                       "VALUES ('TEMP', ?, ?, ?, ?, ?, ?, ?)";
- 
+        String sql = "INSERT INTO transactinfo_tbl (transact_id, Account_ID, Account_Type, Firstname, " +
+                     "Purchase_Name, Date, Amount, Status, flagged, fromAccount, toAccount) " +
+                     "VALUES ('TEMP', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
- 
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             ps.setString(1, t.getAccountId());
             ps.setString(2, t.getAccountType());
             ps.setString(3, t.getCustomerName());
             ps.setString(4, t.getPurchaseName());
             ps.setString(5, t.getDate());
             ps.setDouble(6, t.getAmount());
-            ps.setString(7, t.getStatus());
- 
+            ps.setString(7, t.getStatus() != null ? t.getStatus() : "Pending");
+            ps.setBoolean(8, t.isFlagged());
+            ps.setString(9, t.getFromAccount());
+            ps.setString(10, t.getToAccount());
+
             int rows = ps.executeUpdate();
- 
-            if (rows == 0) {
-                return false;
-            }
- 
-            // gen transact_id from the auto_increment t_id
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int generatedTId = generatedKeys.getInt(1);
- 
-                    // format: TXN-000001, padded to 6 digits
-                    String transactId = "TXN-" + String.format("%06d", generatedTId);
-                    t.setTransactionId(transactId);
-                    t.setT_ID(generatedTId);
- 
-                    // update the row with the generated transact_id
-                    String updateQuery = "UPDATE transactinfo_tbl SET transact_id = ? WHERE t_id = ?";
-                    try (PreparedStatement updatePs = conn.prepareStatement(updateQuery)) {
-                        updatePs.setString(1, transactId);
-                        updatePs.setInt(2, generatedTId);
+            if (rows == 0) return false;
+
+            // generation of id
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    int generatedId = keys.getInt(1);
+                    String newTransactId = "TXN-" + String.format("%06d", generatedId);
+                    t.setTransactionId(newTransactId);
+                    t.setT_ID(generatedId);
+
+                    String updateSql = "UPDATE transactinfo_tbl SET transact_id = ? WHERE t_id = ?";
+                    try (PreparedStatement updatePs = conn.prepareStatement(updateSql)) {
+                        updatePs.setString(1, newTransactId);
+                        updatePs.setInt(2, generatedId);
                         updatePs.executeUpdate();
                     }
                 }
             }
- 
             return true;
- 
         } catch (SQLException e) {
             System.out.println("TransactionDataService Error [insertTransaction]: " + e.getMessage());
             return false;
         }
     }
- 
-    // update status of a transaction by transact_id
- 
+
+    // method updating ng statuses and flags
+
     public boolean updateTransactionStatus(String transactId, String newStatus) {
-        String query = "UPDATE transactinfo_tbl SET Status = ? WHERE transact_id = ?";
- 
+        String sql = "UPDATE transactinfo_tbl SET Status = ? WHERE transact_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
- 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, newStatus);
             ps.setString(2, transactId);
- 
-            int rows = ps.executeUpdate();
-            return rows > 0;
- 
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("TransactionDataService Error [updateTransactionStatus]: " + e.getMessage());
             return false;
         }
     }
- 
-    // generate a transact_id based on the current max t_id
-    // format: TXN-000001, increments with each new record
-    // use this for preview/display before inserting — insertTransaction generates it automatically
- 
-    public String generateTransactionId() {
-        String query = "SELECT MAX(t_id) FROM transactinfo_tbl";
- 
+
+    public boolean updateTransactionFlagged(String transactId, boolean isFlagged) {
+        String sql = "UPDATE transactinfo_tbl SET flagged = ? WHERE transact_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
- 
-            ResultSet rs = ps.executeQuery();
- 
-            if (rs.next()) {
-                int maxId = rs.getInt(1); // returns 0 if no records yet
-                int nextId = maxId + 1;
-                return "TXN-" + String.format("%06d", nextId);
-            }
- 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, isFlagged);
+            ps.setString(2, transactId);
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("TransactionDataService Error [generateTransactionId]: " + e.getMessage());
+            System.out.println("TransactionDataService Error [updateTransactionFlagged]: " + e.getMessage());
+            return false;
         }
- 
-        // fallback if query fails
-        return "TXN-000001";
+    }
+
+    private TransactionModel mapResultSetToTransaction(ResultSet rs) throws SQLException {
+        TransactionModel t = new TransactionModel();
+        t.setT_ID(rs.getInt("t_id"));
+        t.setTransactionId(rs.getString("transact_id"));
+        t.setAccountId(rs.getString("Account_ID"));
+        t.setAccountType(rs.getString("Account_Type"));
+        t.setCustomerName(rs.getString("Firstname"));
+        t.setPurchaseName(rs.getString("Purchase_Name"));
+        t.setDate(rs.getString("Date"));
+        t.setAmount(rs.getDouble("Amount"));
+        t.setStatus(rs.getString("Status"));
+        t.setFlagged(rs.getBoolean("flagged"));
+        t.setFromAccount(rs.getString("fromAccount"));
+        t.setToAccount(rs.getString("toAccount"));
+        return t;
     }
 }

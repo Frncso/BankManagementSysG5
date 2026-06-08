@@ -1,25 +1,26 @@
 package BankManage; 
  
-import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
 import BankManage.AppService.TransactionService;
 import BankManage.AccountModels.CustomerModel;
 import BankManage.AccountModels.TransactionModel;
+import BankManage.AccountModels.BankAccount;
+import BankManage.AppService.BankAccountService;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+import java.util.ArrayList;
  
 public class TransactUI extends JFrame implements ActionListener {
     
     ColorScheme cs = new ColorScheme();
-    Encryption en = new Encryption();
     TransactionService transactSvc = new TransactionService();
     
     // panels
     
-    private final JPanel sidebarPanel, mainContentPanel, linePanel; // gamitin nyo mainContentPanel para mag lagay ng content na hindi mag ooverlap kay sidebar
+    private final JPanel sidebarPanel, mainContentPanel, linePanel;
     
     // import images
     
@@ -95,7 +96,10 @@ public class TransactUI extends JFrame implements ActionListener {
     // filter combo
     
     private JComboBox<String> filterCombo;
-    private JLabel filterLabel;
+    
+    // refresh button
+    
+    private JButton filterBtn, refreshBtn, clearFilterBtn;
     
     // loaded transactions from BL
     
@@ -106,20 +110,6 @@ public class TransactUI extends JFrame implements ActionListener {
     };
     
     public TransactUI() {
-        
-        // session check
-        
-        String currentAccountId = "";
-        
-        if (SessionManage.isCustomerLoggedIn()) {
-            CustomerModel customer = SessionManage.getCurrentCustomer();
-            currentAccountId = customer.getCustomerId();
-            System.out.println("Logged in as: " + en.decrypt(customer.getFirstName())); // debug
-        }
-        
-        // load transactions via BL
-        
-        allTransactions = transactSvc.getTransactions(currentAccountId);
         
         setTitle("Dashboard - Transactions");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -159,7 +149,7 @@ public class TransactUI extends JFrame implements ActionListener {
         
         // transact
         
-        transactBtn = new JButton("Transact", transactIcon);
+        transactBtn = new JButton("Transactions", transactIcon);
         transactBtn.setBounds(0, 100, 180, 40);
         transactBtn.setBackground(cs.btnColorSelect);
         transactBtn.setForeground(cs.white);
@@ -347,33 +337,56 @@ public class TransactUI extends JFrame implements ActionListener {
         transactlbl.setForeground(cs.darkerPurple);
         transactconPanel.add(transactlbl);
         
-        // filter label
-        
-        filterLabel = new JLabel("Filter:");
-        filterLabel.setBounds(875, 18, 40, 25);
-        filterLabel.setFont(new Font("Arial", Font.PLAIN, 13));
-        filterLabel.setForeground(cs.darkerPurple);
-        transactconPanel.add(filterLabel);
-        
         // filter combo box
         
         String[] filterOptions = {
             TransactionService.FILTER_ALL,
             TransactionService.FILTER_COMPLETED,
             TransactionService.FILTER_DECLINED,
-            TransactionService.FILTER_SUSPENDED,
-            TransactionService.FILTER_FROZEN,
             TransactionService.FILTER_POSITIVE,
             TransactionService.FILTER_NEGATIVE
         };
         
         filterCombo = new JComboBox<>(filterOptions);
-        filterCombo.setBounds(920, 16, 200, 28);
+        filterCombo.setBounds(785, 20, 180, 28);
         filterCombo.setBackground(Color.WHITE);
         filterCombo.setForeground(cs.darkerPurple);
         filterCombo.setFont(new Font("Arial", Font.PLAIN, 13));
         filterCombo.setFocusable(false);
         transactconPanel.add(filterCombo);
+
+        filterBtn = new JButton("Apply Filter");
+        filterBtn.setBounds(975, 20, 110, 28);
+        filterBtn.setBackground(cs.darkPurple);
+        filterBtn.setForeground(cs.white);
+        filterBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        filterBtn.setFocusPainted(false);
+        filterBtn.setBorderPainted(false);
+        transactconPanel.add(filterBtn);
+
+        filterBtn.addActionListener(this);
+        
+        refreshBtn = new JButton("Refresh");
+        refreshBtn.setBounds(1230, 20, 90, 28);
+        refreshBtn.setBackground(new Color(108, 117, 125));
+        refreshBtn.setForeground(cs.white);
+        refreshBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        refreshBtn.setFocusPainted(false);
+        refreshBtn.setBorderPainted(false);
+        transactconPanel.add(refreshBtn);
+
+        refreshBtn.addActionListener(this);
+        
+        clearFilterBtn = new JButton("Clear");
+        clearFilterBtn.setBounds(1095, 20, 70, 28);
+        clearFilterBtn.setBackground(new Color(108, 117, 125));
+        clearFilterBtn.setForeground(cs.white);
+        clearFilterBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        clearFilterBtn.setFocusPainted(false);
+        clearFilterBtn.setBorderPainted(false);
+        transactconPanel.add(clearFilterBtn);
+
+        clearFilterBtn.addActionListener(this);
         
         // table model (non-editable)
         
@@ -409,6 +422,19 @@ public class TransactUI extends JFrame implements ActionListener {
             new Dimension(0, 45)
         );
         
+        recenttransacttbl.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int selectedRow = recenttransacttbl.getSelectedRow();
+                if (selectedRow != -1) {
+                    String transactId = (String) tableModel.getValueAt(selectedRow, 0);
+                    TransactionDetailUI td = new TransactionDetailUI(transactId);
+                    td.setVisible(true);
+                    dispose();
+                }
+            }
+        });
+        
         // no scroll
         
         recentnoScroll = new JScrollPane(recenttransacttbl);
@@ -424,35 +450,30 @@ public class TransactUI extends JFrame implements ActionListener {
         accountsBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
         
-        // filter combo listener
+        // session check
         
-        filterCombo.addActionListener(this);
-    }
-    
-    // populate table using BL-filtered data
-    
-    private void populateTable(List<TransactionModel> transactions) {
-        tableModel.setRowCount(0);
-        String[][] data = transactSvc.toTableData(transactions);
-        for (String[] row : data) {
-            tableModel.addRow(row);
+        String currentAccountId = "";
+        
+        if (SessionManage.isCustomerLoggedIn()) {
+            CustomerModel customer = SessionManage.getCurrentCustomer();
+            currentAccountId = customer.getCustomerId();
+            System.out.println("Logged in as: " + customer.getFirstName()); // debug
+            updateSummaryCards();
         }
+        
+        // load transactions via BL
+        
+        allTransactions = transactSvc.getTransactions(currentAccountId);
+        loadTransactions();
+        
     }
  
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        // filter combo selection
-        
-        if (e.getSource() == filterCombo) {
-            String selectedFilter = (String) filterCombo.getSelectedItem();
-            List<TransactionModel> filtered = transactSvc.filterTransactions(allTransactions, selectedFilter);
-            populateTable(filtered);
-        }
-        
         // sidebar navigation
         
-        else if (e.getSource() == homeBtn) {
+        if (e.getSource() == homeBtn) {
             CustomerDashboard cusUI = new CustomerDashboard();
             cusUI.setVisible(true);
             dispose();
@@ -485,5 +506,92 @@ public class TransactUI extends JFrame implements ActionListener {
                 dispose();
             }
         }
+        else if(e.getSource() == filterBtn){
+            String selected = (String) filterCombo.getSelectedItem();
+            String filterKey = mapFilterToConstant(selected);
+
+            List<TransactionModel> filtered = transactSvc.filterTransactions(allTransactions, filterKey);
+            populateTable(filtered);
+        }
+        else if(e.getSource() == refreshBtn){
+            filterCombo.setSelectedIndex(0);
+            populateTable(allTransactions);
+        }
+        else if(e.getSource() == clearFilterBtn){
+            filterCombo.setSelectedIndex(0);
+            loadTransactions();   
+        }
     }
+
+    private void loadTransactions() {
+        if (!SessionManage.isCustomerLoggedIn()) {
+            allTransactions = new ArrayList<>();
+            populateTable(allTransactions);
+            return;
+        }
+
+        CustomerModel customer = SessionManage.getCurrentCustomer();
+        String customerId = customer.getCustomerId();
+
+        // get the account by customer id
+        BankAccountService accountService = new BankAccountService();
+        List<BankAccount> myAccounts = accountService.getCustomerAccounts(customerId);
+
+        List<String> myAccountIds = new ArrayList<>();
+        for (BankAccount acc : myAccounts) {
+            myAccountIds.add(acc.getAccountId());
+        }
+
+        // filter transactions
+        List<TransactionModel> allSystemTransactions = transactSvc.getAllTransactions();
+
+        allTransactions = new ArrayList<>();
+        for (TransactionModel t : allSystemTransactions) {
+            if (myAccountIds.contains(t.getAccountId())) {
+                allTransactions.add(t);
+            }
+        }
+
+        populateTable(allTransactions);
+        updateSummaryCards();
+    }
+    
+    private void populateTable(List<TransactionModel> transactions) {
+        tableModel.setRowCount(0);
+
+        if (transactions == null || transactions.isEmpty()) {
+            return;
+        }
+
+        String[][] data = transactSvc.toCustomerTableData(transactions);
+
+        for (String[] row : data) {
+            tableModel.addRow(row);
+        }
+    }
+
+    private void updateSummaryCards() {
+        if (allTransactions == null) {
+            fPhp.setText("PHP +₱0.00");
+            sPhp.setText("PHP -₱0.00");
+            tPhp.setText("₱0.00");
+            return;
+        }
+
+        fPhp.setText(String.format("PHP +₱%,.2f", transactSvc.getTotalDeposits(allTransactions)));
+        sPhp.setText(String.format("PHP -₱%,.2f", Math.abs(transactSvc.getTotalWithdrawals(allTransactions))));
+        tPhp.setText(transactSvc.formatAmount(transactSvc.getRecentActivity(allTransactions)));
+    }
+    
+    private String mapFilterToConstant(String displayText) {
+        switch (displayText) {
+            case TransactionService.FILTER_ALL:        return TransactionService.FILTER_ALL;
+            case TransactionService.FILTER_COMPLETED:  return TransactionService.FILTER_COMPLETED;
+            case TransactionService.FILTER_DECLINED:   return TransactionService.FILTER_DECLINED;
+            case TransactionService.FILTER_POSITIVE:   return TransactionService.FILTER_POSITIVE;
+            case TransactionService.FILTER_NEGATIVE:   return TransactionService.FILTER_NEGATIVE;
+            default: return TransactionService.FILTER_ALL;
+        }
+    }
+
 }

@@ -246,6 +246,11 @@ public class SavingsViewGoalsUI extends JFrame implements ActionListener {
                     bu.setVisible(true);
                     dispose();
                     break;
+                case "DashUI":
+                    CustomerDashboard cd = new CustomerDashboard();
+                    cd.setVisible(true);
+                    dispose();
+                    break;
             }
         }
     }

@@ -8,11 +8,12 @@ public class TransactionModel {
     private String accountType;     // acc type
     private String customerName;
     private String purchaseName;
-    private String description;     // transfer from juan
     private String date;
     private double amount;
     private String status;          // pending, completed, declined
     private boolean flagged;
+    private String fromAccount;
+    private String toAccount;
     
     public TransactionModel() {}
     
@@ -25,7 +26,6 @@ public class TransactionModel {
         this.accountType = accountType;
         this.customerName = customerName;
         this.purchaseName = purchaseName;
-        this.description = description;
         this.date = date;
         this.amount = amount;
         this.status = status;
@@ -50,9 +50,6 @@ public class TransactionModel {
     public String getPurchaseName() { return purchaseName; }
     public void setPurchaseName(String purchaseName) { this.purchaseName = purchaseName; }
     
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
     
@@ -64,5 +61,11 @@ public class TransactionModel {
     
     public boolean isFlagged() { return flagged; }
     public void setFlagged(boolean flagged) { this.flagged = flagged; }
+    
+    public String getFromAccount() { return fromAccount; }
+    public void setFromAccount(String fromAccount) { this.fromAccount = fromAccount; }
+
+    public String getToAccount() { return toAccount; }
+    public void setToAccount(String toAccount) { this.toAccount = toAccount; }
 }
  

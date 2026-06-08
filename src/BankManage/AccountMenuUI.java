@@ -2,7 +2,6 @@ package BankManage;
 import BankManage.AccountModels.BankAccount;
 import BankManage.AccountModels.CustomerModel;
 import BankManage.AppService.BankAccountService;
-import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +12,6 @@ import java.util.List;
 public class AccountMenuUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
-    Encryption en = new Encryption();
     
     // panels
     
@@ -185,7 +183,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         
         // transact
         
-        transactBtn = new JButton("Transact", transactIcon);
+        transactBtn = new JButton("Transactions", transactIcon);
         transactBtn.setBounds(0, 100, 180, 40);
         transactBtn.setBackground(cs.darkPurple);
         transactBtn.setForeground(cs.white);

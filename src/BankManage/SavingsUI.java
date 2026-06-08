@@ -2,7 +2,6 @@ package BankManage;
 import BankManage.AccountModels.BankAccount;
 import BankManage.AccountModels.CustomerModel;
 import BankManage.AppService.BankAccountService;
-import BankManage.AppService.Encryption;
 import BankManage.AppService.SavingsService;
 import BankManage.AppService.SessionManage;
 import javax.swing.*;
@@ -142,7 +141,7 @@ public class SavingsUI extends JFrame implements ActionListener {
         
         // transact
         
-        transactBtn = new JButton("Transact", transactIcon);
+        transactBtn = new JButton("Transactions", transactIcon);
         transactBtn.setBounds(0, 100, 180, 40);
         transactBtn.setBackground(cs.darkPurple);
         transactBtn.setForeground(cs.white);

@@ -3,6 +3,7 @@ import BankManage.AccountModels.BankAccount;
 import BankManage.AccountModels.CustomerModel;
 import BankManage.AppService.BankAccountService;
 import BankManage.AppService.SessionManage;
+import BankManage.AppService.TransactionService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -13,6 +14,7 @@ import java.util.Map;
 public class BalanceUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
+    TransactionService transactSvc = new TransactionService();
     // panels
     
     private JPanel sidebarPanel, mainContentPanel, linePanel, accountsColumnPanel, actionsColumnPanel, quickActionsPanel, insightsPanel;
@@ -73,6 +75,12 @@ public class BalanceUI extends JFrame implements ActionListener {
     private Image depositScale = depositRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
     private ImageIcon depositIcon = new ImageIcon(depositScale);
     
+    java.net.URL transferImgURL = CustomerDashboard.class.getResource("resources/transfer.png");
+    
+    private ImageIcon transferRaw = new ImageIcon(transferImgURL);
+    private Image transferScale = transferRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+    private ImageIcon transferIcon = new ImageIcon(transferScale);
+    
     // logo
     
     java.net.URL logoImgURL = CustomerDashboard.class.getResource("resources/bluewhiteLogo.png");
@@ -111,7 +119,7 @@ public class BalanceUI extends JFrame implements ActionListener {
     // quick panel
     
     private final JLabel manageFundslbl, inputAmtLbl, selectAcclbl, actionlbl;
-    private final JButton withdrawBtn, depositBtn;
+    private final JButton withdrawBtn, depositBtn, transferBtn;
     private JTextField inputAmttxb;
   
     // combobox update
@@ -167,7 +175,7 @@ public class BalanceUI extends JFrame implements ActionListener {
         
         // transact
         
-        transactBtn = new JButton("Transact", transactIcon);
+        transactBtn = new JButton("Transactions", transactIcon);
         transactBtn.setBounds(0, 100, 180, 40);
         transactBtn.setBackground(cs.darkPurple);
         transactBtn.setForeground(cs.white);
@@ -327,7 +335,7 @@ public class BalanceUI extends JFrame implements ActionListener {
         quickActionsPanel.add(actionlbl);
         
         depositBtn = new JButton("Deposit", depositIcon);
-        depositBtn.setBounds(20, 180, 255, 45);
+        depositBtn.setBounds(20, 180, 163, 45);
         depositBtn.setBackground(cs.darkPurple);
         depositBtn.setForeground(cs.white);
         depositBtn.setFocusPainted(false);
@@ -340,7 +348,7 @@ public class BalanceUI extends JFrame implements ActionListener {
         quickActionsPanel.add(depositBtn);
         
         withdrawBtn = new JButton("Withdraw", withdrawIcon);
-        withdrawBtn.setBounds(295, 180, 255, 45);
+        withdrawBtn.setBounds(203, 180, 163, 45);
         withdrawBtn.setBackground(cs.darkPurple);
         withdrawBtn.setForeground(cs.white);
         withdrawBtn.setFocusPainted(false);
@@ -351,6 +359,19 @@ public class BalanceUI extends JFrame implements ActionListener {
         withdrawBtn.setMargin(new Insets(0, 0, 0, 10));
         withdrawBtn.setIconTextGap(10);
         quickActionsPanel.add(withdrawBtn);
+        
+        transferBtn = new JButton("Transfer", transferIcon);
+        transferBtn.setBounds(386, 180, 164, 45);
+        transferBtn.setBackground(cs.darkPurple);
+        transferBtn.setForeground(cs.white);
+        transferBtn.setFocusPainted(false);
+        transferBtn.setBorderPainted(false);
+        transferBtn.addActionListener(this);
+        
+        transferBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        transferBtn.setMargin(new Insets(0, 0, 0, 10));
+        transferBtn.setIconTextGap(10);
+        quickActionsPanel.add(transferBtn);
         
         mainContentPanel.add(actionsColumnPanel);
         
@@ -492,8 +513,15 @@ public class BalanceUI extends JFrame implements ActionListener {
             saveUI.setVisible(true);
             dispose();
         }
-        
-        
+        else if(e.getSource() == depositBtn){
+            handleDeposit();
+        }
+        else if(e.getSource() == withdrawBtn){
+            handleWithdraw();
+        }
+        else if (e.getSource() == transferBtn){
+            handleTransfer();
+        }
     }
     
     private java.util.List<BankAccount> customerAccounts = new ArrayList<>(); // field
@@ -608,6 +636,9 @@ public class BalanceUI extends JFrame implements ActionListener {
                 case "Frozen":
                     avail.setText("Unavailable");
                     break;
+                case "Suspended":
+                    avail.setText("Unavailable");
+                    break;
             }
             
             card.add(avail);
@@ -620,6 +651,9 @@ public class BalanceUI extends JFrame implements ActionListener {
                     quick.setVisible(false);
                     break;
                 case "Frozen":
+                    quick.setVisible(false);
+                    break;
+                case "Suspended":
                     quick.setVisible(false);
                     break;
             }
@@ -642,6 +676,9 @@ public class BalanceUI extends JFrame implements ActionListener {
                     goToTrans.setVisible(false);
                     break;
                 case "Frozen":
+                    goToTrans.setVisible(false);
+                    break;
+                case "Suspended":
                     goToTrans.setVisible(false);
                     break;
             }
@@ -701,6 +738,9 @@ public class BalanceUI extends JFrame implements ActionListener {
                 case "Frozen":
                     avail.setText("Unavailable");
                     break;
+                case "Suspended":
+                    avail.setText("Unavailable");
+                    break;
             }
             
             card.add(avail);
@@ -714,6 +754,9 @@ public class BalanceUI extends JFrame implements ActionListener {
                     quick.setVisible(false);
                     break;
                 case "Frozen":
+                    quick.setVisible(false);
+                    break;
+                case "Suspended":
                     quick.setVisible(false);
                     break;
             }
@@ -737,6 +780,9 @@ public class BalanceUI extends JFrame implements ActionListener {
                 case "Frozen":
                     goToSavings.setVisible(false);
                     break;
+                case "Suspended":
+                    goToSavings.setVisible(false);
+                    break;
             }
             
             goToSavings.addActionListener(e -> {
@@ -746,7 +792,7 @@ public class BalanceUI extends JFrame implements ActionListener {
             });
             card.add(goToSavings);
 
-            JButton goalHistory = new JButton("Goal History", historyIcon);
+            JButton goalHistory = new JButton("Goal List", historyIcon);
             goalHistory.setBounds(295, 180, 255, 45);
             goalHistory.setBackground(cs.darkPurple);
             goalHistory.setForeground(cs.white);
@@ -763,6 +809,9 @@ public class BalanceUI extends JFrame implements ActionListener {
                 case "Frozen":
                     goalHistory.setVisible(false);
                     break;
+                case "Suspended":
+                    goalHistory.setVisible(false);
+                    break;
             }
             
             goalHistory.addActionListener(e -> {
@@ -776,22 +825,20 @@ public class BalanceUI extends JFrame implements ActionListener {
     return card;
 }
 
-    private double getTotalBal(){
+    private double getTotalBal() {
         if (!SessionManage.isCustomerLoggedIn()) {
             return 0;
         }
-
         CustomerModel customer = SessionManage.getCurrentCustomer();
-
         BankAccountService accountService = new BankAccountService();
-        customerAccounts = accountService.getCustomerAccounts(customer.getCustomerId());
+        java.util.List<BankAccount> accounts = accountService.getCustomerAccounts(customer.getCustomerId());
 
         double total = 0;
-
-        for (BankAccount acc : customerAccounts) {
-            total += acc.getBalance();
+        for (BankAccount acc : accounts) {
+            if ("Active".equalsIgnoreCase(acc.getStatus())) {
+                total += acc.getBalance();
+            }
         }
-
         return total;
     }
 
@@ -799,11 +846,14 @@ public class BalanceUI extends JFrame implements ActionListener {
         Map<String, Double> totals = new HashMap<>();
 
         for (BankAccount acc : accounts) {
+            if (!"Active".equalsIgnoreCase(acc.getStatus())) {
+                continue;
+            }
+
             String type = acc.getAccountType();
             double currentTotal = totals.getOrDefault(type, 0.0);
             totals.put(type, currentTotal + acc.getBalance());
         }
-
         return totals;
     }
     
@@ -817,15 +867,258 @@ public class BalanceUI extends JFrame implements ActionListener {
             quickActionsPanel.add(accountcmb);
         }
 
-        // for updation sakes
         accountComboModel.removeAllElements();
         accountComboModel.addElement("Select Account");
 
-        // add accs sa combobox
         for (BankAccount acc : customerAccounts) {
-            String display = acc.getAccountId() + " " + acc.getAccountType();
-            accountComboModel.addElement(display);
+            // only active in combo box
+            if ("Active".equalsIgnoreCase(acc.getStatus())) {
+                String display = acc.getAccountId() + " " + acc.getAccountType();
+                accountComboModel.addElement(display);
+            }
         }
+    }
+    
+    private java.util.List<BankAccount> getActiveAccounts() {
+        java.util.List<BankAccount> activeAccounts = new ArrayList<>();
+        for (BankAccount acc : customerAccounts) {
+            if ("Active".equalsIgnoreCase(acc.getStatus())) {
+                activeAccounts.add(acc);
+            }
+        }
+        return activeAccounts;
+    }
+    
+        // deposit
+    private void handleDeposit() {
+        String selected = (String) accountcmb.getSelectedItem();
+
+        if (selected == null || selected.equals("Select Account")) {
+            JOptionPane.showMessageDialog(this, "Please select an account.");
+            return;
+        }
+
+        String accountId = selected.split(" ")[0];
+        String amountText = inputAmttxb.getText().trim();
+
+        if (amountText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter an amount.");
+            return;
+        }
+
+        double amount;
+        try {
+            amount = Double.parseDouble(amountText);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid amount entered.");
+            return;
+        }
+
+        if (amount <= 0) {
+            JOptionPane.showMessageDialog(this, "Amount must be greater than zero.");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Do you want to deposit ₱" + String.format("%,.2f", amount) + " to " + accountId + "?",
+                "Confirm Deposit", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            boolean success = transactSvc.recordDeposit(
+                    accountId,
+                    getAccountTypeFromCombo(selected),
+                    SessionManage.getCurrentUserDisplayName(),
+                    amount,
+                    java.time.LocalDate.now().toString()
+            );
+
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Deposit successful!");
+                inputAmttxb.setText("");
+                loadAndDisplayAccountsDynamically();
+                loadCustomerAccounts();
+            } else {
+                JOptionPane.showMessageDialog(this, "Deposit failed. Please try again.");
+            }
+        }
+    }
+
+    private void handleWithdraw() {
+        String selected = (String) accountcmb.getSelectedItem();
+
+        if (selected == null || selected.equals("Select Account")) {
+            JOptionPane.showMessageDialog(this, "Please select an account.");
+            return;
+        }
+
+        String accountId = selected.split(" ")[0];
+        String amountText = inputAmttxb.getText().trim();
+
+        if (amountText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter an amount.");
+            return;
+        }
+
+        double amount;
+        try {
+            amount = Double.parseDouble(amountText);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid amount entered.");
+            return;
+        }
+
+        if (amount <= 0) {
+            JOptionPane.showMessageDialog(this, "Amount must be greater than zero.");
+            return;
+        }
+
+        // Find selected account to check balance
+        BankAccount selectedAccount = null;
+        for (BankAccount acc : customerAccounts) {
+            if (acc.getAccountId().equals(accountId)) {
+                selectedAccount = acc;
+                break;
+            }
+        }
+
+        if (selectedAccount == null) {
+            JOptionPane.showMessageDialog(this, "Account not found.");
+            return;
+        }
+
+        if (amount > selectedAccount.getBalance()) {
+            JOptionPane.showMessageDialog(this, "Insufficient balance for this withdrawal.");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Do you want to withdraw ₱" + String.format("%,.2f", amount) + " from " + accountId + "?",
+                "Confirm Withdrawal", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            boolean success = transactSvc.recordWithdraw(
+                    accountId,
+                    getAccountTypeFromCombo(selected),
+                    SessionManage.getCurrentUserDisplayName(),
+                    amount,
+                    java.time.LocalDate.now().toString()
+            );
+
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Withdrawal successful!");
+                inputAmttxb.setText("");
+                loadAndDisplayAccountsDynamically();
+                loadCustomerAccounts();
+            } else {
+                JOptionPane.showMessageDialog(this, "Withdrawal failed. Please try again.");
+            }
+        }
+    }
+    
+    // transfer
+    private void handleTransfer() {
+        String selected = (String) accountcmb.getSelectedItem();
+
+        if (selected == null || selected.equals("Select Account")) {
+            JOptionPane.showMessageDialog(this, "Please select an account to transfer from.");
+            return;
+        }
+
+        String fromAccountId = selected.split(" ")[0];
+
+        // Get list of active accounts (excluding current one)
+        java.util.List<String> activeAccounts = new ArrayList<>();
+        for (BankAccount acc : customerAccounts) {
+            if ("Active".equalsIgnoreCase(acc.getStatus()) && !acc.getAccountId().equals(fromAccountId)) {
+                activeAccounts.add(acc.getAccountId() + " " + acc.getAccountType());
+            }
+        }
+
+        if (activeAccounts.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No other active accounts available for transfer.");
+            return;
+        }
+
+        JComboBox<String> toAccountCombo = new JComboBox<>(activeAccounts.toArray(new String[0]));
+        toAccountCombo.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        panel.add(new JLabel("Transfer to:"));
+        panel.add(toAccountCombo);
+
+        int result = JOptionPane.showConfirmDialog(this, panel,
+                "Select Destination Account", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result != JOptionPane.OK_OPTION) return;
+
+        String toAccountDisplay = (String) toAccountCombo.getSelectedItem();
+        String toAccountId = toAccountDisplay.split(" ")[0];
+
+        String amountText = inputAmttxb.getText().trim();
+        if (amountText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter an amount to transfer.");
+            return;
+        }
+
+        double amount;
+        try {
+            amount = Double.parseDouble(amountText);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid amount.");
+            return;
+        }
+
+        if (amount <= 0) {
+            JOptionPane.showMessageDialog(this, "Amount must be greater than zero.");
+            return;
+        }
+
+        // source balance
+        BankAccount fromAccount = null;
+        for (BankAccount acc : customerAccounts) {
+            if (acc.getAccountId().equals(fromAccountId)) {
+                fromAccount = acc;
+                break;
+            }
+        }
+
+        if (fromAccount == null || amount > fromAccount.getBalance()) {
+            JOptionPane.showMessageDialog(this, "Insufficient balance for transfer.");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Transfer ₱" + String.format("%,.2f", amount) + " from " + fromAccountId + " to " + toAccountId + "?",
+                "Confirm Transfer", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            boolean success = transactSvc.recordTransfer(
+                    fromAccountId,
+                    toAccountId,
+                    fromAccount.getAccountType(),
+                    SessionManage.getCurrentUserDisplayName(),
+                    amount,
+                    java.time.LocalDate.now().toString(),
+                    "Transfer from " + fromAccountId + " to " + toAccountId
+            );
+
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Transfer successful!");
+                inputAmttxb.setText("");
+                loadAndDisplayAccountsDynamically();
+                loadCustomerAccounts();
+            } else {
+                JOptionPane.showMessageDialog(this, "Transfer failed.");
+            }
+        }
+    }
+    
+    private String getAccountTypeFromCombo(String selectedItem) {
+        if (selectedItem == null || selectedItem.equals("Select Account")) {
+            return "";
+        }
+        String[] parts = selectedItem.split(" ");
+        return parts.length > 1 ? parts[1] : "";
     }
     
 }

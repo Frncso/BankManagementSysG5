@@ -1,5 +1,4 @@
 package BankManage; 
-import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
 import BankManage.AppService.GetDateAndTime;
 import BankManage.AppService.BankAccountService;
@@ -133,11 +132,14 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         {"Minecraft Bundle", "January 6, 2026", "Completed", "-₱1,600"},
     };
     
+    private Timer timeTick;
+    
     //
     
     private String fname = SessionManage.getCurrentUserDisplayName();
     private String date = dateTime.currentTime();
     private double totalBal = getTotalBal();
+    private double currentTotalSavings;
     
     public CustomerDashboard() {
 
@@ -177,7 +179,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         
         // transact
         
-        transactBtn = new JButton("Transact", transactIcon);
+        transactBtn = new JButton("Transactions", transactIcon);
         transactBtn.setBounds(0, 100, 180, 40);
         transactBtn.setBackground(cs.darkPurple);
         transactBtn.setForeground(cs.white);
@@ -403,7 +405,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         gotoSavingsbtn.addActionListener(this);
         savingsPanel.add(gotoSavingsbtn);
         
-        gotoHistorybtn = new JButton("Goal History", historyIcon);
+        gotoHistorybtn = new JButton("Goal List", historyIcon);
         gotoHistorybtn.setBounds(298, 180, 262, 45);
         gotoHistorybtn.setBackground(cs.darkPurple);
         gotoHistorybtn.setForeground(cs.white);
@@ -496,11 +498,22 @@ public class CustomerDashboard extends JFrame implements ActionListener {
             System.out.println("Logged in as: " + customer.getFirstName()); // debug
         }
         
+        timeTick = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String timeGet = dateTime.currentTime();
+                datelbl.setText(timeGet);
+            }
+        });
+        
+        timeTick.start();
+        
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
+        CustomerModel customer = SessionManage.getCurrentCustomer();
+        String userId = customer.getCustomerId();
         // side bar
         
         if(e.getSource() == transactBtn){
@@ -568,7 +581,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == gotoHistorybtn){
-            SavingsUI saveUI = new SavingsUI();
+            SavingsViewGoalsUI saveUI = new SavingsViewGoalsUI(userId, currentTotalSavings, "DashUI");
             saveUI.setVisible(true);
             dispose();
         }
@@ -585,47 +598,24 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     
     private List<BankAccount> customerAccounts = new ArrayList<>();
 
-    private void loadCustomerAccounts() { // loading customers' accounts
+    private void loadCustomerAccounts() {
         if (!SessionManage.isCustomerLoggedIn()) {
             return;
         }
 
         CustomerModel customer = SessionManage.getCurrentCustomer();
-
         BankAccountService accountService = new BankAccountService();
         customerAccounts = accountService.getCustomerAccounts(customer.getCustomerId());
 
-        System.out.println("=== Accounts for " + SessionManage.getCurrentUserDisplayName() + " ===");
-        
-        // grouping accs by type for future use
-        Map<String, List<BankAccount>> accountsByType = new HashMap<>();
+        // active accounts for balance
+        Map<String, Double> activeTotals = calculateActiveTotalsByType(customerAccounts);
 
-        for (BankAccount acc : customerAccounts) {
-            accountsByType
-                .computeIfAbsent(acc.getAccountType(), k -> new ArrayList<>())
-                .add(acc);
-        }
+        double totalSavings = activeTotals.getOrDefault("Savings", 0.0);
 
-        // displaying all accs for debug tests
-        for (Map.Entry<String, List<BankAccount>> entry : accountsByType.entrySet()) {
-            String type = entry.getKey();
-            List<BankAccount> accountsOfType = entry.getValue();
+        currentTotalSavings = totalSavings;
 
-            System.out.println("\n--- " + type + " Accounts (" + accountsOfType.size() + ") ---");
-
-            for (BankAccount acc : accountsOfType) {
-                System.out.println("Account ID : " + acc.getAccountId());
-                System.out.println("Balance    : ₱" + acc.getBalance());
-                System.out.println("Status     : " + acc.getStatus());
-                System.out.println("---------------------------");
-            }
-        }
-        
-        Map<String, Double> totalsByType = calculateTotalsByType(customerAccounts);
-        
-        double totalSavings  = totalsByType.getOrDefault("Savings", 0.0);
-        
         savingBalancelbl.setText("₱" + String.format("%,.2f", totalSavings));
+
     }
     
     private double getTotalBal(){
@@ -647,15 +637,29 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         return total;
     }
     
+    
+    // gather all accs total regardless if its inactive or not
     private Map<String, Double> calculateTotalsByType(List<BankAccount> accounts) {
         Map<String, Double> totals = new HashMap<>();
-
         for (BankAccount acc : accounts) {
             String type = acc.getAccountType();
             double currentTotal = totals.getOrDefault(type, 0.0);
             totals.put(type, currentTotal + acc.getBalance());
         }
+        return totals;
+    }
 
+    private Map<String, Double> calculateActiveTotalsByType(List<BankAccount> accounts) {
+        Map<String, Double> totals = new HashMap<>();
+
+        for (BankAccount acc : accounts) {
+            if (!"Active".equalsIgnoreCase(acc.getStatus())) {
+                continue;
+            }
+            String type = acc.getAccountType();
+            double currentTotal = totals.getOrDefault(type, 0.0);
+            totals.put(type, currentTotal + acc.getBalance());
+        }
         return totals;
     }
     

@@ -1,7 +1,10 @@
 package BankManage;
 import BankManage.AccountModels.EmployeeModel;
+import BankManage.AccountModels.TransactionModel;
 import BankManage.AppService.Encryption;
 import BankManage.AppService.SessionManage;
+import BankManage.AppService.TransactionService;
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -79,25 +82,13 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
     private JTable transTable;
     private JScrollPane tableScrollPane;
     
+    // filtering
+    
+    private JComboBox<String> filterCombo;
+    private JButton filterBtn, clearFilterBtn, refreshBtn;
+    
     protected String[] columnHeaders = {
-        "Transaction ID", "Account ID", "Account Type", "First Name", "Purchase Name", "Date", "Amount", "Status"
-    };
-
-    protected String[][] tableData = {
-        {"TXN-001", "ACC-12345", "Savings",  "Ezekiel", "Fully Booked",            "May 25, 2026",       "₱25,120.50", "Completed"},
-        {"TXN-002", "ACC-12346", "Checking", "Inigo",   "Nintendo Shop",           "May 30, 2026",        "₱0.00",      "Declined"},
-        {"TXN-003", "ACC-12347", "Savings",  "Athea",   "Fully Booked",            "June 7, 2026",    "₱250.00",    "Completed"},
-        {"TXN-004", "ACC-12348", "Savings",  "Maria",   "Food Panda",              "January 6, 2026",    "₱1,600.00",  "Completed"},
-        {"TXN-005", "ACC-12349", "Checking", "Jose",    "The Golden Fur PH",       "January 1, 2026",    "₱1,200.00",  "Completed"},
-        {"TXN-006", "ACC-12350", "Savings",  "Ana",     "Shopee Philippines",      "January 1, 2026",    "₱300.00",    "Completed"},
-        {"TXN-007", "ACC-12351", "Savings",  "Carlos",  "Minecraft Gift",          "January 1, 2026",    "₱1,600.00",  "Completed"},
-        {"TXN-008", "ACC-12352", "Checking", "Rosa",    "Apple Pay Transfer",      "December 25, 2025",  "₱2,000.00",  "Completed"},
-        {"TXN-009", "ACC-12353", "Savings",  "Pedro",   "Paypal Transfer",         "December 24, 2025",  "₱50,600.00", "Pending"},
-        {"TXN-010", "ACC-12354", "Savings",  "Luis",    "Steam 20USD Gift Card",   "December 1, 2025",   "₱1,200.00",  "Completed"},
-        {"TXN-011", "ACC-12355", "Checking", "Clara",   "LetterBoxd Patreon",      "December 1, 2025",   "₱999.00",    "Completed"},
-        {"TXN-012", "ACC-12356", "Savings",  "Marco",   "GCash Transfer",          "November 1, 2025",   "₱1,600.00",  "Pending"},
-        {"TXN-013", "ACC-12357", "Savings",  "Sofia",   "Spotify Premium Yearly",  "September 25, 2025", "₱2,000.00",  "Completed"},
-        {"TXN-014", "ACC-12358", "Checking", "Diego",   "PayPal Transfer",         "September 24, 2025", "₱10,600.00", "Completed"},
+        "Transaction ID", "Account ID", "Account Type", "First Name", "Purchase Name", "Date", "Amount", "Status", "Flagged"
     };
     
     public TransactionTrackerUI() {
@@ -242,51 +233,76 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
         tablePanel.setBounds(30, 110, 1185, 790);
         tablePanel.setBackground(cs.white);
         tablePanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-        
-        allTranslbl = new JLabel("All Transactions"); 
+
+        allTranslbl = new JLabel("All Transactions");
         allTranslbl.setBounds(20, 20, 300, 30);
         allTranslbl.setFont(new Font("", Font.BOLD, 18));
         allTranslbl.setForeground(cs.darkerPurple);
         tablePanel.add(allTranslbl);
-        
-        // table (objects papasok dito)
-        
-        transTable = new JTable(tableData, columnHeaders);
-        transTable.setRowHeight(40);
-        transTable.setFont(new Font("Arial", Font.PLAIN, 14));
-        transTable.setFocusable(false);
-        transTable.getTableHeader().setReorderingAllowed(false);
-        transTable.getTableHeader().setBackground(cs.darkPurple);
-        transTable.getTableHeader().setForeground(cs.white);
-        transTable.setSelectionBackground(cs.lightPurple);
-        transTable.setSelectionForeground(cs.white);
-        transTable.setShowGrid(false);
-        transTable.setDefaultEditor(Object.class, null);
-        
-        transTable.getTableHeader().setFont(
-            new Font("Arial", Font.BOLD, 14)
-        );
-        transTable.getTableHeader().setPreferredSize(
-            new Dimension(0, 45)
-        );
-        
-        // no scroll
-        
-        tableScrollPane = new JScrollPane(transTable);
-        
-        tableScrollPane.setVerticalScrollBarPolicy(
-            JScrollPane.VERTICAL_SCROLLBAR_NEVER
-        );
 
-        tableScrollPane.setHorizontalScrollBarPolicy(
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-        );
-        
+        tableScrollPane = new JScrollPane();
         tableScrollPane.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         tableScrollPane.setBounds(20, 55, 1145, 715);
         tablePanel.add(tableScrollPane);
-        
+
         mainContentPanel.add(tablePanel);
+
+        // filtering
+        String[] filterOptions = {
+            TransactionService.FILTER_ALL,
+            TransactionService.FILTER_COMPLETED,
+            TransactionService.FILTER_DECLINED,
+            TransactionService.FILTER_SUSPENDED,
+            TransactionService.FILTER_FROZEN,
+            TransactionService.FILTER_FLAGGED,
+            TransactionService.FILTER_POSITIVE,
+            TransactionService.FILTER_NEGATIVE
+        };
+
+        filterCombo = new JComboBox<>(filterOptions);
+        filterCombo.setBounds(785, 20, 180, 28);
+        filterCombo.setBackground(Color.WHITE);
+        filterCombo.setForeground(cs.darkerPurple);
+        filterCombo.setFont(new Font("Arial", Font.PLAIN, 13));
+        filterCombo.setFocusable(false);
+        tablePanel.add(filterCombo);
+
+        filterBtn = new JButton("Apply Filter");
+        filterBtn.setBounds(975, 20, 110, 28);
+        filterBtn.setBackground(cs.darkPurple);
+        filterBtn.setForeground(cs.white);
+        filterBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        filterBtn.setFocusPainted(false);
+        filterBtn.setBorderPainted(false);
+        tablePanel.add(filterBtn);
+
+        filterBtn.addActionListener(this);
+        
+        refreshBtn = new JButton("Refresh");
+        refreshBtn.setBounds(1230, 20, 90, 28);
+        refreshBtn.setBackground(new Color(108, 117, 125));
+        refreshBtn.setForeground(cs.white);
+        refreshBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        refreshBtn.setFocusPainted(false);
+        refreshBtn.setBorderPainted(false);
+        tablePanel.add(refreshBtn);
+
+        refreshBtn.addActionListener(this);
+        
+        clearFilterBtn = new JButton("Clear");
+        clearFilterBtn.setBounds(1095, 20, 70, 28);
+        clearFilterBtn.setBackground(new Color(108, 117, 125));
+        clearFilterBtn.setForeground(cs.white);
+        clearFilterBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        clearFilterBtn.setFocusPainted(false);
+        clearFilterBtn.setBorderPainted(false);
+        tablePanel.add(clearFilterBtn);
+
+        clearFilterBtn.addActionListener(this);
+        
+        // load yung datas    
+            
+        loadTransactions();
         
         // end table
         
@@ -342,19 +358,123 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == searchBtn){
-            // query and search code here:
-            TransactionSummaryUI ts = new TransactionSummaryUI();
-            ts.setVisible(true);
-            dispose();
+            String transactId = searchField.getText().trim();
+            
+            TransactionService transactionService = new TransactionService();
+            TransactionModel transaction = transactionService.getTransactionById(transactId);
+
+            if (transaction != null) {
+                TransactionSummaryUI ts = new TransactionSummaryUI(transactId);
+                ts.setVisible(true);
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Transaction ID not found: " + transactId, 
+                    "Not Found", 
+                    JOptionPane.WARNING_MESSAGE);
+            }
         }
-        
-        // side bar end
-        
-        // main content
-        
-        
-        //
-        
+        else if(e.getSource() == filterBtn){
+            applyFilter();
+        }
+        else if(e.getSource() == refreshBtn){
+            filterCombo.setSelectedIndex(0);
+            searchField.setText("");
+            loadTransactions();    
+        }
+        else if(e.getSource() == clearFilterBtn){
+            filterCombo.setSelectedIndex(0);
+            loadTransactions();   
+        }
+    }
+    
+    private void loadTransactions() {
+        TransactionService transactionService = new TransactionService();
+
+        // get all transact
+        List<TransactionModel> transactions = transactionService.getAllTransactions();
+
+        // convert into data (thanks inigo)
+        String[][] data = transactionService.toTableData(transactions);
+
+        // create the table itself
+        transTable = new JTable(data, columnHeaders);
+        transTable.setRowHeight(40);
+        transTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        transTable.setFocusable(false);
+        transTable.getTableHeader().setReorderingAllowed(false);
+        transTable.getTableHeader().setBackground(cs.darkPurple);
+        transTable.getTableHeader().setForeground(cs.white);
+        transTable.setSelectionBackground(cs.lightPurple);
+        transTable.setSelectionForeground(cs.white);
+        transTable.setShowGrid(false);
+        transTable.setDefaultEditor(Object.class, null);
+
+        transTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        transTable.getTableHeader().setPreferredSize(new Dimension(0, 45));
+
+        // row click listener para mag paste sa search field
+        transTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = transTable.getSelectedRow();
+                if (row != -1) {
+                    String transactId = (String) transTable.getValueAt(row, 0);
+                    new TransactionSummaryUI(transactId).setVisible(true);
+                    dispose();
+                }
+            }
+        });
+
+        tableScrollPane.setViewportView(transTable);
+    }
+
+    private void applyFilter() {
+        String selectedFilter = (String) filterCombo.getSelectedItem();
+        if (selectedFilter == null) return;
+
+        TransactionService transactionService = new TransactionService();
+
+        // transactions
+        List<TransactionModel> allTransactions = transactionService.getAllTransactions();
+
+        // filtering method
+        List<TransactionModel> filteredList = transactionService.filterTransactions(allTransactions, selectedFilter);
+
+        // convert to data para ease
+        String[][] filteredData = transactionService.toTableData(filteredList);
+
+        // updating
+        transTable = new JTable(filteredData, columnHeaders);
+        transTable.setRowHeight(40);
+        transTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        transTable.setFocusable(false);
+        transTable.getTableHeader().setReorderingAllowed(false);
+        transTable.getTableHeader().setBackground(cs.darkPurple);
+        transTable.getTableHeader().setForeground(cs.white);
+        transTable.setSelectionBackground(cs.lightPurple);
+        transTable.setSelectionForeground(cs.white);
+        transTable.setShowGrid(false);
+        transTable.setDefaultEditor(Object.class, null);
+
+        transTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        transTable.getTableHeader().setPreferredSize(new Dimension(0, 45));
+
+        // click listener
+        transTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = transTable.getSelectedRow();
+                if (row != -1) {
+                    String transactId = (String) transTable.getValueAt(row, 0);
+                    TransactionSummaryUI ts = new TransactionSummaryUI(transactId);
+                    ts.setVisible(true);
+                    dispose();
+                }
+            }
+        });
+
+        tableScrollPane.setViewportView(transTable);
     }
     
 }
