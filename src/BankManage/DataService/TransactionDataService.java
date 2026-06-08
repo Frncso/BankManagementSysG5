@@ -11,7 +11,7 @@ public class TransactionDataService {
 
     public List<TransactionModel> getTransactionsByAccountId(String accountId) {
         List<TransactionModel> list = new ArrayList<>();
-        String sql = "SELECT * FROM transactinfo_tbl WHERE Account_ID = ? ORDER BY Date DESC";
+        String sql = "SELECT * FROM transactinfo_tbl WHERE Account_ID = ? ORDER BY t_id DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -30,7 +30,7 @@ public class TransactionDataService {
 
     public List<TransactionModel> getAllTransactions() {
         List<TransactionModel> list = new ArrayList<>();
-        String sql = "SELECT * FROM transactinfo_tbl ORDER BY Date DESC";
+        String sql = "SELECT * FROM transactinfo_tbl ORDER BY t_id DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);

@@ -74,6 +74,16 @@ public class BankAccountService {
         }
     }
     
+    public boolean updateAccountBalance(String accountId, double newBalance) {
+        return accountDataService.updateBalance(accountId, newBalance);
+    }
+    
+    // is account active/existing?
+    
+    public boolean isAccountActive(String accountId) {
+        return accountDataService.accountExistsAndIsActive(accountId);
+    }
+    
     public boolean updateAccountStatus(String accountId, String newStatus) {
         return accountDataService.updateStatus(accountId, newStatus);
     }

@@ -557,20 +557,20 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         }
         
         else if(e.getSource() == withdrawBtn){
-            TransactUI trUI = new TransactUI();
-            trUI.setVisible(true);
+            BalanceUI balUI = new BalanceUI();
+            balUI.setVisible(true);
             dispose();
         }
         
         else if(e.getSource() == depositBtn){
-            TransactUI trUI = new TransactUI();
-            trUI.setVisible(true);
+            BalanceUI balUI = new BalanceUI();
+            balUI.setVisible(true);
             dispose();
         }
         
         else if(e.getSource() == transferBtn){
-            TransactUI trUI = new TransactUI();
-            trUI.setVisible(true);
+            BalanceUI balUI = new BalanceUI();
+            balUI.setVisible(true);
             dispose();
         }
         
@@ -618,44 +618,31 @@ public class CustomerDashboard extends JFrame implements ActionListener {
 
     }
     
-    private double getTotalBal(){
+    private double getTotalBal() {
         if (!SessionManage.isCustomerLoggedIn()) {
             return 0;
         }
-        
         CustomerModel customer = SessionManage.getCurrentCustomer();
-
         BankAccountService accountService = new BankAccountService();
-        customerAccounts = accountService.getCustomerAccounts(customer.getCustomerId());
-        
+        java.util.List<BankAccount> accounts = accountService.getCustomerAccounts(customer.getCustomerId());
+
         double total = 0;
-        
-        for (BankAccount acc : customerAccounts) {
-            total += acc.getBalance();
+        for (BankAccount acc : accounts) {
+            if ("Active".equalsIgnoreCase(acc.getStatus())) {
+                total += acc.getBalance();
+            }
         }
-        
         return total;
     }
-    
-    
-    // gather all accs total regardless if its inactive or not
-    private Map<String, Double> calculateTotalsByType(List<BankAccount> accounts) {
-        Map<String, Double> totals = new HashMap<>();
-        for (BankAccount acc : accounts) {
-            String type = acc.getAccountType();
-            double currentTotal = totals.getOrDefault(type, 0.0);
-            totals.put(type, currentTotal + acc.getBalance());
-        }
-        return totals;
-    }
 
-    private Map<String, Double> calculateActiveTotalsByType(List<BankAccount> accounts) {
+    private Map<String, Double> calculateActiveTotalsByType(java.util.List<BankAccount> accounts) {
         Map<String, Double> totals = new HashMap<>();
 
         for (BankAccount acc : accounts) {
             if (!"Active".equalsIgnoreCase(acc.getStatus())) {
                 continue;
             }
+
             String type = acc.getAccountType();
             double currentTotal = totals.getOrDefault(type, 0.0);
             totals.put(type, currentTotal + acc.getBalance());

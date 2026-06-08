@@ -100,6 +100,44 @@ public class BankAccountDataService {
         }
     }
     
+    // updation ng balance
+    public boolean updateBalance(String accountId, double newBalance) {
+        String sql = "UPDATE bank_accounts SET balance = ? WHERE account_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDouble(1, newBalance);
+            stmt.setString(2, accountId);
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("BankAccountDAO Error [updateBalance]: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    // checks if active and existing yung data (used for transfer)
+    public boolean accountExistsAndIsActive(String accountId) {
+        String sql = "SELECT status FROM bank_accounts WHERE account_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, accountId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String status = rs.getString("status");
+                return "Active".equalsIgnoreCase(status);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("BankAccountDAO Error [accountExistsAndIsActive]: " + e.getMessage());
+        }
+
+        return false; // acc isnt active or not existing
+    }
+    
     public int getTotalAccountsCnt(){
         String sql = "SELECT COUNT(*) AS total FROM bank_accounts";
     
