@@ -97,7 +97,7 @@ CREATE TABLE `employees` (
 --
 
 INSERT INTO `employees` (`employee_id`, `first_name`, `last_name`, `password`, `date_of_birth`, `position`, `access_code`) VALUES
-('AU2026-00001-AA', 'Rh', 'K', 'KvG', '-dUAbB6#fl', 'Administrator', '123');
+('AU2026-00001-SS', 'CxQgPdhyJX', 'CxQgPdgoPeXw', 'KgNkL46$', ')xMAZ3C#bkq', 'Administrator', 'AAAAAAAA');
 
 -- --------------------------------------------------------
 
@@ -133,7 +133,7 @@ CREATE TABLE `one_time_codes` (
 --
 
 INSERT INTO `one_time_codes` (`employee_id`, `access_code`, `status`, `created_at`) VALUES
-('AU2026-00001-AA', 'AAAAAAAA', 'Used', NOW())
+('AU2026-00001-SS', 'AAAAAAAA', 'Used', NOW());
 
 -- --------------------------------------------------------
 

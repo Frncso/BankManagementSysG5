@@ -1,7 +1,6 @@
 package BankManage; 
 import BankManage.AccountModels.EmployeeModel;
 import BankManage.AccountModels.OneTimeCode;
-import BankManage.AppService.Encryption;
 import BankManage.AppService.OneTimeCodeService;
 import BankManage.AppService.SessionManage;
 import java.util.List;
@@ -12,12 +11,6 @@ import java.awt.event.*;
 public class ViewAccessCodesUI extends JFrame implements ActionListener {
 
     ColorScheme cs = new ColorScheme();
-    Encryption en = new Encryption();
-    
-    java.net.URL eyeImgURL = CustomerDashboard.class.getResource("resources/eye.png");
-    private ImageIcon eyeRaw = new ImageIcon(eyeImgURL);
-    private Image eyeScale = eyeRaw.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-    private ImageIcon eyeIcon = new ImageIcon(eyeScale);
     
     private JPanel mainContentPanel, linePanel, requestsTablePanel;
     
@@ -43,7 +36,7 @@ public class ViewAccessCodesUI extends JFrame implements ActionListener {
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(null);
         
-        dashboardTitle = new JLabel("Processed Requests");
+        dashboardTitle = new JLabel("Generated Codes");
         dashboardTitle.setBounds(30, 15, 200, 20);
         dashboardTitle.setFont(new Font("", Font.BOLD, 16));
         mainContentPanel.add(dashboardTitle);
@@ -59,7 +52,7 @@ public class ViewAccessCodesUI extends JFrame implements ActionListener {
         requestsTablePanel.setBackground(cs.white);
         requestsTablePanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         
-        pendinglbl = new JLabel("List of Processed Requests"); 
+        pendinglbl = new JLabel("List of Generated Codes"); 
         pendinglbl.setBounds(20, 20, 300, 30);
         pendinglbl.setFont(new Font("", Font.BOLD, 18));
         pendinglbl.setForeground(cs.darkerPurple);
@@ -72,7 +65,7 @@ public class ViewAccessCodesUI extends JFrame implements ActionListener {
         
         mainContentPanel.add(requestsTablePanel);
         
-        viewPenReqbtn = new JButton("View Pending Requests", eyeIcon);
+        viewPenReqbtn = new JButton("Return to Account Controls");
         viewPenReqbtn.setBounds(985, 65, 230, 30);
         viewPenReqbtn.setBackground(cs.darkPurple);
         viewPenReqbtn.setForeground(cs.white);

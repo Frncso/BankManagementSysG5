@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Encryption {
     
-    private final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=/" + " ";
+    private final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~!@#$%^&*()_+-=/" + " ";
     private final String superkey = "!D3C0DEM3!";
     
     public Encryption() {}

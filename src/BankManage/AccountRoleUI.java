@@ -189,13 +189,13 @@ public class AccountRoleUI extends JFrame implements ActionListener{
         mainContentPanel.add(linePanel);
         
         JLabel actionlbl = new JLabel("For Staff Creation:");
-        actionlbl.setBounds(30, 67, 250, 40);
+        actionlbl.setBounds(640, 67, 250, 40);
         actionlbl.setForeground(cs.darkerPurple);
         actionlbl.setFont(new Font("Arial", Font.BOLD, 16));
         mainContentPanel.add(actionlbl);
         
         generateCodeBtn = new JButton("Generate Access Code");
-        generateCodeBtn.setBounds(185, 72, 200, 30);
+        generateCodeBtn.setBounds(805, 72, 200, 30);
         generateCodeBtn.setBackground(cs.darkPurple);
         generateCodeBtn.setForeground(cs.white);
         generateCodeBtn.setFont(new Font("Arial", Font.BOLD, 12));
@@ -204,7 +204,7 @@ public class AccountRoleUI extends JFrame implements ActionListener{
         mainContentPanel.add(generateCodeBtn);
 
         viewCodesBtn = new JButton("View Available Codes");
-        viewCodesBtn.setBounds(405, 72, 200, 30);
+        viewCodesBtn.setBounds(1015, 72, 200, 30);
         viewCodesBtn.setBackground(cs.darkPurple);
         viewCodesBtn.setForeground(cs.white);
         viewCodesBtn.setFont(new Font("Arial", Font.BOLD, 12));
