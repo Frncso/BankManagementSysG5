@@ -323,7 +323,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         moneyIMG.setBounds(6, 15, 70, 70);
         balancePanel.add(moneyIMG);
         
-        totalbankBalbl = new JLabel("Total Balance"); 
+        totalbankBalbl = new JLabel("Total Balance (including inactive)"); 
         totalbankBalbl.setBounds(80, 20, 250, 20);
         totalbankBalbl.setFont(new Font("", Font.BOLD, 12));
         totalbankBalbl.setForeground(cs.darkerPurple);
@@ -344,7 +344,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         checkTotalIMG.setBounds(6, 15, 70, 70);
         savingsPanel.add(checkTotalIMG);
         
-        checkingAmnt = new JLabel("Total Checking"); 
+        checkingAmnt = new JLabel("Total Checking (including inactive)"); 
         checkingAmnt.setBounds(80, 20, 250, 20);
         checkingAmnt.setFont(new Font("", Font.BOLD, 12));
         checkingAmnt.setForeground(cs.darkerPurple);
@@ -365,7 +365,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
         saveTotalIMG.setBounds(6, 15, 70, 70);
         checkingPanel.add(saveTotalIMG);
         
-        checkingLbl = new JLabel("Total Savings"); 
+        checkingLbl = new JLabel("Total Savings (including inactive)"); 
         checkingLbl.setBounds(80, 20, 250, 20);
         checkingLbl.setFont(new Font("", Font.BOLD, 12));
         checkingLbl.setForeground(cs.darkerPurple);

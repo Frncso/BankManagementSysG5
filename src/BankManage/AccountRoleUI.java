@@ -3,6 +3,7 @@ import BankManage.AccountModels.EmployeeModel;
 import BankManage.AccountModels.BankAccount;
 import BankManage.AppService.ActivityLogService;
 import BankManage.AppService.BankAccountService;
+import BankManage.AppService.NotificationService;
 import BankManage.AppService.OneTimeCodeService;
 import BankManage.AppService.SessionManage;
 import BankManage.DataService.CustomerDataService;
@@ -600,23 +601,76 @@ public class AccountRoleUI extends JFrame implements ActionListener{
     }
     
     private void updateStatus(String accountId, String newStatus) {
+        // get acc details
+        BankAccountService accountService = new BankAccountService();
+        BankAccount account = accountService.getAccountById(accountId);
+        EmployeeModel staff = SessionManage.getCurrentStaff();
+
+        if (account == null) {
+            JOptionPane.showMessageDialog(this, "Account not found.");
+            return;
+        }
+
+        String oldStatus = account.getStatus();
+        String customerId = account.getCustomerId();
+
+        // ask for reason for status change
+        String reason = JOptionPane.showInputDialog(this,
+                "Enter reason for changing status to " + newStatus + ":",
+                "Status Change Reason", JOptionPane.PLAIN_MESSAGE);
+
+        if (reason == null || reason.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Reason is required to change account status.");
+            return;
+        }
+
+        // action confirmation
         int confirm = JOptionPane.showConfirmDialog(this,
-                "Are you sure you want to change this account's status to " + newStatus + "?",
-                "Confirm Status Change",
-                JOptionPane.YES_NO_OPTION);
+                "Are you sure you want to change account " + accountId + " from " + oldStatus + " to " + newStatus + "?",
+                "Confirm Status Change", JOptionPane.YES_NO_OPTION);
 
-        if (confirm == JOptionPane.YES_OPTION) {
-            BankAccountService accountService = new BankAccountService();
-            boolean success = accountService.updateAccountStatus(accountId, newStatus);
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+        
+        boolean updated = accountService.updateAccountStatus(accountId, newStatus);
 
-            if (success) {
-                JOptionPane.showMessageDialog(this, "Account status updated to " + newStatus);
-                
-                refreshStatsPanel();
-                loadAccountsDynamically();
+        if (updated) {
+            // if true, pass ung notification object
+            NotificationService notificationService = new NotificationService();
+            boolean notified = notificationService.createStatusChangeNotification(
+                    customerId,
+                    accountId,
+                    oldStatus,
+                    newStatus,
+                    reason.trim()
+            );
+            
+            ActivityLogService ls = new ActivityLogService();
+            
+            ls.logActivity(
+                "ACC STATUS UPDATE",
+                account.getCustomerId(),
+                accountId,
+                "Status to " + newStatus,
+                staff.getEmployeeFName()
+            );
+
+            if (notified) {
+                JOptionPane.showMessageDialog(this,
+                        "Account status updated successfully.\nCustomer has been notified.",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Failed to update account status.");
+                JOptionPane.showMessageDialog(this,
+                        "Account status updated, but failed to send notification.",
+                        "Partial Success", JOptionPane.WARNING_MESSAGE);
             }
+
+            // refresh
+            loadAccountsDynamically();
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to update account status.");
         }
     }
     

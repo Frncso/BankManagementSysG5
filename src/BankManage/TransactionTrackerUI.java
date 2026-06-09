@@ -252,8 +252,6 @@ public class TransactionTrackerUI extends JFrame implements ActionListener {
             TransactionService.FILTER_ALL,
             TransactionService.FILTER_COMPLETED,
             TransactionService.FILTER_DECLINED,
-            TransactionService.FILTER_SUSPENDED,
-            TransactionService.FILTER_FROZEN,
             TransactionService.FILTER_FLAGGED,
             TransactionService.FILTER_POSITIVE,
             TransactionService.FILTER_NEGATIVE

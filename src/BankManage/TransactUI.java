@@ -106,7 +106,7 @@ public class TransactUI extends JFrame implements ActionListener {
     private List<TransactionModel> allTransactions;
     
     protected String[] recentColumns = {
-        "Transaction Info", "Name", "Date", "Status", "Amount", "Account Type"
+        "Transaction Info", "Name", "Account ID", "Date", "Status", "Amount", "Account Type"
     };
     
     public TransactUI() {

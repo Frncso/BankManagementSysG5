@@ -446,7 +446,12 @@ public class SavingsUI extends JFrame implements ActionListener {
         CustomerModel customer = SessionManage.getCurrentCustomer();
 
         int completed = goalService.getCompletedGoalsCount(customer.getCustomerId());
-        achievedCountLabel.setText(completed + " Goals Achieved");
+        if (completed > 1){
+            achievedCountLabel.setText(completed + " Goals Achieved");
+        }
+        else{
+            achievedCountLabel.setText(completed + " Goal Achieved");
+        }
     }
-    
+
 }

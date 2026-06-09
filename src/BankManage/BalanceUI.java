@@ -4,6 +4,8 @@ import BankManage.AccountModels.CustomerModel;
 import BankManage.AppService.BankAccountService;
 import BankManage.AppService.SessionManage;
 import BankManage.AppService.TransactionService;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -134,6 +136,12 @@ public class BalanceUI extends JFrame implements ActionListener {
     private JLabel account1lbl, account2lbl;
     private double totalBal = getTotalBal();
     private double currentTotalSavings;
+    
+    // date and time
+    
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatted = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String formattedDT = now.format(formatted);
     
     //
     
@@ -408,13 +416,13 @@ public class BalanceUI extends JFrame implements ActionListener {
         breakdownlbl.setForeground(cs.darkerPurple);
         insightsPanel.add(breakdownlbl);
         
-        account1lbl = new JLabel("Total Checking Balance: ₱0.00");
-        account1lbl.setBounds(20, 180, 450, 20);
+        account1lbl = new JLabel("Total Active Checking Balance: ₱0.00");
+        account1lbl.setBounds(20, 180, 650, 20);
         account1lbl.setForeground(cs.gray);
         insightsPanel.add(account1lbl);
         
-        account2lbl = new JLabel("Total Saving Balance: ₱0.00");
-        account2lbl.setBounds(20, 200, 450, 20);
+        account2lbl = new JLabel("Total Active Saving Balance: ₱0.00");
+        account2lbl.setBounds(20, 200, 650, 20);
         account2lbl.setForeground(cs.gray);
         insightsPanel.add(account2lbl);
         
@@ -541,8 +549,8 @@ public class BalanceUI extends JFrame implements ActionListener {
         double totalChecking = totalsByType.getOrDefault("Checking", 0.0);
         double totalSavings  = totalsByType.getOrDefault("Savings", 0.0);
         
-        account1lbl.setText("Total Checking Balance: ₱" + String.format("%,.2f", totalChecking));
-        account2lbl.setText("Total Savings Balance: ₱" + String.format("%,.2f", totalSavings));
+        account1lbl.setText("Total Active Checking Balance: ₱" + String.format("%,.2f", totalChecking));
+        account2lbl.setText("Total Active Savings Balance: ₱" + String.format("%,.2f", totalSavings));
         
         currentTotalSavings = totalSavings;
         updateAccountComboBox();
@@ -952,7 +960,7 @@ public class BalanceUI extends JFrame implements ActionListener {
                     targetAccount.getAccountType(),
                     SessionManage.getCurrentUserDisplayName(),
                     amount,
-                    java.time.LocalDate.now().toString()
+                    formattedDT
             );
 
             if (balanceUpdated && transactionRecorded) {
@@ -1028,7 +1036,7 @@ public class BalanceUI extends JFrame implements ActionListener {
                     targetAccount.getAccountType(),
                     SessionManage.getCurrentUserDisplayName(),
                     amount,
-                    java.time.LocalDate.now().toString()
+                    formattedDT
             );
 
             if (balanceUpdated && transactionRecorded) {
@@ -1054,7 +1062,7 @@ public class BalanceUI extends JFrame implements ActionListener {
 
         String fromAccountId = selected.split(" ")[0];
 
-        // soruce account details
+        // get source account
         BankAccount fromAccount = null;
         for (BankAccount acc : customerAccounts) {
             if (acc.getAccountId().equals(fromAccountId)) {
@@ -1068,7 +1076,7 @@ public class BalanceUI extends JFrame implements ActionListener {
             return;
         }
 
-        // destination options
+        // build destination options
         java.util.List<String> destinationOptions = new ArrayList<>();
         destinationOptions.add("Input Account ID Manually");
 
@@ -1101,7 +1109,7 @@ public class BalanceUI extends JFrame implements ActionListener {
             }
             toAccountId = toAccountId.trim();
 
-            // validate external acc
+            // validation of the target eccount
             if (!accountService.isAccountActive(toAccountId)) {
                 JOptionPane.showMessageDialog(this,
                         "The destination account does not exist or is not Active.",
@@ -1115,7 +1123,7 @@ public class BalanceUI extends JFrame implements ActionListener {
         // get amount
         String amountText = inputAmttxb.getText().trim();
         if (amountText.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter an amount to transfer.");
+            JOptionPane.showMessageDialog(this, "Please enter an amount.");
             return;
         }
 
@@ -1137,46 +1145,34 @@ public class BalanceUI extends JFrame implements ActionListener {
             return;
         }
 
-        // final confirmation
+        // confirmation
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Transfer ₱" + String.format("%,.2f", amount) + " from " + fromAccountId + " to " + toAccountId + "?",
                 "Confirm Transfer", JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            // updating balances
+
+            // deduction sa sender
             double newFromBalance = fromAccount.getBalance() - amount;
             boolean fromUpdated = accountService.updateAccountBalance(fromAccountId, newFromBalance);
 
-            // update destination balance
-            boolean toUpdated = true;
-            BankAccount toAccount = null;
-
-            // try to find destination in current list first
-            for (BankAccount acc : customerAccounts) {
-                if (acc.getAccountId().equals(toAccountId)) {
-                    toAccount = acc;
-                    break;
-                }
-            }
+            // updation of both account balance
+            BankAccount toAccount = accountService.getAccountById(toAccountId);
+            boolean toUpdated = false;
 
             if (toAccount != null) {
                 double newToBalance = toAccount.getBalance() + amount;
                 toUpdated = accountService.updateAccountBalance(toAccountId, newToBalance);
-            } else {
-                // External account - fetch current balance and update
-                // For simplicity, we assume the account exists (already validated)
-                // You can enhance this later with a getAccountById() method
-                toUpdated = true; // Placeholder - balance will be updated via transaction record for now
             }
 
-            // record the transaction
+            // record transaction
             boolean transactionSuccess = transactSvc.recordTransfer(
                     fromAccountId,
                     toAccountId,
                     fromAccount.getAccountType(),
                     SessionManage.getCurrentUserDisplayName(),
                     amount,
-                    java.time.LocalDate.now().toString(),
+                    formattedDT,
                     "Transfer from " + fromAccountId + " to " + toAccountId
             );
 

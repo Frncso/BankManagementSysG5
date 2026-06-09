@@ -112,6 +112,26 @@ public class CustomerDataService {
         return "Unknown Customer";
     }
     
+    public String getFirstNameByCustomerId(String customerId) {
+        String sql = "SELECT first_name FROM customers WHERE customer_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, customerId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String firstName = en.decrypt(rs.getString("first_name"));
+                return firstName;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "Unknown Customer";
+    }
+    
     public int getMaxSequenceForCurrentYear() {
     int currentYear = java.time.LocalDate.now().getYear();
     String sql = "SELECT MAX(CAST(SUBSTRING_INDEX(customer_id, '-', 2) AS UNSIGNED)) " +

@@ -1,6 +1,9 @@
 package BankManage.AppService;
 
+import BankManage.AccountModels.BankAccount;
+import BankManage.AccountModels.CustomerModel;
 import BankManage.AccountModels.TransactionModel;
+import BankManage.DataService.CustomerDataService;
 import BankManage.DataService.TransactionDataService;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,19 +102,21 @@ public class TransactionService {
     public String[][] toCustomerTableData(List<TransactionModel> transactions) {
         if (transactions == null) return new String[0][6];
 
-        String[][] data = new String[transactions.size()][6];
+        String[][] data = new String[transactions.size()][7];
 
         for (int i = 0; i < transactions.size(); i++) {
             TransactionModel t = transactions.get(i);
 
-            data[i][0] = t.getTransactionId();                    
-            data[i][1] = t.getPurchaseName();                     
-            data[i][2] = t.getDate();                             
-            data[i][3] = t.getStatus();                           
-            data[i][4] = formatAmount(t.getAmount());             
-            data[i][5] = t.getAccountType();                      
+            data[i][0] = t.getTransactionId();
+            data[i][1] = t.getPurchaseName();
+            data[i][2] = (t.getToAccount() != null && !t.getToAccount().isEmpty()) 
+                            ? t.getToAccount() 
+                            : t.getPurchaseName();           
+            data[i][3] = t.getDate();
+            data[i][4] = t.getStatus();
+            data[i][5] = formatAmount(t.getAmount());
+            data[i][6] = t.getAccountType();
         }
-
         return data;
     }
 
@@ -199,25 +204,58 @@ public class TransactionService {
         return tds.insertTransaction(t);
     }
     
-    public boolean recordTransfer(String fromAccountId, String toAccountId, String accountType, String customerName, double amount, String date, String description) {
+    // recording withdraw accross transactions (hinahanap din destination account)
+    public boolean recordTransfer(String fromAccountId, String toAccountId,
+                              String accountType, String customerName,
+                              double amount, String date, String description) {
+
         if (amount <= 0) {
             System.out.println("Transfer amount must be greater than 0.");
             return false;
         }
 
-        TransactionModel t = new TransactionModel();
-        t.setAccountId(fromAccountId);           
-        t.setAccountType(accountType);
-        t.setCustomerName(customerName);
-        t.setPurchaseName("Transfer");
-        t.setDate(date);
-        t.setAmount(-Math.abs(amount));          
-        t.setStatus("Completed");
-        t.setFlagged(false);
-        t.setFromAccount(fromAccountId);
-        t.setToAccount(toAccountId);
+        // negative amount (since transfer)
+        TransactionModel senderTx = new TransactionModel();
+        senderTx.setAccountId(fromAccountId);
+        senderTx.setAccountType(accountType);
+        senderTx.setCustomerName(customerName);
+        senderTx.setPurchaseName("Transfer Out");
+        senderTx.setDate(date);
+        senderTx.setAmount(-Math.abs(amount));
+        senderTx.setStatus("Completed");
+        senderTx.setFlagged(false);
+        senderTx.setFromAccount(fromAccountId);
+        senderTx.setToAccount(toAccountId);
 
-        return tds.insertTransaction(t);
+        boolean senderRecorded = tds.insertTransaction(senderTx);
+
+        if (!senderRecorded) {
+            return false;
+        }
+
+        // record transaction for the receiver if meron (checker senderRecorded)
+        BankAccountService accountService = new BankAccountService();
+        CustomerDataService customerDataService = new CustomerDataService();
+        BankAccount toAccount = accountService.getAccountById(toAccountId);
+        
+        if (toAccount != null) {
+            String userId = customerDataService.getFirstNameByCustomerId(toAccount.getCustomerId());
+            
+            TransactionModel receiverTx = new TransactionModel();
+            receiverTx.setAccountId(toAccountId);
+            receiverTx.setAccountType(toAccount.getAccountType());
+            receiverTx.setCustomerName(userId);
+            receiverTx.setPurchaseName("Transfer In");
+            receiverTx.setDate(date);
+            receiverTx.setAmount(Math.abs(amount));
+            receiverTx.setStatus("Completed");
+            receiverTx.setFlagged(false);
+            receiverTx.setFromAccount(fromAccountId);
+            receiverTx.setToAccount(toAccountId);
+
+            tds.insertTransaction(receiverTx);
+        }
+
+        return true;
     }
-    
 }

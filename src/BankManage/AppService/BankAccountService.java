@@ -74,6 +74,11 @@ public class BankAccountService {
         }
     }
     
+    //get by id
+    public BankAccount getAccountById(String accountId) {
+        return accountDataService.getAccountById(accountId);
+    }
+    
     public boolean updateAccountBalance(String accountId, double newBalance) {
         return accountDataService.updateBalance(accountId, newBalance);
     }

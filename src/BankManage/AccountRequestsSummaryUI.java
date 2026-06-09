@@ -3,6 +3,7 @@ package BankManage;
 import BankManage.AccountModels.EmployeeModel;
 import BankManage.AccountModels.RequestModel;
 import BankManage.AppService.ActivityLogService;
+import BankManage.AppService.NotificationService;
 import BankManage.AppService.SessionManage;
 import BankManage.DataService.BankAccountDataService;
 import BankManage.DataService.RequestDataService;
@@ -176,6 +177,7 @@ public class AccountRequestsSummaryUI extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        NotificationService notificationService = new NotificationService();
         RequestDataService requestDataService = new RequestDataService();
         ActivityLogService ls = new ActivityLogService();
         EmployeeModel staff = SessionManage.getCurrentStaff();
@@ -192,6 +194,13 @@ public class AccountRequestsSummaryUI extends JFrame implements ActionListener {
                 currentRequest.getAccountNumber(),
                 "Accepted - Account Closing",
                 staff.getEmployeeFName()
+            );
+            
+            notificationService.createRequestProcessedNotification(
+                currentRequest.getCustomerId(),
+                currentRequestId,
+                "Account Closing Request",
+                "Accepted"
             );
             
             if (updated && currentRequest.getAccountNumber() != null) {
@@ -217,6 +226,13 @@ public class AccountRequestsSummaryUI extends JFrame implements ActionListener {
                 currentRequest.getAccountNumber(),
                 "Rejected - Account Closing",
                 staff.getEmployeeFName()
+            );
+            
+            notificationService.createRequestProcessedNotification(
+                currentRequest.getCustomerId(),
+                currentRequestId,
+                "Account Closing Request",
+                "Rejected"
             );
             
             requestDataService.updateRequestStatus(currentRequestId, "Rejected");

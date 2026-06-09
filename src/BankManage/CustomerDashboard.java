@@ -3,6 +3,8 @@ import BankManage.AppService.SessionManage;
 import BankManage.AppService.GetDateAndTime;
 import BankManage.AppService.BankAccountService;
 import BankManage.AccountModels.*;
+import BankManage.AppService.NotificationService;
+import BankManage.AppService.TransactionService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.table.DefaultTableModel;
 
 public class CustomerDashboard extends JFrame implements ActionListener {
 
@@ -119,17 +122,11 @@ public class CustomerDashboard extends JFrame implements ActionListener {
     
     private final JLabel recentlbl;
     private JTable recenttransacttbl;
+    private DefaultTableModel tableModel;
     private JScrollPane recentnoScroll;
     
     protected String[] recentColumns = {
-        "Name", "Date", "Status", "Amount"
-    };
-    
-    protected String[][] sampleData = {
-        {"PayPal Transfer", "May 10, 2026", "Completed", "+₱25,120.50"},
-        {"Roblox 1000 ROBUX", "May 5, 2026", "Declined", "=₱0"},
-        {"Minecraft Cape", "January 7, 2026", "Completed", "-₱250.00"},
-        {"Minecraft Bundle", "January 6, 2026", "Completed", "-₱1,600"},
+        "Transaction Info", "Name", "Account ID", "Purchase Date", "Status", "Amount", "Account Type"
     };
     
     private Timer timeTick;
@@ -309,7 +306,7 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         availBalancelbl.setForeground(cs.darkerPurple);
         balancePanel.add(availBalancelbl);
         
-        availlbl = new JLabel("Checking + Saving");
+        availlbl = new JLabel("Checkings + Savings");
         availlbl.setBounds(20, 108, 150, 20);
         availlbl.setForeground(cs.gray);
         balancePanel.add(availlbl);
@@ -422,23 +419,30 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         
         // end savings
         
-        // Transaction
-        
+        // recent transactions
+
         recentTransactPanel = new JPanel();
         recentTransactPanel.setLayout(null);
         recentTransactPanel.setBounds(30, 425, 1185, 460);
         recentTransactPanel.setBackground(cs.white);
         recentTransactPanel.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
-        
-        recentlbl = new JLabel("Recent Transactions"); 
+
+        recentlbl = new JLabel("Recent Transactions");
         recentlbl.setBounds(20, 20, 250, 20);
         recentlbl.setFont(new Font("", Font.BOLD, 18));
         recentlbl.setForeground(cs.darkerPurple);
         recentTransactPanel.add(recentlbl);
-        
-        // table (objects papasok dito)
-        
-        recenttransacttbl = new JTable(sampleData, recentColumns);
+
+        // Create table model
+        tableModel = new DefaultTableModel(recentColumns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        // Create table with model
+        recenttransacttbl = new JTable(tableModel);
         recenttransacttbl.setRowHeight(40);
         recenttransacttbl.setFont(new Font("Arial", Font.PLAIN, 14));
         recenttransacttbl.setFocusable(false);
@@ -449,29 +453,22 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         recenttransacttbl.setSelectionForeground(cs.white);
         recenttransacttbl.setShowGrid(false);
         recenttransacttbl.setDefaultEditor(Object.class, null);
-        
-        recenttransacttbl.getTableHeader().setFont(
-            new Font("Arial", Font.BOLD, 14)
-        );
-        recenttransacttbl.getTableHeader().setPreferredSize(
-            new Dimension(0, 45)
-        );
-        
-        // no scroll
-        
-        recentnoScroll = new JScrollPane(recenttransacttbl);
-        
-        recentnoScroll.setVerticalScrollBarPolicy(
-            JScrollPane.VERTICAL_SCROLLBAR_NEVER
-        );
 
-        recentnoScroll.setHorizontalScrollBarPolicy(
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-        );
-        
+        recenttransacttbl.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        recenttransacttbl.getTableHeader().setPreferredSize(new Dimension(0, 45));
+
+        // Create scroll pane
+        recentnoScroll = new JScrollPane(recenttransacttbl);
+        recentnoScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        recentnoScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         recentnoScroll.setBorder(BorderFactory.createLineBorder(cs.darkPurple, 1));
         recentnoScroll.setBounds(20, 60, 1145, 380);
         recentTransactPanel.add(recentnoScroll);
+
+        mainContentPanel.add(recentTransactPanel);
+
+        // Load real recent transactions (max 6)
+        loadRecentTransactions();
         
         mainContentPanel.add(recentTransactPanel);
         
@@ -494,6 +491,10 @@ public class CustomerDashboard extends JFrame implements ActionListener {
             CustomerModel customer = SessionManage.getCurrentCustomer();
             
             loadCustomerAccounts();
+            loadRecentTransactions();
+            
+            // NOTIFICATIONS !
+            showAccountNotifications(customer.getCustomerId());
             
             System.out.println("Logged in as: " + customer.getFirstName()); // debug
         }
@@ -596,6 +597,50 @@ public class CustomerDashboard extends JFrame implements ActionListener {
         
     }
     
+    private void loadRecentTransactions() {
+        if (!SessionManage.isCustomerLoggedIn() || tableModel == null) {
+            return;
+        }
+
+        CustomerModel customer = SessionManage.getCurrentCustomer();
+        TransactionService transactionService = new TransactionService();
+
+        // get all transactions
+        List<TransactionModel> allTransactions = transactionService.getAllTransactions();
+
+        // filter for current user only
+        List<TransactionModel> userTransactions = new ArrayList<>();
+        for (TransactionModel t : allTransactions) {
+            for (BankAccount acc : customerAccounts) {
+                if (t.getAccountId() != null && t.getAccountId().equals(acc.getAccountId())) {
+                    userTransactions.add(t);
+                    break;
+                }
+            }
+        }
+
+        // limit
+        int limit = Math.min(userTransactions.size(), 8);
+        List<TransactionModel> recentList = userTransactions.subList(0, limit);
+
+        // clear existing
+        tableModel.setRowCount(0);
+
+        // feeding data from sql
+        for (TransactionModel t : recentList) {
+            Object[] row = new Object[7];
+            row[0] = t.getTransactionId();                          
+            row[1] = t.getPurchaseName();                            
+            row[2] = t.getAccountId();                               
+            row[3] = t.getDate();                                    
+            row[4] = t.getStatus();                                  
+            row[5] = transactionService.formatAmount(t.getAmount()); 
+            row[6] = t.getAccountType();                             
+
+            tableModel.addRow(row);
+        }
+    }
+
     private List<BankAccount> customerAccounts = new ArrayList<>();
 
     private void loadCustomerAccounts() {
@@ -648,6 +693,24 @@ public class CustomerDashboard extends JFrame implements ActionListener {
             totals.put(type, currentTotal + acc.getBalance());
         }
         return totals;
+    }
+    
+    private void showAccountNotifications(String customerId) {
+        NotificationService notificationService = new NotificationService();
+        List<NotificationModel> unread = notificationService.getUnreadNotifications(customerId);
+
+        if (!unread.isEmpty()) {
+            StringBuilder message = new StringBuilder("Account Status Update(s):\n\n");
+            for (NotificationModel n : unread) {
+                message.append("• ").append(n.getMessage()).append("\n\n");
+            }
+
+            JOptionPane.showMessageDialog(this, message.toString(), 
+                "Account Notification", JOptionPane.INFORMATION_MESSAGE);
+
+            // mark as read
+            notificationService.markAllNotificationsAsRead(customerId);
+        }
     }
     
 }

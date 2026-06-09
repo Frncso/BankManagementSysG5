@@ -73,6 +73,30 @@ public class BankAccountDataService {
         return list;
     }
     
+    // get account by id (for record sakes)
+    public BankAccount getAccountById(String accountId) {
+        String sql = "SELECT * FROM bank_accounts WHERE account_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, accountId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                BankAccount acc = new BankAccount();
+                acc.setAccountId(rs.getString("account_id"));
+                acc.setCustomerId(rs.getString("customer_id"));
+                acc.setAccountType(rs.getString("account_type"));
+                acc.setBalance(rs.getDouble("balance"));
+                acc.setStatus(rs.getString("status"));
+                return acc;
+            }
+        } catch (SQLException e) {
+            System.out.println("BankAccountDS Error [getAccountById]: " + e.getMessage());
+        }
+        return null;
+    }
+    
     public boolean updateStatus(String accountId, String newStatus) {
         String sql = "UPDATE bank_accounts SET status = ? WHERE account_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

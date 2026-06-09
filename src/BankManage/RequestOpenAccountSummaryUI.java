@@ -4,6 +4,7 @@ import BankManage.AccountModels.EmployeeModel;
 import BankManage.AccountModels.RequestModel;
 import BankManage.AppService.ActivityLogService;
 import BankManage.AppService.BankAccountService;
+import BankManage.AppService.NotificationService;
 import BankManage.AppService.SessionManage;
 import BankManage.DataService.RequestDataService;
 import javax.swing.*;
@@ -188,6 +189,7 @@ public class RequestOpenAccountSummaryUI extends JFrame implements ActionListene
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        NotificationService notificationService = new NotificationService();
         RequestDataService requestDataService = new RequestDataService();
         ActivityLogService ls = new ActivityLogService();
         EmployeeModel staff = SessionManage.getCurrentStaff();
@@ -209,6 +211,13 @@ public class RequestOpenAccountSummaryUI extends JFrame implements ActionListene
                 request.getAccountNumber(),
                 "Accepted - Account Opening",
                 staff.getEmployeeFName()
+            );
+            
+            notificationService.createRequestProcessedNotification(
+                request.getCustomerId(),
+                requestId,
+                "Account Closing Request",
+                "Accepted"
             );
             
             if (accountCreated) {
@@ -236,6 +245,13 @@ public class RequestOpenAccountSummaryUI extends JFrame implements ActionListene
                 request.getAccountNumber(),
                 "Rejected - Account Opening",
                 staff.getEmployeeFName()
+            );
+            
+                        notificationService.createRequestProcessedNotification(
+                request.getCustomerId(),
+                requestId,
+                "Account Closing Request",
+                "Rejected"
             );
             
             requestDataService.updateRequestStatus(requestId, "Rejected");
