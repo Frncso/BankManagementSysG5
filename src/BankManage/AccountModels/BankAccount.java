@@ -8,6 +8,7 @@ public class BankAccount {
     private String accountType;     // checking or saving
     private double balance;
     private String status;          // active frozen suspended closed
+    private String customerName;    // Holds the decrypted, capitalized full name from JOIN queries
 
     public BankAccount() {}
 
@@ -37,6 +38,9 @@ public class BankAccount {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
 
     @Override
     public String toString() {

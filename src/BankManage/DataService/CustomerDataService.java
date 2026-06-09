@@ -103,13 +103,16 @@ public class CustomerDataService {
             if (rs.next()) {
                 String firstName = en.decrypt(rs.getString("first_name"));
                 String lastName = en.decrypt(rs.getString("last_name"));
-                return firstName + " " + lastName;
+                
+                if (firstName != null && lastName != null) {
+                    return (firstName + " " + lastName).toUpperCase();
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return "Unknown Customer";
+        return "UNKNOWN CUSTOMER";
     }
     
     public String getFirstNameByCustomerId(String customerId) {
@@ -129,7 +132,7 @@ public class CustomerDataService {
             e.printStackTrace();
         }
 
-        return "Unknown Customer";
+        return "UNKNOWN CUSTOMER";
     }
     
     public int getMaxSequenceForCurrentYear() {

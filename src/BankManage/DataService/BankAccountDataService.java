@@ -247,6 +247,8 @@ public class BankAccountDataService {
                      "FROM bank_accounts ba " +
                      "JOIN customers c ON ba.customer_id = c.customer_id " +
                      "ORDER BY ba.created_at DESC";
+        
+        BankManage.AppService.Encryption en = new BankManage.AppService.Encryption();
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -259,6 +261,16 @@ public class BankAccountDataService {
                 acc.setAccountType(rs.getString("account_type"));
                 acc.setBalance(rs.getDouble("balance"));
                 acc.setStatus(rs.getString("status"));
+                
+                String firstName = en.decrypt(rs.getString("first_name"));
+                String lastName = en.decrypt(rs.getString("last_name"));
+
+                if (firstName != null && lastName != null) {
+                    String fullName = (firstName + " " + lastName).toUpperCase();
+                    acc.setCustomerName(fullName);
+                } else {
+                    acc.setCustomerName("UNKNOWN CUSTOMER");
+                }
 
                 accounts.add(acc);
             }

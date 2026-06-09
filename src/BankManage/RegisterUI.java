@@ -591,6 +591,55 @@ public class RegisterUI extends JFrame implements ActionListener{
             JOptionPane.showMessageDialog(this, "Please fill all required fields.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        //name validation
+        if (!fname.matches("[a-zA-Z\\s]+") || !lname.matches("[a-zA-Z\\s]+")) { //a-z, A-Z, \\s ensures that the user can input letters capitalized or not capitalized and spaces.
+                                                                                //the + sign indicates that the user can input as many however he/she likes. Also ensures that the field is not empty.
+            JOptionPane.showMessageDialog(this, "Name must not contain numbers or special characters.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (fname.length() > 50) {
+            JOptionPane.showMessageDialog(this, "First name is too long! \nMaximum limit is 50 characters.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (lname.length() > 50) {
+            JOptionPane.showMessageDialog(this, "Last name is too long! \nMaximum limit is 50 characters.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        fname = fname.toUpperCase();
+        lname = lname.toUpperCase();    
+        
+        //password validation
+        if (pass.length() < 7) {
+            JOptionPane.showMessageDialog(this, "Password is too short! \nMust be at least 7 characters.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (pass.length() > 50) {
+            JOptionPane.showMessageDialog(this, "Password is too long! \nMaximum limit is 50 characters.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        //age validation
+        String selectedYearStr = (String) cbxYear.getSelectedItem();
+        int birthYear = Integer.parseInt(selectedYearStr);
+        int result = 2026 - birthYear;
+        
+        if (!(result >= 18 && result <= 117)) {
+            JOptionPane.showMessageDialog(this, "Age validation failed. \nMust be 18 and above to register.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        //ID validation
+        if (idno.length() < 12 || idno.length() > 16 || !idno.matches("\\d+")) {
+            JOptionPane.showMessageDialog(this, "ID must contain only digits and no spaces. \nAnd between 12 and 16 characters long.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        } else {
+            long idValue = Long.parseLong(idno);
+            long checkModulo = idValue % 16;
+        }
 
         CustomerModel customer = new CustomerModel(fname, lname, pass, dob, occupation, income, idtype, idno);
         boolean success = rs.registerCustomer(customer);
@@ -616,6 +665,44 @@ public class RegisterUI extends JFrame implements ActionListener{
 
         if (fname.isEmpty() || lname.isEmpty() || pass.isEmpty() || position.equals("Select Position")) {
             JOptionPane.showMessageDialog(this, "Please fill all required fields.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        //name validation
+        if (!fname.matches("[a-zA-Z\\s]+") || !lname.matches("[a-zA-Z\\s]+")) { //a-z, A-Z, \\s ensures that the user can input letters capitalized or not capitalized and spaces.
+                                                                                //the + sign indicates that the user can input as many however he/she likes.
+            JOptionPane.showMessageDialog(this, "Name must not contain numbers or special characters.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (fname.length() > 50) {
+            JOptionPane.showMessageDialog(this, "First name is too long! \nMaximum limit is 50 characters.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (lname.length() > 50) {
+            JOptionPane.showMessageDialog(this, "Last name is too long! \nMaximum limit is 50 characters.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        //password validation
+        if (pass.length() < 7) {
+            JOptionPane.showMessageDialog(this, "Password is too short! \nMust be at least 7 characters.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (pass.length() > 50) {
+            JOptionPane.showMessageDialog(this, "Password is too long! \nMaximum limit is 50 characters.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        //age validation
+        String selectedYearStr = (String) cbxYear.getSelectedItem();
+        int birthYear = Integer.parseInt(selectedYearStr);
+        int result = 2026 - birthYear;
+        
+        if (!(result >= 18 && result <= 117)) {
+            JOptionPane.showMessageDialog(this, "Age validation failed. \nMust be 18 and above to register.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -646,12 +733,12 @@ public class RegisterUI extends JFrame implements ActionListener{
                 ln.staffRegister(true);
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Registration failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Registration failed. \nPlease try again.", "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         }
         else{
-            JOptionPane.showMessageDialog(this, "Invalid Access Code. Please contact your Administrators.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Invalid Access Code. \nPlease contact your Administrators.", "Error", JOptionPane.ERROR_MESSAGE);
         }
         
         
