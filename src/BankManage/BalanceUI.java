@@ -916,6 +916,12 @@ public class BalanceUI extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(this, "Please enter an amount.");
             return;
         }
+        
+        // validate numeric input only
+        if (!amountText.matches("\\d+(\\.\\d+)?")) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Strictly numbers only (no letters, symbols, or special characters).");
+            return;
+        }
 
         double amount;
         try {
@@ -988,6 +994,12 @@ public class BalanceUI extends JFrame implements ActionListener {
 
         if (amountText.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter an amount.");
+            return;
+        }
+        
+        // validate numeric input only
+        if (!amountText.matches("\\d+(\\.\\d+)?")) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Strictly numbers only (no letters, symbols, or special characters).");
             return;
         }
 
@@ -1124,6 +1136,12 @@ public class BalanceUI extends JFrame implements ActionListener {
         String amountText = inputAmttxb.getText().trim();
         if (amountText.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter an amount.");
+            return;
+        }
+        
+        // validate numeric input only
+        if (!amountText.matches("\\d+(\\.\\d+)?")) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Strictly numbers only (no letters, symbols, or special characters).");
             return;
         }
 
