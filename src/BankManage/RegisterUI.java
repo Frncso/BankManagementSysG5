@@ -627,8 +627,12 @@ public class RegisterUI extends JFrame implements ActionListener{
         int birthYear = Integer.parseInt(selectedYearStr);
         int result = 2026 - birthYear;
         
-        if (!(result >= 18 && result <= 117)) {
+        if (!(result >= 18)) {
             JOptionPane.showMessageDialog(this, "Age validation failed. \nMust be 18 and above to register.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }// greater than 117
+        else if(!(result <= 117)){
+            JOptionPane.showMessageDialog(this, "Age validation failed. \nInvalid Age.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
@@ -684,6 +688,8 @@ public class RegisterUI extends JFrame implements ActionListener{
             JOptionPane.showMessageDialog(this, "Last name is too long! \nMaximum limit is 50 characters.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        fname = fname.toUpperCase();
+        lname = lname.toUpperCase(); 
         
         //password validation
         if (pass.length() < 7) {
@@ -701,8 +707,13 @@ public class RegisterUI extends JFrame implements ActionListener{
         int birthYear = Integer.parseInt(selectedYearStr);
         int result = 2026 - birthYear;
         
-        if (!(result >= 18 && result <= 117)) {
+        if (!(result >= 18)) {
             JOptionPane.showMessageDialog(this, "Age validation failed. \nMust be 18 and above to register.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        // if greater than 117
+        else if(!(result <= 117)){
+            JOptionPane.showMessageDialog(this, "Age validation failed. \nInvalid Age.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
