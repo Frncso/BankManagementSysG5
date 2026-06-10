@@ -92,7 +92,7 @@ public class BankAccountDataService {
                 return acc;
             }
         } catch (SQLException e) {
-            System.out.println("BankAccountDS Error [getAccountById]: " + e.getMessage());
+            System.out.println("BankAccountDataService Error [getAccountById]: " + e.getMessage());
         }
         return null;
     }
@@ -135,7 +135,7 @@ public class BankAccountDataService {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.out.println("BankAccountDAO Error [updateBalance]: " + e.getMessage());
+            System.out.println("BankAccountDataService Error [updateBalance]: " + e.getMessage());
             return false;
         }
     }
@@ -156,7 +156,7 @@ public class BankAccountDataService {
             }
 
         } catch (SQLException e) {
-            System.out.println("BankAccountDAO Error [accountExistsAndIsActive]: " + e.getMessage());
+            System.out.println("BankAccountDataService Error [accountExistsAndIsActive]: " + e.getMessage());
         }
 
         return false; // acc isnt active or not existing

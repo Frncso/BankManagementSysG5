@@ -522,12 +522,36 @@ public class BalanceUI extends JFrame implements ActionListener {
             dispose();
         }
         else if(e.getSource() == depositBtn){
+            // input amt validation
+            double input = Double.parseDouble(inputAmttxb.getText().trim());
+
+            if(input > 250000){ // limit to 250k, like other banks
+                JOptionPane.showMessageDialog(this, "Deposit Amount must be less than 250,000.");
+                return;
+            }
+
             handleDeposit();
         }
         else if(e.getSource() == withdrawBtn){
+            // input amt validation
+            double input = Double.parseDouble(inputAmttxb.getText().trim());
+
+            if(input > 250000){ // limit to 250k, like other banks
+                JOptionPane.showMessageDialog(this, "Withdraw Amount must be less than 250,000.");
+                return;
+            }
+            
             handleWithdraw();
         }
         else if (e.getSource() == transferBtn){
+            // input amt validation
+            double input = Double.parseDouble(inputAmttxb.getText().trim());
+
+            if(input > 250000){ // limit to 250k, like other banks
+                JOptionPane.showMessageDialog(this, "Transfer Amount must be less than 250,000.");
+                return;
+            }
+            
             handleTransfer();
         }
     }
@@ -548,9 +572,11 @@ public class BalanceUI extends JFrame implements ActionListener {
         
         double totalChecking = totalsByType.getOrDefault("Checking", 0.0);
         double totalSavings  = totalsByType.getOrDefault("Savings", 0.0);
+        double sumCheckSave = totalChecking + totalSavings;
         
         account1lbl.setText("Total Active Checking Balance: ₱" + String.format("%,.2f", totalChecking));
         account2lbl.setText("Total Active Savings Balance: ₱" + String.format("%,.2f", totalSavings));
+        totalBallbl.setText("₱" + String.format("%,.2f", sumCheckSave));
         
         currentTotalSavings = totalSavings;
         updateAccountComboBox();
@@ -960,20 +986,21 @@ public class BalanceUI extends JFrame implements ActionListener {
             // update balance in database
             boolean balanceUpdated = accountService.updateAccountBalance(accountId, newBalance);
 
-            // record transaction
-            boolean transactionRecorded = transactSvc.recordDeposit(
-                    accountId,
-                    targetAccount.getAccountType(),
-                    SessionManage.getCurrentUserDisplayName(),
-                    amount,
-                    formattedDT
-            );
-
-            if (balanceUpdated && transactionRecorded) {
+            if (balanceUpdated) {
                 JOptionPane.showMessageDialog(this, "Deposit successful!");
                 inputAmttxb.setText("");
                 loadAndDisplayAccountsDynamically();
                 loadCustomerAccounts();
+                
+                // record transaction
+                transactSvc.recordDeposit(
+                        accountId,
+                        targetAccount.getAccountType(),
+                        SessionManage.getCurrentUserDisplayName(),
+                        amount,
+                        formattedDT
+                );
+                
             } else {
                 JOptionPane.showMessageDialog(this, "Deposit failed. Please try again.");
             }
@@ -1042,20 +1069,22 @@ public class BalanceUI extends JFrame implements ActionListener {
         if (confirm == JOptionPane.YES_OPTION) {
             double newBalance = targetAccount.getBalance() - amount;
 
-            boolean balanceUpdated = accountService.updateAccountBalance(accountId, newBalance);
-            boolean transactionRecorded = transactSvc.recordWithdraw(
+            boolean balanceUpdated = accountService.updateAccountBalance(accountId, newBalance);  
+
+            if (balanceUpdated) {
+                JOptionPane.showMessageDialog(this, "Withdrawal successful!");
+                inputAmttxb.setText("");
+                loadAndDisplayAccountsDynamically();
+                loadCustomerAccounts();
+                
+                // record withdrawal
+                transactSvc.recordWithdraw(
                     accountId,
                     targetAccount.getAccountType(),
                     SessionManage.getCurrentUserDisplayName(),
                     amount,
                     formattedDT
             );
-
-            if (balanceUpdated && transactionRecorded) {
-                JOptionPane.showMessageDialog(this, "Withdrawal successful!");
-                inputAmttxb.setText("");
-                loadAndDisplayAccountsDynamically();
-                loadCustomerAccounts();
             } else {
                 JOptionPane.showMessageDialog(this, "Withdrawal failed.");
             }
@@ -1183,8 +1212,14 @@ public class BalanceUI extends JFrame implements ActionListener {
                 toUpdated = accountService.updateAccountBalance(toAccountId, newToBalance);
             }
 
-            // record transaction
-            boolean transactionSuccess = transactSvc.recordTransfer(
+            if (fromUpdated && toUpdated) {
+                JOptionPane.showMessageDialog(this, "Transfer successful!");
+                inputAmttxb.setText("");
+                loadAndDisplayAccountsDynamically();
+                loadCustomerAccounts();
+                
+                // record transact
+                transactSvc.recordTransfer(
                     fromAccountId,
                     toAccountId,
                     fromAccount.getAccountType(),
@@ -1192,25 +1227,11 @@ public class BalanceUI extends JFrame implements ActionListener {
                     amount,
                     formattedDT,
                     "Transfer from " + fromAccountId + " to " + toAccountId
-            );
-
-            if (fromUpdated && toUpdated && transactionSuccess) {
-                JOptionPane.showMessageDialog(this, "Transfer successful!");
-                inputAmttxb.setText("");
-                loadAndDisplayAccountsDynamically();
-                loadCustomerAccounts();
+                );
             } else {
                 JOptionPane.showMessageDialog(this, "Transfer failed. Please try again.");
             }
         }
-    }
-    
-    private String getAccountTypeFromCombo(String selectedItem) {
-        if (selectedItem == null || selectedItem.equals("Select Account")) {
-            return "";
-        }
-        String[] parts = selectedItem.split(" ");
-        return parts.length > 1 ? parts[1] : "";
     }
     
 }

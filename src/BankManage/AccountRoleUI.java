@@ -386,7 +386,7 @@ public class AccountRoleUI extends JFrame implements ActionListener{
                 acc.getAccountId(),
                 acc.getCustomerId(),
                 fullName,                           
-                "₱" + acc.getBalance(),
+                "₱" + accountService.formatAmount(acc.getBalance()),
                 acc.getStatus(),
                 i,
                 yPos
@@ -668,6 +668,7 @@ public class AccountRoleUI extends JFrame implements ActionListener{
 
             // refresh
             loadAccountsDynamically();
+            refreshStatsPanel();
 
         } else {
             JOptionPane.showMessageDialog(this, "Failed to update account status.");

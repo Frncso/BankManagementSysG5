@@ -524,7 +524,7 @@ public class AccountMenuUI extends JFrame implements ActionListener {
             data[i][0] = acc.getAccountId();
             data[i][1] = acc.getAccountType();
             data[i][2] = acc.getStatus();
-            data[i][3] = "₱" + acc.getBalance();
+            data[i][3] = "₱" + accountService.formatAmount(acc.getBalance());
         }
 
         // create / update JTable

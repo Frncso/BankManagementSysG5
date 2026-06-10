@@ -74,6 +74,15 @@ public class BankAccountService {
         }
     }
     
+    // to properly format the money
+    public String formatAmount(double amount) {
+        if (amount >= 0) {
+            return String.format("%,.2f", amount);
+        } else {
+            return String.format("%,.2f", Math.abs(amount));
+        }
+    }
+    
     //get by id
     public BankAccount getAccountById(String accountId) {
         return accountDataService.getAccountById(accountId);
